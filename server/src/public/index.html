@@ -1,0 +1,3454 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UWS - Unifiable Workspace System</title>
+  <link rel="icon" type="image/png" href="/assets/logo.png" />
+  <link rel="stylesheet" href="/vendor/xterm/xterm.css" />
+  <style>
+    :root {
+      --bg: #090c10;
+      --card-bg: #12161f;
+      --card-header: #181d27;
+      --border: #2d333b;
+      --border-focus: #58a6ff;
+      --text: #c9d1d9;
+      --text-bold: #f0f6fc;
+      --text-muted: #8b949e;
+      --accent: #58a6ff;
+      --accent-green: #3fb950;
+      --accent-yellow: #d29922;
+      --accent-red: #f85149;
+      --accent-purple: #bc8cff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "JetBrains Mono", "SF Mono", "Fira Code", Consolas, monospace;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg);
+      color: var(--text);
+      user-select: none;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* TOP STATUS BAR */
+    .top-bar {
+      height: 40px;
+      background: #10141d;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 16px 0 20px;
+      flex-shrink: 0;
+      z-index: 5000;
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.8px;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* NODE & QUICK ACTIONS WRAPPER */
+    .node-actions-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .node-title-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      color: #79c0ff;
+    }
+    .node-name {
+      font-weight: 700;
+    }
+    .rename-btn-hint {
+      font-size: 10px;
+      color: var(--text-muted);
+      border: 1px dashed var(--border);
+      padding: 1px 5px;
+      border-radius: 3px;
+    }
+    .node-title-wrap:hover .rename-btn-hint {
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    #rename-form {
+      display: none;
+      align-items: center;
+      gap: 6px;
+    }
+    #rename-input {
+      background: #0d1117;
+      border: 1px solid var(--accent);
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-family: inherit;
+      outline: none;
+      width: 140px;
+    }
+
+    /* QUICK ACTIONS DROPDOWN */
+    .actions-dropdown-wrap {
+      position: relative;
+      display: inline-block;
+    }
+
+    .actions-dropdown-trigger {
+      background: #1f242e;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 3px 9px;
+      border-radius: 4px;
+      font-size: 11px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-family: inherit;
+      transition: all 0.12s;
+    }
+    .actions-dropdown-trigger:hover {
+      background: #283142;
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .actions-dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      margin-top: 4px;
+      background: rgba(22, 27, 34, 0.98);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.8);
+      min-width: 200px;
+      padding: 4px;
+      z-index: 10000;
+      display: none;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .actions-dropdown-menu.show {
+      display: flex;
+    }
+
+    .action-menu-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      color: var(--text);
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+    .action-menu-item:hover {
+      background: #283142;
+      color: #fff;
+    }
+    .action-menu-item.config-btn {
+      color: #79c0ff;
+      border-top: 1px solid var(--border);
+      margin-top: 4px;
+      padding-top: 6px;
+      font-weight: 600;
+    }
+
+    /* MULTI-USER PRESENCE WIDGET */
+    .presence-container {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #161b24;
+      padding: 2px 8px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+    }
+
+    .presence-users-list {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .user-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      padding: 1px 7px;
+      border-radius: 12px;
+      background: #21262d;
+      color: var(--text);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.12s;
+    }
+    .user-badge:hover {
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .user-badge.host {
+      background: rgba(63, 185, 80, 0.15);
+      border-color: rgba(63, 185, 80, 0.4);
+      color: #7ee787;
+    }
+    .user-badge.editor-now {
+      box-shadow: 0 0 6px rgba(63, 185, 80, 0.5);
+      border-color: #3fb950;
+    }
+    .user-badge.you {
+      border-color: var(--accent);
+      box-shadow: 0 0 6px rgba(88, 166, 255, 0.3);
+    }
+
+    .share-btn {
+      background: #238636;
+      border: 1px solid #2ea043;
+      color: #fff;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      font-family: inherit;
+      transition: all 0.15s;
+    }
+    .share-btn:hover {
+      background: #2ea043;
+    }
+
+    .btn-save {
+      background: #238636;
+      border: 1px solid #2ea043;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-family: inherit;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+    }
+    .btn-save:hover { background: #2ea043; }
+
+    .btn-cancel {
+      background: #21262d;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .btn-cancel:hover { background: #30363d; color: #fff; }
+
+    .live-tag {
+      font-size: 11px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--accent-green);
+      background: rgba(63, 185, 80, 0.1);
+      padding: 2px 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(63, 185, 80, 0.25);
+    }
+
+    .pulse-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 6px currentColor;
+    }
+
+    /* LEFT HOVER SUMMON MENU */
+    .sidebar-dock-trigger {
+      position: fixed;
+      top: 40px;
+      left: 0;
+      bottom: 0;
+      width: 10px;
+      z-index: 99999;
+      background: rgba(88, 166, 255, 0.1);
+      border-right: 1px solid rgba(88, 166, 255, 0.2);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .sidebar-dock-trigger:hover {
+      background: rgba(88, 166, 255, 0.3);
+    }
+
+    .sidebar-dock {
+      position: fixed;
+      top: 40px;
+      left: 0;
+      bottom: 0;
+      width: 230px;
+      background: rgba(18, 22, 31, 0.98);
+      backdrop-filter: blur(16px);
+      border-right: 1px solid var(--border);
+      box-shadow: 10px 0 30px rgba(0, 0, 0, 0.7);
+      transform: translateX(-100%);
+      transition: transform 0.2s cubic-bezier(0.1, 0.9, 0.2, 1);
+      z-index: 100000;
+      display: flex;
+      flex-direction: column;
+      padding: 16px 12px;
+      gap: 8px;
+    }
+
+    .sidebar-dock-trigger:hover + .sidebar-dock,
+    .sidebar-dock:hover {
+      transform: translateX(0);
+    }
+
+    .dock-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+      padding-left: 2px;
+    }
+
+    .dock-btn {
+      width: 100%;
+      background: #181d26;
+      border: 1px solid var(--border);
+      color: var(--text-bold);
+      padding: 9px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-family: inherit;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      transition: all 0.15s ease;
+      text-align: left;
+    }
+    .dock-btn:hover {
+      background: #232a38;
+      border-color: var(--accent);
+      color: #fff;
+      transform: translateX(3px);
+    }
+    .dock-btn:active {
+      transform: scale(0.98);
+    }
+
+    .dock-btn.btn-accent {
+      background: rgba(56, 139, 253, 0.12);
+      border-color: rgba(56, 139, 253, 0.3);
+      color: #79c0ff;
+    }
+    .dock-btn.btn-accent:hover {
+      background: rgba(56, 139, 253, 0.22);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .dock-btn.btn-purple {
+      background: rgba(188, 140, 255, 0.12);
+      border-color: rgba(188, 140, 255, 0.3);
+      color: #d2a8ff;
+    }
+    .dock-btn.btn-purple:hover {
+      background: rgba(188, 140, 255, 0.22);
+      border-color: var(--accent-purple);
+      color: #fff;
+    }
+
+    /* WORKSPACE ROOT CONTAINER */
+    #workspace-container {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      padding: 6px 6px 6px 14px;
+      display: flex;
+    }
+
+    /* RECURSIVE SPLIT TILING TREE */
+    .tiling-split-container {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      min-width: 0;
+      min-height: 0;
+      position: relative;
+    }
+
+    .tiling-split-container.split-row {
+      flex-direction: row;
+    }
+
+    .tiling-split-container.split-col {
+      flex-direction: column;
+    }
+
+    /* SPLITTER GUTTER */
+    .split-gutter {
+      flex-shrink: 0;
+      background: #181d27;
+      position: relative;
+      z-index: 50;
+      transition: background 0.15s;
+    }
+
+    .split-gutter.gutter-row {
+      width: 6px;
+      cursor: col-resize;
+      margin: 0 1px;
+    }
+    .split-gutter.gutter-row:hover,
+    .split-gutter.gutter-row.resizing {
+      background: var(--accent);
+      box-shadow: 0 0 8px rgba(88, 166, 255, 0.6);
+    }
+
+    .split-gutter.gutter-col {
+      height: 6px;
+      cursor: row-resize;
+      margin: 1px 0;
+    }
+    .split-gutter.gutter-col:hover,
+    .split-gutter.gutter-col.resizing {
+      background: var(--accent);
+      box-shadow: 0 0 8px rgba(88, 166, 255, 0.6);
+    }
+
+    /* TILING LEAF PANE */
+    .tiling-pane {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-width: 0;
+      min-height: 0;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+      transition: border-color 0.15s, box-shadow 0.15s;
+      position: relative;
+    }
+
+    .tiling-pane.active {
+      border-color: var(--accent);
+      box-shadow: 0 0 10px rgba(88, 166, 255, 0.25);
+    }
+
+    .tiling-pane.dragging {
+      opacity: 0.35;
+      border-style: dashed;
+    }
+
+    /* PANE HEADER */
+    .pane-header {
+      height: 28px;
+      background: var(--card-header);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 6px 0 10px;
+      flex-shrink: 0;
+      user-select: none;
+      cursor: grab;
+    }
+    .pane-header:active {
+      cursor: grabbing;
+    }
+
+    .pane-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--text-muted);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex: 1;
+      pointer-events: none;
+    }
+
+    .pane-title-path {
+      color: #79c0ff;
+      font-weight: 600;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .pane-actions-wrap {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .pane-save-btn {
+      background: #238636;
+      border: 1px solid #2ea043;
+      color: #fff;
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .pane-save-btn:hover {
+      background: #2ea043;
+    }
+
+    .pane-close-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 13px;
+      cursor: pointer;
+      padding: 1px 6px;
+      border-radius: 3px;
+      font-family: inherit;
+      transition: all 0.15s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .pane-close-btn:hover {
+      color: #fff;
+      background: rgba(248, 81, 73, 0.8);
+    }
+
+    /* PANE BODY */
+    .pane-body {
+      flex: 1;
+      position: relative;
+      background: #0a0d12;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      min-width: 0;
+    }
+
+    /* TERMINAL MOUNT & VIEWER NOTIFICATION BAR */
+    .terminal-mount {
+      width: 100%;
+      height: 100%;
+      padding: 4px 6px;
+      position: relative;
+    }
+
+    .terminal-viewer-notice-wrap {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(22, 27, 34, 0.95);
+      border: 1px solid rgba(210, 153, 34, 0.6);
+      border-radius: 20px;
+      padding: 4px 12px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      animation: noticeFadeIn 0.2s ease-out;
+    }
+
+    @keyframes noticeFadeIn {
+      from { opacity: 0; transform: translate(-50%, 8px); }
+      to { opacity: 1; transform: translate(-50%, 0); }
+    }
+
+    .terminal-viewer-text {
+      font-size: 11px;
+      color: #e3b341;
+      white-space: nowrap;
+    }
+
+    .terminal-viewer-btn {
+      background: #d29922;
+      border: 1px solid #e3b341;
+      color: #111;
+      font-weight: 700;
+      font-size: 10px;
+      padding: 2px 10px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.12s;
+      white-space: nowrap;
+    }
+    .terminal-viewer-btn:hover {
+      background: #e3b341;
+      transform: scale(1.04);
+    }
+
+    .terminal-revoke-btn {
+      background: rgba(248, 81, 73, 0.2);
+      border: 1px solid var(--accent-red);
+      color: #ff7b72;
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+    .terminal-revoke-btn:hover {
+      background: var(--accent-red);
+      color: #fff;
+    }
+
+    .xterm {
+      height: 100%;
+      padding: 2px;
+    }
+    .xterm-viewport::-webkit-scrollbar {
+      width: 6px;
+    }
+    .xterm-viewport::-webkit-scrollbar-thumb {
+      background: #30363d;
+      border-radius: 3px;
+    }
+
+    /* TELEMETRY BODY */
+    .telemetry-body {
+      padding: 12px 16px;
+      overflow-y: auto;
+      background: #11151e;
+      height: 100%;
+    }
+    .metric-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+    .metric-line {
+      display: flex;
+      align-items: baseline;
+    }
+    .metric-key {
+      font-weight: 700;
+      color: var(--text-bold);
+      min-width: 80px;
+      flex-shrink: 0;
+    }
+    .metric-val {
+      color: #a5d6ff;
+      word-break: break-word;
+    }
+    .metric-val .sub {
+      color: var(--text-muted);
+      font-size: 10px;
+      margin-left: 6px;
+    }
+
+    /* FILE EXPLORER UI */
+    .explorer-container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      background: #0d1117;
+      overflow: hidden;
+    }
+
+    .explorer-nav-bar {
+      background: #161b22;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 6px 8px;
+      flex-shrink: 0;
+    }
+
+    .explorer-drive-chips {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+    .explorer-drive-chips::-webkit-scrollbar {
+      height: 3px;
+    }
+    .explorer-drive-chips::-webkit-scrollbar-thumb {
+      background: #30363d;
+      border-radius: 2px;
+    }
+
+    .drive-chip {
+      background: #1f242e;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 2px 7px;
+      border-radius: 3px;
+      font-size: 10px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.12s;
+    }
+    .drive-chip:hover,
+    .drive-chip.active {
+      background: #283142;
+      border-color: var(--accent);
+      color: #79c0ff;
+    }
+
+    .drive-chip.chip-git {
+      background: rgba(188, 140, 255, 0.12);
+      border-color: rgba(188, 140, 255, 0.4);
+      color: #d2a8ff;
+      font-weight: 600;
+    }
+    .drive-chip.chip-git:hover,
+    .drive-chip.chip-git.active {
+      background: rgba(188, 140, 255, 0.25);
+      border-color: var(--accent-purple);
+      color: #fff;
+    }
+
+    .explorer-breadcrumb-wrap {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      overflow-x: auto;
+      white-space: nowrap;
+      padding: 2px 0;
+    }
+    .explorer-breadcrumb-wrap::-webkit-scrollbar {
+      height: 3px;
+    }
+    .explorer-breadcrumb-wrap::-webkit-scrollbar-thumb {
+      background: #30363d;
+      border-radius: 2px;
+    }
+
+    .breadcrumb-pill {
+      background: #21262d;
+      border: 1px solid var(--border);
+      color: #79c0ff;
+      padding: 1px 6px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 11px;
+      transition: all 0.12s;
+    }
+    .breadcrumb-pill:hover {
+      background: #30363d;
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .breadcrumb-sep {
+      color: var(--text-muted);
+      font-size: 10px;
+    }
+
+    .explorer-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .explorer-path-input {
+      background: #0a0d12;
+      border: 1px solid var(--border);
+      color: #fff;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-family: inherit;
+      outline: none;
+      flex: 1;
+      min-width: 80px;
+    }
+    .explorer-path-input:focus {
+      border-color: var(--accent);
+    }
+
+    .explorer-btn {
+      background: #21262d;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 3px 7px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-family: inherit;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      transition: all 0.15s;
+      flex-shrink: 0;
+    }
+    .explorer-btn:hover {
+      background: #30363d;
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .explorer-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .explorer-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      color: var(--text);
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+    .explorer-item:hover {
+      background: #1f242e;
+      color: #fff;
+    }
+    .explorer-item.selected {
+      background: rgba(88, 166, 255, 0.18);
+      border-left: 2px solid var(--accent);
+    }
+
+    .explorer-item-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex: 1;
+    }
+
+    .item-badge {
+      font-size: 9px;
+      padding: 1px 4px;
+      border-radius: 3px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .badge-folder { background: rgba(88, 166, 255, 0.15); color: #79c0ff; }
+    .badge-code { background: rgba(63, 185, 80, 0.15); color: #7ee787; }
+    .badge-img { background: rgba(210, 153, 34, 0.15); color: #e3b341; }
+    .badge-doc { background: rgba(188, 140, 255, 0.15); color: #d2a8ff; }
+
+    .explorer-footer-bar {
+      height: 22px;
+      background: #161b22;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px;
+      font-size: 10px;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    /* GIT REPOS HUB VIEW */
+    .git-hub-container {
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      height: 100%;
+      overflow-y: auto;
+    }
+
+    .git-hub-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      background: #161b24;
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+    }
+
+    .git-repo-card {
+      background: #11151e;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: all 0.15s;
+    }
+    .git-repo-card:hover {
+      border-color: var(--accent-purple);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    }
+
+    .repo-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .repo-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #d2a8ff;
+      display: flex;
+      align-items: center;
+    }
+
+    .repo-badges {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .badge-branch {
+      background: rgba(88, 166, 255, 0.15);
+      border: 1px solid rgba(88, 166, 255, 0.3);
+      color: #79c0ff;
+      padding: 1px 6px;
+      border-radius: 10px;
+      font-size: 10px;
+    }
+
+    .badge-clean {
+      background: rgba(63, 185, 80, 0.15);
+      border: 1px solid rgba(63, 185, 80, 0.3);
+      color: #7ee787;
+      padding: 1px 6px;
+      border-radius: 10px;
+      font-size: 10px;
+    }
+
+    .badge-dirty {
+      background: rgba(210, 153, 34, 0.15);
+      border: 1px solid rgba(210, 153, 34, 0.3);
+      color: #e3b341;
+      padding: 1px 6px;
+      border-radius: 10px;
+      font-size: 10px;
+    }
+
+    .repo-commit-info {
+      font-size: 11px;
+      color: var(--text-muted);
+      background: #0d1117;
+      padding: 6px 8px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .repo-actions-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .repo-actions-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* RIGHT-CLICK CONTEXT MENU */
+    #uws-context-menu {
+      position: fixed;
+      display: none;
+      background: rgba(22, 27, 34, 0.98);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.05);
+      padding: 4px;
+      min-width: 190px;
+      z-index: 200000;
+      font-size: 12px;
+      animation: menuFadeIn 0.1s ease-out;
+    }
+
+    @keyframes menuFadeIn {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .context-menu-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 6px 10px;
+      border-radius: 4px;
+      color: var(--text);
+      cursor: pointer;
+      transition: background 0.1s, color 0.1s;
+    }
+    .context-menu-item:hover {
+      background: #283142;
+      color: #fff;
+    }
+    .context-menu-item .menu-hint {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+    .context-menu-item.danger {
+      color: #ff7b72;
+    }
+    .context-menu-item.danger:hover {
+      background: rgba(248, 81, 73, 0.2);
+      color: #ff7b72;
+    }
+    .context-menu-sep {
+      height: 1px;
+      background: var(--border);
+      margin: 4px 0;
+    }
+
+    /* TOAST NOTIFICATION CONTAINER */
+    #toast-container {
+      position: fixed;
+      top: 50px;
+      right: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 999999;
+      pointer-events: none;
+    }
+
+    .toast-msg {
+      background: rgba(22, 27, 34, 0.95);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      color: #e6edf3;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      animation: toastSlideIn 0.25s ease-out, toastFadeOut 0.3s ease-in 3.7s forwards;
+      pointer-events: auto;
+    }
+    .toast-msg.success { border-left: 3px solid var(--accent-green); }
+    .toast-msg.info { border-left: 3px solid var(--accent); }
+    .toast-msg.warning { border-left: 3px solid var(--accent-yellow); }
+
+    @keyframes toastSlideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes toastFadeOut {
+      from { opacity: 1; transform: translateY(0); }
+      to { opacity: 0; transform: translateY(-10px); }
+    }
+
+    /* MODAL WINDOWS */
+    .uws-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      z-index: 300000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-box {
+      width: 680px;
+      max-width: 90vw;
+      max-height: 85vh;
+      background: #161b24;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.8);
+      overflow: hidden;
+    }
+
+    .modal-header {
+      height: 42px;
+      background: #1c212c;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #79c0ff;
+    }
+
+    .modal-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .modal-footer {
+      height: 48px;
+      background: #1c212c;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      padding: 0 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .form-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+    .form-input {
+      background: #0d1117;
+      border: 1px solid var(--border);
+      color: #fff;
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-family: inherit;
+      outline: none;
+    }
+    .form-input:focus {
+      border-color: var(--accent);
+    }
+
+    .slot-card {
+      background: #11151e;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .slot-row-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .slot-cmd-textarea {
+      width: 100%;
+      background: #0d1117;
+      border: 1px solid var(--border);
+      color: #7ee787;
+      padding: 6px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-family: inherit;
+      resize: vertical;
+      min-height: 48px;
+      outline: none;
+    }
+    .slot-cmd-textarea:focus {
+      border-color: var(--accent);
+    }
+
+    .tag-chips-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      font-size: 10px;
+    }
+
+    .tag-chip {
+      background: rgba(88, 166, 255, 0.12);
+      border: 1px solid rgba(88, 166, 255, 0.3);
+      color: #79c0ff;
+      padding: 1px 6px;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.12s;
+    }
+    .tag-chip:hover {
+      background: rgba(88, 166, 255, 0.25);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    /* NOTEPAD (TEXT EDITOR) UI */
+    .notepad-container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      background: #0d1117;
+      overflow: hidden;
+    }
+
+    .notepad-textarea {
+      flex: 1;
+      width: 100%;
+      background: #0a0d12;
+      color: #e6edf3;
+      border: none;
+      outline: none;
+      resize: none;
+      padding: 10px 12px;
+      font-size: 13px;
+      line-height: 1.45;
+      font-family: "JetBrains Mono", "SF Mono", Consolas, monospace;
+      tab-size: 2;
+    }
+
+    .notepad-status-bar {
+      height: 22px;
+      background: #161b22;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px;
+      font-size: 10px;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    /* IMAGE VIEWER UI */
+    .image-viewer-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      padding: 16px;
+      background: repeating-conic-gradient(#111620 0% 25%, #161c28 0% 50%) 50% / 20px 20px;
+      overflow: auto;
+    }
+
+    .image-viewer-container img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+      border-radius: 4px;
+      border: 1px solid var(--border);
+    }
+
+    /* SNAP GHOST & DRAG BADGE */
+    #snap-ghost-zone {
+      position: absolute;
+      display: none;
+      background: rgba(56, 139, 253, 0.2);
+      border: 2px dashed #58a6ff;
+      border-radius: 6px;
+      box-shadow: 0 0 24px rgba(88, 166, 255, 0.4), inset 0 0 16px rgba(88, 166, 255, 0.15);
+      pointer-events: none;
+      z-index: 8000;
+      transition: top 0.1s ease, left 0.1s ease, width 0.1s ease, height 0.1s ease;
+    }
+
+    #drag-floating-badge {
+      position: fixed;
+      display: none;
+      padding: 6px 12px;
+      background: rgba(22, 27, 34, 0.95);
+      border: 1px solid var(--accent);
+      border-radius: 6px;
+      color: #79c0ff;
+      font-size: 11px;
+      font-weight: 600;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+      pointer-events: none;
+      z-index: 100001;
+      transform: translate(-50%, -50%);
+    }
+
+    .empty-state {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      gap: 12px;
+    }
+    .empty-state button {
+      background: #238636;
+      border: 1px solid #2ea043;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-family: inherit;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <!-- TOP BAR -->
+  <div class="top-bar">
+    <div class="brand-wrap">
+      <img src="/assets/logo.png" alt="UWS" style="width: 22px; height: 22px; object-fit: contain;" />
+      <div class="brand-title">UWS // UNIFIABLE WORKSPACE SYSTEM</div>
+    </div>
+
+    <div class="top-actions">
+      <!-- NODE & QUICK ACTIONS DROPDOWN -->
+      <div class="node-actions-group">
+        <div id="nodeDisplay" class="node-title-wrap" onclick="startRename()" title="Nhấp để đổi tên Node máy">
+          <span class="node-name">[<span id="valName">UWS-Node</span>]</span>
+          <span class="rename-btn-hint">rename</span>
+        </div>
+        <form id="rename-form" onsubmit="submitRename(event)">
+          <input type="text" id="rename-input" maxlength="32" placeholder="Tên máy..." />
+          <button type="submit" class="btn-save">Lưu</button>
+          <button type="button" class="btn-cancel" onclick="cancelRename()">Hủy</button>
+        </form>
+
+        <!-- STREAMLINED ACTIONS DROPDOWN -->
+        <div class="actions-dropdown-wrap">
+          <button class="actions-dropdown-trigger" id="actionsTriggerBtn" onclick="toggleActionsDropdown(event)">
+            <span>Actions</span>
+            <span style="font-size: 9px;">▾</span>
+          </button>
+          <div class="actions-dropdown-menu" id="actionsMenu">
+            <!-- Dynamic Slots Injected Here -->
+          </div>
+        </div>
+      </div>
+
+      <!-- MULTI-USER PRESENCE WIDGET -->
+      <div class="presence-container">
+        <span style="font-size: 11px; color: var(--text-muted);">Users:</span>
+        <div class="presence-users-list" id="presenceList">
+          <span class="user-badge host you">Connecting...</span>
+        </div>
+        <button class="share-btn" onclick="copyShareLink()" title="Sao chép liên kết mời người khác tham gia">
+          <span>Share</span>
+        </button>
+      </div>
+
+      <div class="live-tag" id="liveStatus">
+        <span class="pulse-dot"></span>
+        <span id="liveStatusText">Live (1s)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEFT HOVER SUMMON MENU -->
+  <div class="sidebar-dock-trigger" id="dockTrigger" title="Rê chuột vào đây để mở dịch vụ"></div>
+  <aside class="sidebar-dock" id="sidebarDock">
+    <div class="dock-title">Summon Services</div>
+    <button class="dock-btn btn-accent" onclick="spawnTerminalPane()">
+      <span>PowerShell Terminal</span>
+    </button>
+    <button class="dock-btn" onclick="spawnExplorerPane('')">
+      <span>File Explorer</span>
+    </button>
+    <button class="dock-btn btn-purple" onclick="spawnExplorerGitHub()">
+      <span>Git Projects</span>
+    </button>
+    <button class="dock-btn" onclick="spawnNotepadPane()">
+      <span>Notepad Editor</span>
+    </button>
+    <button class="dock-btn" onclick="spawnTelemetryPane()">
+      <span>Telemetry</span>
+    </button>
+    <button class="dock-btn" onclick="openAutomationSettingsModal()">
+      <span>Automation & Git</span>
+    </button>
+  </aside>
+
+  <!-- WORKSPACE CONTAINER -->
+  <div id="workspace-container">
+    <div id="snap-ghost-zone"></div>
+  </div>
+
+  <div id="drag-floating-badge"></div>
+
+  <!-- TOAST CONTAINER -->
+  <div id="toast-container"></div>
+
+  <!-- GLOBAL CONTEXT MENU -->
+  <div id="uws-context-menu"></div>
+
+  <!-- AUTOMATION SETTINGS MODAL -->
+  <div id="automation-modal" class="uws-modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <span>Cấu Hình Mẫu Lệnh Tự Động Hóa & Git</span>
+        <button class="pane-close-btn" onclick="closeAutomationSettingsModal()">✕</button>
+      </div>
+      <div class="modal-body" id="modalSlotsList"></div>
+      <div class="modal-footer">
+        <button class="explorer-btn" onclick="addNewSlot()">+ Thêm Slot Mới</button>
+        <button class="btn-save" onclick="saveAutomationSlots()">Lưu Cấu Hình</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CREATE GIT REPO MODAL -->
+  <div id="create-repo-modal" class="uws-modal-overlay">
+    <div class="modal-box" style="width: 520px;">
+      <div class="modal-header">
+        <span>Khởi Tạo & Phân Phối Git Repository</span>
+        <button class="pane-close-btn" onclick="closeCreateRepoModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Tên Repository / Dự Án:</label>
+          <input type="text" class="form-input" id="newRepoName" placeholder="vd: my-awesome-app, api-gateway" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Mô tả dự án (Tùy chọn):</label>
+          <input type="text" class="form-input" id="newRepoDesc" placeholder="Mô tả ngắn về dự án..." />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Mẫu .gitignore tự động:</label>
+          <select class="form-input" id="newRepoGitignore">
+            <option value="node">Node.js (node_modules, .env, dist, build)</option>
+            <option value="python">Python (venv, __pycache__, .env)</option>
+            <option value="general">Tổng quát (General logs, temp, .env)</option>
+            <option value="none">Không tạo .gitignore</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Liên kết Remote Git URL (Tùy chọn):</label>
+          <input type="text" class="form-input" id="newRepoRemote" placeholder="https://github.com/username/my-awesome-app.git" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeCreateRepoModal()">Hủy</button>
+        <button class="btn-save" onclick="submitCreateRepo()">Khởi Tạo Repo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLONE GIT REPO MODAL -->
+  <div id="clone-repo-modal" class="uws-modal-overlay">
+    <div class="modal-box" style="width: 520px;">
+      <div class="modal-header">
+        <span>Clone Git Repository Về Máy</span>
+        <button class="pane-close-btn" onclick="closeCloneRepoModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Git Clone URL (HTTPS / SSH / LAN):</label>
+          <input type="text" class="form-input" id="cloneRepoUrl" placeholder="https://github.com/user/project.git" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tên thư mục lưu (Tùy chọn):</label>
+          <input type="text" class="form-input" id="cloneRepoName" placeholder="Để trống để tự lấy theo tên repo" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeCloneRepoModal()">Hủy</button>
+        <button class="btn-save" onclick="submitCloneRepo()">Bắt Đầu Clone</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="/vendor/xterm/xterm.js"></script>
+  <script src="/vendor/xterm/addon-fit.js"></script>
+  <script src="/vendor/xterm/addon-web-links.js"></script>
+  <script>
+    let ws = null;
+    let currentMachineName = 'UWS-Node';
+    let latestMetricsData = null;
+    let paneCounter = 0;
+    let activePaneId = null;
+
+    // --- USER SESSION & TURN-BASED PERMISSION STATE ---
+    let myUserId = null;
+    let myUserRole = 'owner';
+    let myUserName = '';
+    let isHost = true;
+    let currentEditorId = null;
+    let currentHostId = null;
+    let activeUsersList = [];
+
+    // --- AUTOMATION SLOTS STATE ---
+    let automationSlots = [];
+
+    // --- GIT REPOSITORIES STATE ---
+    let gitReposList = [];
+
+    // --- TOAST NOTIFICATION UTILITY ---
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast-msg ${type}`;
+      toast.innerText = message;
+      container.appendChild(toast);
+      setTimeout(() => {
+        if (toast.parentNode) toast.parentNode.removeChild(toast);
+      }, 4000);
+    }
+
+    function copyShareLink() {
+      const shareUrl = window.location.origin;
+      navigator.clipboard.writeText(shareUrl).then(() => {
+        showToast(`Đã sao chép liên kết chia sẻ: ${shareUrl}`, 'success');
+      }).catch(() => {
+        prompt('Sao chép liên kết này để chia sẻ cho máy khác:', shareUrl);
+      });
+    }
+
+    // --- TURN-BASED PERMISSION CONTROLS ---
+
+    function amIEditor() {
+      return myUserId && currentEditorId === myUserId;
+    }
+
+    function updateTurnControlUI() {
+      const isEditor = amIEditor();
+
+      let editorUser = activeUsersList.find(u => u.id === currentEditorId);
+      let editorName = editorUser ? editorUser.name : 'Người khác';
+
+      // Update all terminal viewer notice banners
+      allLeafsMap.forEach(leaf => {
+        if (leaf.serviceType === 'terminal') {
+          const noticeWrap = leaf.el.querySelector('.terminal-viewer-notice-wrap');
+          const noticeText = leaf.el.querySelector('.terminal-viewer-text');
+          const btnRevoke = leaf.el.querySelector('.terminal-revoke-btn');
+
+          if (noticeWrap) {
+            if (isEditor) {
+              noticeWrap.style.display = 'none';
+            } else {
+              noticeWrap.style.display = 'inline-flex';
+              if (noticeText) {
+                noticeText.innerText = `Chế độ Chỉ Xem (Viewer) - [Đang điều khiển: ${editorName}]`;
+              }
+              if (btnRevoke) {
+                btnRevoke.style.display = isHost ? 'inline-block' : 'none';
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function requestEditControl() {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'session:request_edit' }));
+        showToast('Đã gửi yêu cầu xin quyền điều khiển...', 'info');
+      }
+    }
+
+    function revokeEditControl() {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'session:revoke_edit' }));
+        showToast('Đang thu hồi quyền về máy chủ Host...', 'info');
+      }
+    }
+
+    function grantEditControlToUser(targetUserId, targetUserName) {
+      if (confirm(`Bạn có chắc chắn muốn chuyển lượt điều khiển cho "${targetUserName}" không?`)) {
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({ type: 'session:grant_edit', targetUserId }));
+        }
+      }
+    }
+
+    function renderPresenceUsers(users, hostId) {
+      const listEl = document.getElementById('presenceList');
+      if (!listEl) return;
+      listEl.innerHTML = '';
+
+      users.forEach(u => {
+        const isMe = u.id === myUserId;
+        const isHostUser = u.isHost || u.id === hostId;
+        const isCurEditor = u.id === currentEditorId;
+
+        const badge = document.createElement('span');
+        badge.className = `user-badge ${isHostUser ? 'host' : ''} ${isCurEditor ? 'editor-now' : ''} ${isMe ? 'you' : ''}`;
+        const meSuffix = isMe ? ' [You]' : '';
+        const roleSuffix = isCurEditor ? ' [Editor]' : ' [Viewer]';
+        badge.innerText = `${u.name}${meSuffix}${roleSuffix}`;
+
+        badge.onclick = (e) => {
+          if (isMe) {
+            const newName = prompt('Đổi tên hiển thị của bạn trong phòng:', myUserName);
+            if (newName && newName.trim() && newName.trim() !== myUserName) {
+              if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({ type: 'session:rename_user', userName: newName.trim() }));
+              }
+            }
+          } else if (amIEditor() || isHost) {
+            showContextMenu(e, [
+              { label: `Trao quyền điều khiển cho ${u.name}`, hint: 'Turn-based', action: () => grantEditControlToUser(u.id, u.name) },
+            ]);
+          }
+        };
+
+        listEl.appendChild(badge);
+      });
+    }
+
+    // --- ACTIONS DROPDOWN & EXECUTION ---
+
+    function toggleActionsDropdown(e) {
+      e.stopPropagation();
+      const menu = document.getElementById('actionsMenu');
+      if (menu) menu.classList.toggle('show');
+    }
+
+    window.addEventListener('click', (e) => {
+      const menu = document.getElementById('actionsMenu');
+      const trigger = document.getElementById('actionsTriggerBtn');
+      if (menu && !menu.contains(e.target) && trigger && !trigger.contains(e.target)) {
+        menu.classList.remove('show');
+      }
+    });
+
+    function renderActionsDropdown(slots) {
+      const menu = document.getElementById('actionsMenu');
+      if (!menu) return;
+      menu.innerHTML = '';
+
+      slots.forEach(slot => {
+        const item = document.createElement('div');
+        item.className = 'action-menu-item';
+        item.innerHTML = `
+          <span>${slot.label}</span>
+          <span style="font-size: 10px; color: var(--text-muted);">Run</span>
+        `;
+        item.title = `${slot.description || ''}\nLệnh: ${slot.command}`;
+        item.onclick = () => {
+          menu.classList.remove('show');
+          executeAutomationSlot(slot.id);
+        };
+        menu.appendChild(item);
+      });
+
+      const configBtn = document.createElement('div');
+      configBtn.className = 'action-menu-item config-btn';
+      configBtn.innerHTML = `
+        <span>+ Cấu hình Slots...</span>
+        <span style="font-size: 10px;">Edit</span>
+      `;
+      configBtn.onclick = () => {
+        menu.classList.remove('show');
+        openAutomationSettingsModal();
+      };
+      menu.appendChild(configBtn);
+    }
+
+    function executeAutomationSlot(slotId) {
+      if (!amIEditor()) {
+        showToast('Bạn đang ở chế độ Chỉ Xem. Hãy bấm "Xin Quyền" để chạy tự động hóa!', 'warning');
+        return;
+      }
+
+      const target = automationSlots.find(s => s.id === slotId);
+      if (!target) return;
+
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({
+          type: 'automation:compile',
+          slotId,
+        }));
+      }
+    }
+
+    function runCompiledCommandInTerminal(command, label) {
+      let termLeaf = allLeafsMap.get(activePaneId);
+      if (!termLeaf || termLeaf.serviceType !== 'terminal') {
+        for (const leaf of allLeafsMap.values()) {
+          if (leaf.serviceType === 'terminal') {
+            termLeaf = leaf;
+            break;
+          }
+        }
+      }
+
+      if (!termLeaf) {
+        termLeaf = spawnTerminalPane();
+      }
+
+      focusLeafPane(termLeaf.paneId);
+      showToast(`Đang chạy: ${label}...`, 'info');
+
+      if (ws && ws.readyState === WebSocket.OPEN && termLeaf.sessionId) {
+        ws.send(JSON.stringify({
+          type: 'terminal:input',
+          sessionId: termLeaf.sessionId,
+          data: `${command}\r`,
+        }));
+      } else {
+        setTimeout(() => {
+          if (termLeaf.sessionId) {
+            ws.send(JSON.stringify({
+              type: 'terminal:input',
+              sessionId: termLeaf.sessionId,
+              data: `${command}\r`,
+            }));
+          }
+        }, 600);
+      }
+    }
+
+    function openAutomationSettingsModal() {
+      const modal = document.getElementById('automation-modal');
+      if (!modal) return;
+      renderModalSlotsForm();
+      modal.style.display = 'flex';
+    }
+
+    function closeAutomationSettingsModal() {
+      const modal = document.getElementById('automation-modal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function renderModalSlotsForm() {
+      const list = document.getElementById('modalSlotsList');
+      if (!list) return;
+      list.innerHTML = '';
+
+      automationSlots.forEach((slot) => {
+        const card = document.createElement('div');
+        card.className = 'slot-card';
+        card.id = `slot_card_${slot.id}`;
+
+        card.innerHTML = `
+          <div class="slot-row-header">
+            <input type="text" class="form-input" style="flex: 1;" value="${slot.label}" id="slot_label_${slot.id}" placeholder="Tên Slot (vd: Quick Git Push)" />
+            <button class="pane-close-btn" style="color: #ff7b72;" onclick="removeSlot('${slot.id}')" title="Xóa slot này">✕</button>
+          </div>
+          <textarea class="slot-cmd-textarea" id="slot_cmd_${slot.id}" placeholder="Nhập mẫu lệnh PowerShell/Git (vd: git add . && git commit -m 'from {{MACHINE_NAME}}' && git push)">${slot.command}</textarea>
+          <div class="tag-chips-wrap">
+            <span style="color: var(--text-muted);">Thẻ biến tự động:</span>
+            <span class="tag-chip" onclick="insertTagToSlot('${slot.id}', '{{MACHINE_NAME}}')" title="Tự động thay bằng Tên máy">{{MACHINE_NAME}}</span>
+            <span class="tag-chip" onclick="insertTagToSlot('${slot.id}', '{{DATETIME}}')" title="Thời gian hiện tại">{{DATETIME}}</span>
+            <span class="tag-chip" onclick="insertTagToSlot('${slot.id}', '{{USER_NAME}}')" title="Tên người dùng">{{USER_NAME}}</span>
+            <span class="tag-chip" onclick="insertTagToSlot('${slot.id}', '{{DATE}}')" title="Ngày">{{DATE}}</span>
+            <span class="tag-chip" onclick="insertTagToSlot('${slot.id}', '{{TIME}}')" title="Giờ">{{TIME}}</span>
+          </div>
+        `;
+
+        list.appendChild(card);
+      });
+    }
+
+    function insertTagToSlot(slotId, tag) {
+      const textarea = document.getElementById(`slot_cmd_${slotId}`);
+      if (!textarea) return;
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      textarea.value = textarea.value.substring(0, start) + tag + textarea.value.substring(end);
+      textarea.focus();
+      textarea.selectionStart = textarea.selectionEnd = start + tag.length;
+    }
+
+    function addNewSlot() {
+      const newId = `slot_${Date.now()}`;
+      automationSlots.push({
+        id: newId,
+        label: 'Tác vụ mới',
+        icon: '',
+        command: 'git status',
+        description: 'Tác vụ tùy chỉnh',
+      });
+      renderModalSlotsForm();
+    }
+
+    function removeSlot(slotId) {
+      automationSlots = automationSlots.filter(s => s.id !== slotId);
+      renderModalSlotsForm();
+    }
+
+    function saveAutomationSlots() {
+      const updatedSlots = [];
+      automationSlots.forEach(s => {
+        const labelEl = document.getElementById(`slot_label_${s.id}`);
+        const cmdEl = document.getElementById(`slot_cmd_${s.id}`);
+        if (labelEl && cmdEl) {
+          updatedSlots.push({
+            id: s.id,
+            icon: '',
+            label: labelEl.value.trim() || 'Tác vụ',
+            command: cmdEl.value.trim(),
+            description: s.description,
+          });
+        }
+      });
+
+      automationSlots = updatedSlots;
+
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({
+          type: 'automation:save_slots',
+          slots: updatedSlots,
+        }));
+      }
+
+      renderActionsDropdown(updatedSlots);
+      closeAutomationSettingsModal();
+      showToast('Đã lưu cấu hình Mẫu Lệnh Tự Động Hóa!', 'success');
+    }
+
+    // --- GIT REPOSITORIES HUB & MANAGEMENT ---
+
+    function openCreateRepoModal() {
+      const modal = document.getElementById('create-repo-modal');
+      if (modal) modal.style.display = 'flex';
+      document.getElementById('newRepoName').focus();
+    }
+
+    function closeCreateRepoModal() {
+      const modal = document.getElementById('create-repo-modal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function submitCreateRepo() {
+      const name = document.getElementById('newRepoName').value.trim();
+      const desc = document.getElementById('newRepoDesc').value.trim();
+      const gitignore = document.getElementById('newRepoGitignore').value;
+      const remote = document.getElementById('newRepoRemote').value.trim();
+
+      if (!name) {
+        alert('Vui lòng nhập tên Repository');
+        return;
+      }
+
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({
+          type: 'git:create',
+          name,
+          description: desc,
+          gitignoreType: gitignore,
+          remoteUrl: remote,
+        }));
+      }
+
+      closeCreateRepoModal();
+      showToast(`Đang khởi tạo Repository "${name}"...`, 'info');
+    }
+
+    function openCloneRepoModal() {
+      const modal = document.getElementById('clone-repo-modal');
+      if (modal) modal.style.display = 'flex';
+      document.getElementById('cloneRepoUrl').focus();
+    }
+
+    function closeCloneRepoModal() {
+      const modal = document.getElementById('clone-repo-modal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function submitCloneRepo() {
+      const url = document.getElementById('cloneRepoUrl').value.trim();
+      const name = document.getElementById('cloneRepoName').value.trim();
+
+      if (!url) {
+        alert('Vui lòng nhập Git Clone URL');
+        return;
+      }
+
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({
+          type: 'git:clone',
+          url,
+          name: name || undefined,
+        }));
+      }
+
+      closeCloneRepoModal();
+      showToast('Đang tải Repository về máy...', 'info');
+    }
+
+    function gitPullProject(repoPath) {
+      if (!amIEditor()) {
+        showToast('Chỉ Editor mới có quyền Pull/Push. Hãy xin quyền trước!', 'warning');
+        return;
+      }
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'git:pull', repoPath }));
+        showToast('Đang kéo cập nhật từ Git...', 'info');
+      }
+    }
+
+    function gitPushProject(repoPath) {
+      if (!amIEditor()) {
+        showToast('Chỉ Editor mới có quyền Pull/Push. Hãy xin quyền trước!', 'warning');
+        return;
+      }
+      const msg = prompt('Nhập commit message:', `Auto-save from [${currentMachineName}]`);
+      if (msg === null) return;
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'git:push', repoPath, commitMessage: msg }));
+        showToast('Đang đẩy code lên Git...', 'info');
+      }
+    }
+
+    function renderGitReposHub(paneId) {
+      const leaf = allLeafsMap.get(paneId);
+      if (!leaf || !leaf.el) return;
+
+      const bodyEl = leaf.el.querySelector('.pane-body');
+      bodyEl.innerHTML = '';
+
+      const hubContainer = document.createElement('div');
+      hubContainer.className = 'git-hub-container';
+
+      hubContainer.innerHTML = `
+        <div class="git-hub-header">
+          <div>
+            <div style="font-size: 13px; font-weight: 700; color: #d2a8ff;">Kho Dự Án Git (Shared Workspace)</div>
+            <div style="font-size: 10px; color: var(--text-muted);">Không gian chung duy nhất để chia sẻ và đồng bộ giữa các máy</div>
+          </div>
+          <div style="display: flex; gap: 6px;">
+            <button class="btn-save" onclick="openCreateRepoModal()">+ Tạo Repo Mới</button>
+            <button class="explorer-btn" onclick="openCloneRepoModal()">Clone URL</button>
+            <button class="explorer-btn" onclick="fetchGitRepos()">Refresh</button>
+          </div>
+        </div>
+        <div id="${paneId}_reposList" style="display: flex; flex-direction: column; gap: 8px;"></div>
+      `;
+
+      bodyEl.appendChild(hubContainer);
+      updateGitReposDOM(paneId);
+    }
+
+    function updateGitReposDOM(paneId) {
+      const listEl = document.getElementById(`${paneId}_reposList`);
+      if (!listEl) return;
+      listEl.innerHTML = '';
+
+      if (gitReposList.length === 0) {
+        listEl.innerHTML = `
+          <div style="padding: 40px 16px; text-align: center; color: var(--text-muted); font-size: 12px; background: #11151e; border-radius: 6px; border: 1px dashed var(--border);">
+            <p style="margin-bottom: 8px; font-size: 14px;">Chưa có Repository nào trong kho</p>
+            <p style="font-size: 11px; margin-bottom: 12px;">Hãy tạo mới một dự án hoặc Clone dự án từ GitHub/LAN về máy để cùng làm việc</p>
+            <button class="btn-save" onclick="openCreateRepoModal()">+ Khởi Tạo Dự Án Mới</button>
+          </div>
+        `;
+        return;
+      }
+
+      gitReposList.forEach(repo => {
+        const card = document.createElement('div');
+        card.className = 'git-repo-card';
+
+        const lastCommitHtml = repo.lastCommit
+          ? `Last commit: <b>${repo.lastCommit.hash}</b> - "${repo.lastCommit.message}" (${repo.lastCommit.author}, ${repo.lastCommit.date})`
+          : 'Chưa có commit nào';
+
+        const statusBadge = repo.isClean
+          ? `<span class="badge-clean">Clean</span>`
+          : `<span class="badge-dirty">${repo.uncommittedCount} modified</span>`;
+
+        card.innerHTML = `
+          <div class="repo-card-top">
+            <div class="repo-title">
+              <span>${repo.name}</span>
+            </div>
+            <div class="repo-badges">
+              <span class="badge-branch">branch: ${repo.branch}</span>
+              ${statusBadge}
+            </div>
+          </div>
+          <div class="repo-commit-info" title="${repo.path}">
+            ${lastCommitHtml}
+          </div>
+          <div class="repo-actions-bar">
+            <div style="font-size: 10px; color: #79c0ff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 50%;">
+              ${repo.remoteUrl ? repo.remoteUrl : repo.path}
+            </div>
+            <div class="repo-actions-group">
+              <button class="explorer-btn" onclick="openRepoInExplorer('${paneId}', '${repo.path}')" title="Mở cây thư mục trong File Explorer">Mở Tệp</button>
+              <button class="explorer-btn" onclick="spawnTerminalPane('${repo.path}')" title="Mở PowerShell tại thư mục này">Terminal</button>
+              <button class="explorer-btn" onclick="gitPullProject('${repo.path}')" title="Kéo code mới nhất về máy">Pull</button>
+              <button class="btn-save" style="padding: 3px 8px;" onclick="gitPushProject('${repo.path}')" title="Lưu & Đẩy code lên Git">Push</button>
+            </div>
+          </div>
+        `;
+
+        listEl.appendChild(card);
+      });
+    }
+
+    function fetchGitRepos() {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'git:list' }));
+      }
+    }
+
+    function spawnExplorerGitHub() {
+      const leaf = spawnExplorerPane('');
+      openGitReposHubInPane(leaf.paneId);
+    }
+
+    function openGitReposHubInPane(paneId) {
+      const leaf = allLeafsMap.get(paneId);
+      if (!leaf) return;
+      leaf.isGitHubView = true;
+      const titleEl = leaf.el.querySelector(`#${paneId}_title`);
+      if (titleEl) titleEl.innerText = `Kho Dự Án Git (Repos)`;
+      renderGitReposHub(paneId);
+      fetchGitRepos();
+    }
+
+    function openRepoInExplorer(paneId, repoPath) {
+      const leaf = allLeafsMap.get(paneId);
+      if (!leaf) return;
+      leaf.isGitHubView = false;
+      spawnExplorerPane(repoPath);
+    }
+
+    // --- RECURSIVE TILING TREE (VS CODE / TMUX STYLE) ---
+    let layoutRoot = null;
+    const allLeafsMap = new Map();
+
+    function renderLayoutTree() {
+      const container = document.getElementById('workspace-container');
+      const ghost = document.getElementById('snap-ghost-zone');
+
+      container.innerHTML = '';
+      container.appendChild(ghost);
+
+      if (!layoutRoot) {
+        const empty = document.createElement('div');
+        empty.className = 'empty-state';
+        empty.innerHTML = `
+          <p>Chưa có cửa sổ service nào đang mở</p>
+          <button onclick="spawnTerminalPane()">+ Mở PowerShell Terminal</button>
+        `;
+        container.appendChild(empty);
+        return;
+      }
+
+      const domTree = buildNodeDOM(layoutRoot);
+      container.appendChild(domTree);
+
+      setTimeout(fitAllTerminals, 50);
+      updateTurnControlUI();
+    }
+
+    function buildNodeDOM(node) {
+      if (node.type === 'leaf') {
+        node.el.style.flex = '1 1 0%';
+        return node.el;
+      }
+
+      const container = document.createElement('div');
+      container.className = `tiling-split-container split-${node.direction}`;
+      container.style.flex = '1 1 0%';
+
+      const firstDOM = buildNodeDOM(node.first);
+      const secondDOM = buildNodeDOM(node.second);
+
+      const ratio1 = Math.max(0.1, Math.min(0.9, node.ratio || 0.5));
+      const ratio2 = 1 - ratio1;
+
+      firstDOM.style.flex = `${ratio1} ${ratio1} 0%`;
+      secondDOM.style.flex = `${ratio2} ${ratio2} 0%`;
+
+      const gutter = document.createElement('div');
+      gutter.className = `split-gutter gutter-${node.direction}`;
+
+      setupGutterDragging(gutter, node, firstDOM, secondDOM, container);
+
+      container.appendChild(firstDOM);
+      container.appendChild(gutter);
+      container.appendChild(secondDOM);
+
+      node.el = container;
+      return container;
+    }
+
+    function setupGutterDragging(gutter, branchNode, firstDOM, secondDOM, splitContainer) {
+      gutter.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        gutter.classList.add('resizing');
+
+        const isRow = branchNode.direction === 'row';
+
+        function onMouseMove(moveEvent) {
+          const rect = splitContainer.getBoundingClientRect();
+          const totalSize = isRow ? rect.width : rect.height;
+          const curCoord = isRow ? moveEvent.clientX : moveEvent.clientY;
+          const offset = curCoord - (isRow ? rect.left : rect.top);
+
+          const newRatio = Math.max(0.1, Math.min(0.9, offset / totalSize));
+          branchNode.ratio = newRatio;
+
+          firstDOM.style.flex = `${newRatio} ${newRatio} 0%`;
+          secondDOM.style.flex = `${1 - newRatio} ${1 - newRatio} 0%`;
+        }
+
+        function onMouseUp() {
+          window.removeEventListener('mousemove', onMouseMove);
+          window.removeEventListener('mouseup', onMouseUp);
+          gutter.classList.remove('resizing');
+          fitAllTerminals();
+        }
+
+        window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('mouseup', onMouseUp);
+      });
+    }
+
+    // --- LEAF PANE CREATION ---
+
+    function createLeafNode({ title, serviceType, icon = '', showSaveBtn = false }) {
+      paneCounter++;
+      const paneId = `pane_${paneCounter}`;
+
+      const paneEl = document.createElement('div');
+      paneEl.className = 'tiling-pane active';
+      paneEl.id = paneId;
+
+      paneEl.innerHTML = `
+        <div class="pane-header" id="${paneId}_header">
+          <div class="pane-title-wrap">
+            <span class="pane-title-path" id="${paneId}_title">${title}</span>
+          </div>
+          <div class="pane-actions-wrap">
+            ${showSaveBtn ? `<button class="pane-save-btn" id="${paneId}_saveBtn" onclick="saveNotepad('${paneId}')">Lưu</button>` : ''}
+            <button class="pane-close-btn" onclick="closeLeafPane('${paneId}')" title="Đóng cửa sổ">✕</button>
+          </div>
+        </div>
+        <div class="pane-body" id="${paneId}_body"></div>
+      `;
+
+      const leafNode = {
+        type: 'leaf',
+        paneId,
+        serviceType,
+        title,
+        el: paneEl,
+        sessionId: null,
+      };
+
+      allLeafsMap.set(paneId, leafNode);
+
+      paneEl.addEventListener('mousedown', () => {
+        focusLeafPane(paneId);
+      });
+
+      const headerEl = paneEl.querySelector('.pane-header');
+      setupPaneHeaderDrag(paneId, headerEl);
+
+      const resizeObserver = new ResizeObserver(() => {
+        if (leafNode.fitAddon) {
+          try {
+            leafNode.fitAddon.fit();
+            if (leafNode.sessionId && ws && ws.readyState === WebSocket.OPEN && amIEditor()) {
+              ws.send(JSON.stringify({
+                type: 'terminal:resize',
+                sessionId: leafNode.sessionId,
+                cols: leafNode.term.cols,
+                rows: leafNode.term.rows,
+              }));
+            }
+          } catch (e) {}
+        }
+      });
+      resizeObserver.observe(paneEl);
+      leafNode.resizeObserver = resizeObserver;
+
+      return leafNode;
+    }
+
+    function addLeafToLayout(newLeaf) {
+      if (!layoutRoot) {
+        layoutRoot = newLeaf;
+      } else {
+        let targetNode = allLeafsMap.get(activePaneId);
+        if (!targetNode || targetNode === newLeaf) {
+          for (const leaf of allLeafsMap.values()) {
+            if (leaf !== newLeaf) {
+              targetNode = leaf;
+              break;
+            }
+          }
+        }
+
+        if (targetNode && targetNode !== newLeaf) {
+          const rect = targetNode.el.getBoundingClientRect();
+          const direction = (rect.width && rect.height && rect.width < rect.height * 1.1) ? 'col' : 'row';
+          splitLeafNode(targetNode, newLeaf, direction, false);
+        } else {
+          layoutRoot = newLeaf;
+        }
+      }
+
+      focusLeafPane(newLeaf.paneId);
+      renderLayoutTree();
+    }
+
+    function splitLeafNode(existingLeaf, newLeaf, direction, newLeafFirst = false) {
+      if (layoutRoot === existingLeaf) {
+        layoutRoot = {
+          type: 'branch',
+          direction,
+          ratio: 0.5,
+          first: newLeafFirst ? newLeaf : existingLeaf,
+          second: newLeafFirst ? existingLeaf : newLeaf,
+        };
+      } else {
+        replaceNodeInTree(layoutRoot, existingLeaf, {
+          type: 'branch',
+          direction,
+          ratio: 0.5,
+          first: newLeafFirst ? newLeaf : existingLeaf,
+          second: newLeafFirst ? existingLeaf : newLeaf,
+        });
+      }
+    }
+
+    function replaceNodeInTree(current, target, replacement) {
+      if (current.type === 'branch') {
+        if (current.first === target) {
+          current.first = replacement;
+          return true;
+        }
+        if (current.second === target) {
+          current.second = replacement;
+          return true;
+        }
+        return replaceNodeInTree(current.first, target, replacement) || replaceNodeInTree(current.second, target, replacement);
+      }
+      return false;
+    }
+
+    function closeLeafPane(paneId) {
+      const leaf = allLeafsMap.get(paneId);
+      if (!leaf) return;
+
+      if (leaf.sessionId && ws && ws.readyState === WebSocket.OPEN && amIEditor()) {
+        ws.send(JSON.stringify({ type: 'terminal:close', sessionId: leaf.sessionId }));
+      }
+
+      if (leaf.resizeObserver) leaf.resizeObserver.disconnect();
+      if (leaf.term) leaf.term.dispose();
+
+      allLeafsMap.delete(paneId);
+
+      if (layoutRoot === leaf) {
+        layoutRoot = null;
+      } else {
+        layoutRoot = removeNodeFromTree(layoutRoot, leaf);
+      }
+
+      if (activePaneId === paneId) {
+        const remaining = Array.from(allLeafsMap.keys());
+        activePaneId = remaining.length > 0 ? remaining[0] : null;
+      }
+
+      renderLayoutTree();
+    }
+
+    function removeNodeFromTree(current, target) {
+      if (!current || current.type === 'leaf') return current;
+
+      if (current.first === target) {
+        return current.second;
+      }
+      if (current.second === target) {
+        return current.first;
+      }
+
+      current.first = removeNodeFromTree(current.first, target);
+      current.second = removeNodeFromTree(current.second, target);
+      return current;
+    }
+
+    function focusLeafPane(paneId) {
+      activePaneId = paneId;
+      document.querySelectorAll('.tiling-pane').forEach((p) => p.classList.remove('active'));
+      const leaf = allLeafsMap.get(paneId);
+      if (leaf && leaf.el) {
+        leaf.el.classList.add('active');
+        if (leaf.term && amIEditor()) leaf.term.focus();
+        if (leaf.textarea && amIEditor()) leaf.textarea.focus();
+      }
+    }
+
+    function fitAllTerminals() {
+      allLeafsMap.forEach((leaf) => {
+        if (leaf.fitAddon) {
+          try {
+            leaf.fitAddon.fit();
+            if (leaf.sessionId && ws && ws.readyState === WebSocket.OPEN && amIEditor()) {
+              ws.send(JSON.stringify({
+                type: 'terminal:resize',
+                sessionId: leaf.sessionId,
+                cols: leaf.term.cols,
+                rows: leaf.term.rows,
+              }));
+            }
+          } catch (e) {}
+        }
+      });
+    }
+
+    // --- DRAG & DROP SNAP PREVIEW WITH 4-WAY EDGE DOCKING ---
+
+    function setupPaneHeaderDrag(paneId, headerEl) {
+      headerEl.addEventListener('mousedown', (e) => {
+        if (e.target.classList.contains('pane-close-btn') || e.target.classList.contains('pane-save-btn')) return;
+        if (allLeafsMap.size <= 1) return;
+
+        const leafNode = allLeafsMap.get(paneId);
+        if (!leafNode) return;
+
+        let isDragging = false;
+        const startX = e.clientX;
+        const startY = e.clientY;
+
+        const ghost = document.getElementById('snap-ghost-zone');
+        const badge = document.getElementById('drag-floating-badge');
+        const container = document.getElementById('workspace-container');
+
+        let dropAction = null;
+
+        function onMouseMove(moveEvent) {
+          const dist = Math.hypot(moveEvent.clientX - startX, moveEvent.clientY - startY);
+          if (!isDragging && dist > 5) {
+            isDragging = true;
+            leafNode.el.classList.add('dragging');
+            badge.style.display = 'block';
+            badge.innerText = `Move: ${leafNode.title}`;
+            ghost.style.display = 'block';
+          }
+
+          if (!isDragging) return;
+
+          badge.style.left = `${moveEvent.clientX + 14}px`;
+          badge.style.top = `${moveEvent.clientY + 14}px`;
+
+          const containerRect = container.getBoundingClientRect();
+          const mouseX = moveEvent.clientX;
+          const mouseY = moveEvent.clientY;
+
+          let hoveredLeaf = null;
+          for (const otherLeaf of allLeafsMap.values()) {
+            if (otherLeaf.paneId === paneId) continue;
+            const r = otherLeaf.el.getBoundingClientRect();
+            if (mouseX >= r.left && mouseX <= r.right && mouseY >= r.top && mouseY <= r.bottom) {
+              hoveredLeaf = { leaf: otherLeaf, rect: r };
+              break;
+            }
+          }
+
+          if (hoveredLeaf) {
+            const r = hoveredLeaf.rect;
+            const relX = (mouseX - r.left) / r.width;
+            const relY = (mouseY - r.top) / r.height;
+            const cLeft = r.left - containerRect.left;
+            const cTop = r.top - containerRect.top;
+
+            if (relY < 0.28) {
+              ghost.style.left = `${cLeft}px`;
+              ghost.style.top = `${cTop}px`;
+              ghost.style.width = `${r.width}px`;
+              ghost.style.height = `${r.height / 2}px`;
+              dropAction = { type: 'split', targetLeaf: hoveredLeaf.leaf, direction: 'col', newLeafFirst: true };
+            } else if (relY > 0.72) {
+              ghost.style.left = `${cLeft}px`;
+              ghost.style.top = `${cTop + r.height / 2}px`;
+              ghost.style.width = `${r.width}px`;
+              ghost.style.height = `${r.height / 2}px`;
+              dropAction = { type: 'split', targetLeaf: hoveredLeaf.leaf, direction: 'col', newLeafFirst: false };
+            } else if (relX < 0.35) {
+              ghost.style.left = `${cLeft}px`;
+              ghost.style.top = `${cTop}px`;
+              ghost.style.width = `${r.width / 2}px`;
+              ghost.style.height = `${r.height}px`;
+              dropAction = { type: 'split', targetLeaf: hoveredLeaf.leaf, direction: 'row', newLeafFirst: true };
+            } else if (relX > 0.65) {
+              ghost.style.left = `${cLeft + r.width / 2}px`;
+              ghost.style.top = `${cTop}px`;
+              ghost.style.width = `${r.width / 2}px`;
+              ghost.style.height = `${r.height}px`;
+              dropAction = { type: 'split', targetLeaf: hoveredLeaf.leaf, direction: 'row', newLeafFirst: false };
+            } else {
+              ghost.style.left = `${cLeft}px`;
+              ghost.style.top = `${cTop}px`;
+              ghost.style.width = `${r.width}px`;
+              ghost.style.height = `${r.height}px`;
+              dropAction = { type: 'swap', targetLeaf: hoveredLeaf.leaf };
+            }
+          } else {
+            ghost.style.display = 'none';
+            dropAction = null;
+          }
+        }
+
+        function onMouseUp() {
+          window.removeEventListener('mousemove', onMouseMove);
+          window.removeEventListener('mouseup', onMouseUp);
+
+          if (isDragging) {
+            leafNode.el.classList.remove('dragging');
+            ghost.style.display = 'none';
+            badge.style.display = 'none';
+
+            if (dropAction) {
+              if (dropAction.type === 'swap') {
+                swapNodesInTree(layoutRoot, leafNode, dropAction.targetLeaf);
+              } else if (dropAction.type === 'split') {
+                layoutRoot = removeNodeFromTree(layoutRoot, leafNode);
+                splitLeafNode(dropAction.targetLeaf, leafNode, dropAction.direction, dropAction.newLeafFirst);
+              }
+              renderLayoutTree();
+            }
+          }
+        }
+
+        window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('mouseup', onMouseUp);
+        e.preventDefault();
+      });
+    }
+
+    function swapNodesInTree(root, nodeA, nodeB) {
+      function traverse(n) {
+        if (!n || n.type === 'leaf') return;
+        if (n.first === nodeA) n.first = nodeB;
+        else if (n.first === nodeB) n.first = nodeA;
+
+        if (n.second === nodeA) n.second = nodeB;
+        else if (n.second === nodeB) n.second = nodeA;
+
+        traverse(n.first);
+        traverse(n.second);
+      }
+      traverse(root);
+    }
+
+    // --- TERMINAL SPAWNING ---
+
+    function spawnTerminalPane(customCwd, existingSessionId = null) {
+      const leafNode = createLeafNode({
+        title: 'PowerShell Terminal...',
+        serviceType: 'terminal',
+      });
+
+      addLeafToLayout(leafNode);
+
+      const bodyEl = leafNode.el.querySelector('.pane-body');
+      const termMount = document.createElement('div');
+      termMount.className = 'terminal-mount';
+
+      termMount.innerHTML = `
+        <div class="terminal-viewer-notice-wrap">
+          <span class="terminal-viewer-text">Chế độ Chỉ Xem (Viewer)</span>
+          <button class="terminal-viewer-btn" onclick="requestEditControl()">Xin Quyền</button>
+          <button class="terminal-revoke-btn" style="display: none;" onclick="revokeEditControl()">Thu Hồi</button>
+        </div>
+      `;
+
+      bodyEl.appendChild(termMount);
+
+      const term = new Terminal({
+        cursorBlink: true,
+        cursorStyle: 'bar',
+        fontSize: 13,
+        fontFamily: '"JetBrains Mono", "SF Mono", "Fira Code", Consolas, monospace',
+        lineHeight: 1.2,
+        theme: {
+          background: '#0a0d12',
+          foreground: '#d1d7e0',
+          cursor: '#58a6ff',
+          selectionBackground: 'rgba(56, 139, 253, 0.4)',
+          black: '#161b22',
+          red: '#ff7b72',
+          green: '#7ee787',
+          yellow: '#d29922',
+          blue: '#58a6ff',
+          magenta: '#bc8cff',
+          cyan: '#39c5cf',
+          white: '#d1d7e0',
+          brightBlack: '#6e7681',
+          brightRed: '#ffa198',
+          brightGreen: '#56d364',
+          brightYellow: '#e3b341',
+          brightBlue: '#79c0ff',
+          brightMagenta: '#d2a8ff',
+          brightCyan: '#56d4dd',
+          brightWhite: '#ffffff',
+        },
+        allowTransparency: true,
+        convertEol: true,
+      });
+
+      const fitAddon = new FitAddon.FitAddon();
+      term.loadAddon(fitAddon);
+
+      if (window.WebLinksAddon && window.WebLinksAddon.WebLinksAddon) {
+        term.loadAddon(new window.WebLinksAddon.WebLinksAddon());
+      }
+
+      term.open(termMount);
+      setTimeout(() => fitAddon.fit(), 50);
+
+      leafNode.term = term;
+      leafNode.fitAddon = fitAddon;
+
+      if (existingSessionId) {
+        leafNode.sessionId = existingSessionId;
+      }
+
+      term.onData((data) => {
+        if (!amIEditor()) {
+          showToast('Bạn đang ở chế độ Chỉ Xem. Hãy bấm "Xin Quyền" dưới terminal để gõ lệnh!', 'warning');
+          return;
+        }
+        if (ws && ws.readyState === WebSocket.OPEN && leafNode.sessionId) {
+          ws.send(JSON.stringify({
+            type: 'terminal:input',
+            sessionId: leafNode.sessionId,
+            data: data,
+          }));
+        }
+      });
+
+      term.attachCustomKeyEventHandler((e) => {
+        if (e.type === 'keydown') {
+          if (e.ctrlKey && e.code === 'KeyC' && term.hasSelection()) {
+            navigator.clipboard.writeText(term.getSelection()).catch(() => {});
+            return false;
+          }
+          if (e.ctrlKey && e.shiftKey && e.code === 'KeyV') {
+            if (!amIEditor()) {
+              showToast('Bạn đang ở chế độ Chỉ Xem.', 'warning');
+              return false;
+            }
+            navigator.clipboard.readText().then((text) => {
+              if (text && ws && ws.readyState === WebSocket.OPEN && leafNode.sessionId) {
+                ws.send(JSON.stringify({ type: 'terminal:input', sessionId: leafNode.sessionId, data: text }));
+              }
+            }).catch(() => {});
+            return false;
+          }
+        }
+        return true;
+      });
+
+      if (!existingSessionId && ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({
+          type: 'terminal:create',
+          workspaceId: 'default',
+          cwd: customCwd,
+          cols: term.cols || 80,
+          rows: term.rows || 24,
+        }));
+      }
+
+      updateTurnControlUI();
+      return leafNode;
+    }
+
+    // --- CONTEXT MENU SYSTEM ---
+
+    const contextMenuEl = document.getElementById('uws-context-menu');
+
+    function hideContextMenu() {
+      if (contextMenuEl) contextMenuEl.style.display = 'none';
+      document.querySelectorAll('.explorer-item.selected').forEach(el => el.classList.remove('selected'));
+    }
+
+    window.addEventListener('click', (e) => {
+      if (!contextMenuEl.contains(e.target)) {
+        hideContextMenu();
+      }
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') hideContextMenu();
+    });
+
+    function showContextMenu(e, items) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      contextMenuEl.innerHTML = '';
+
+      items.forEach(item => {
+        if (item.type === 'separator') {
+          const sep = document.createElement('div');
+          sep.className = 'context-menu-sep';
+          contextMenuEl.appendChild(sep);
+        } else {
+          const row = document.createElement('div');
+          row.className = `context-menu-item ${item.danger ? 'danger' : ''}`;
+          row.innerHTML = `
+            <span>${item.label}</span>
+            ${item.hint ? `<span class="menu-hint">${item.hint}</span>` : ''}
+          `;
+          row.onclick = () => {
+            hideContextMenu();
+            item.action();
+          };
+          contextMenuEl.appendChild(row);
+        }
+      });
+
+      contextMenuEl.style.display = 'block';
+
+      let x = e.clientX;
+      let y = e.clientY;
+      const menuWidth = contextMenuEl.offsetWidth || 190;
+      const menuHeight = contextMenuEl.offsetHeight || 200;
+
+      if (x + menuWidth > window.innerWidth - 10) {
+        x = window.innerWidth - menuWidth - 10;
+      }
+      if (y + menuHeight > window.innerHeight - 10) {
+        y = window.innerHeight - menuHeight - 10;
+      }
+
+      contextMenuEl.style.left = `${x}px`;
+      contextMenuEl.style.top = `${y}px`;
+    }
+
+    // --- FILE EXPLORER SPAWNING ---
+
+    function spawnExplorerPane(initialPath = '') {
+      const leafNode = createLeafNode({
+        title: 'File Explorer',
+        serviceType: 'explorer',
+      });
+
+      leafNode.currentPath = initialPath;
+      leafNode.currentParent = '';
+      leafNode.currentItems = [];
+      leafNode.searchQuery = '';
+      leafNode.isGitHubView = false;
+
+      addLeafToLayout(leafNode);
+
+      const bodyEl = leafNode.el.querySelector('.pane-body');
+      const explorerBox = document.createElement('div');
+      explorerBox.className = 'explorer-container';
+      explorerBox.innerHTML = `
+        <div class="explorer-nav-bar">
+          <div class="explorer-drive-chips" id="${leafNode.paneId}_drives"></div>
+          <div class="explorer-breadcrumb-wrap" id="${leafNode.paneId}_breadcrumbs"></div>
+          <div class="explorer-toolbar">
+            <button class="explorer-btn" id="${leafNode.paneId}_btnUp" onclick="explorerNavigateUp('${leafNode.paneId}')" title="Lên thư mục cha">Up</button>
+            <button class="explorer-btn" onclick="explorerRefresh('${leafNode.paneId}')" title="Làm mới">Refresh</button>
+            <input type="text" class="explorer-path-input" id="${leafNode.paneId}_pathInput" placeholder="Đường dẫn (vd: E:/, C:/Users...)" onkeydown="if(event.key==='Enter') loadExplorerDirectory('${leafNode.paneId}', this.value)" />
+            <input type="text" class="explorer-path-input" style="max-width: 130px;" placeholder="Lọc tệp..." oninput="explorerFilter('${leafNode.paneId}', this.value)" />
+          </div>
+        </div>
+        <div class="explorer-list" id="${leafNode.paneId}_fileList">
+          <div style="padding: 16px; color: var(--text-muted); font-size: 11px;">Đang đọc thư mục...</div>
+        </div>
+        <div class="explorer-footer-bar" id="${leafNode.paneId}_footer">
+          <span>0 mục</span>
+          <span>...</span>
+        </div>
+      `;
+      bodyEl.appendChild(explorerBox);
+
+      const fileListEl = explorerBox.querySelector(`#${leafNode.paneId}_fileList`);
+      fileListEl.addEventListener('contextmenu', (e) => {
+        if (e.target.closest('.explorer-item')) return;
+        showContextMenu(e, [
+          { label: 'Tệp mới', hint: 'File', action: () => explorerNewFile(leafNode.paneId) },
+          { label: 'Thư mục mới', hint: 'Folder', action: () => explorerNewFolder(leafNode.paneId) },
+          { label: 'Mở Terminal tại đây', hint: 'PowerShell', action: () => explorerOpenTerminalHere(leafNode.paneId) },
+          { type: 'separator' },
+          { label: 'Làm mới', hint: 'Refresh', action: () => explorerRefresh(leafNode.paneId) },
+        ]);
+      });
+
+      loadExplorerDirectory(leafNode.paneId, initialPath);
+      return leafNode;
+    }
+
+    function loadExplorerDirectory(paneId, targetPath = '') {
+      const leaf = allLeafsMap.get(paneId);
+      if (!leaf) return;
+      leaf.currentPath = targetPath;
+      leaf.isGitHubView = false;
+
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({
+          type: 'fs:list',
+          path: targetPath,
+        }));
+      }
+    }
+
+    function renderExplorerList(paneId, currentPath, parentPath, items, drives) {
+      const leaf = allLeafsMap.get(paneId);
+      if (!leaf || !leaf.el || leaf.isGitHubView) return;
+
+      leaf.currentPath = currentPath;
+      leaf.currentParent = parentPath;
+      leaf.currentItems = items || [];
+
+      const pathInput = leaf.el.querySelector(`#${paneId}_pathInput`);
+      if (pathInput) pathInput.value = currentPath;
+
+      const titleEl = leaf.el.querySelector(`#${paneId}_title`);
+      if (titleEl) titleEl.innerText = `Explorer: ${currentPath}`;
+
+      const drivesEl = leaf.el.querySelector(`#${paneId}_drives`);
+      if (drivesEl) {
+        drivesEl.innerHTML = '';
+
+        const gitChip = document.createElement('span');
+        gitChip.className = 'drive-chip chip-git';
+        gitChip.innerText = 'Dự Án Git';
+        gitChip.onclick = () => openGitReposHubInPane(paneId);
+        drivesEl.appendChild(gitChip);
+
+        if (drives && drives.length > 0) {
+          drives.forEach((d) => {
+            const chip = document.createElement('span');
+            chip.className = `drive-chip ${currentPath.startsWith(d.path) ? 'active' : ''}`;
+            chip.innerText = d.name;
+            chip.onclick = () => loadExplorerDirectory(paneId, d.path);
+            drivesEl.appendChild(chip);
+          });
+        }
+      }
+
+      const breadcrumbsEl = leaf.el.querySelector(`#${paneId}_breadcrumbs`);
+      if (breadcrumbsEl) {
+        breadcrumbsEl.innerHTML = '';
+        const normalized = currentPath.replace(/\\/g, '/');
+        const parts = normalized.split('/').filter(Boolean);
+
+        let accum = '';
+        parts.forEach((p, idx) => {
+          accum = (idx === 0 && p.includes(':')) ? `${p}/` : (accum ? `${accum}/${p}` : p);
+          const target = accum;
+          if (idx > 0) {
+            breadcrumbsEl.innerHTML += `<span class="breadcrumb-sep">/</span>`;
+          }
+          const pill = document.createElement('span');
+          pill.className = 'breadcrumb-pill';
+          pill.innerText = p;
+          pill.onclick = () => loadExplorerDirectory(paneId, target);
+          breadcrumbsEl.appendChild(pill);
+        });
+      }
+
+      applyExplorerFilterAndRender(paneId);
+    }
+
+    function explorerFilter(paneId, query) {
+      const leaf = allLeafsMap.get(paneId);
+      if (!leaf) return;
+      leaf.searchQuery = (query || '').toLowerCase().trim();
+      applyExplorerFilterAndRender(paneId);
+    }
+
+    function applyExplorerFilterAndRender(paneId) {
+      const leaf = allLeafsMap.get(paneId);
+      if (!leaf || !leaf.el || leaf.isGitHubView) return;
+
+      const fileList = leaf.el.querySelector(`#${paneId}_fileList`);
+      const footer = leaf.el.querySelector(`#${paneId}_footer`);
+      if (!fileList) return;
+
+      const q = leaf.searchQuery || '';
+      const items = (leaf.currentItems || []).filter(item => {
+        if (!q) return true;
+        return item.name.toLowerCase().includes(q) || item.extension.toLowerCase().includes(q);
+      });
+
+      fileList.innerHTML = '';
+
+      if (items.length === 0) {
+        fileList.innerHTML = `
+          <div style="padding: 32px; color: var(--text-muted); font-size: 11px; text-align: center;">
+            <p style="margin-bottom: 6px;">Thư mục trống</p>
+            <span style="font-size: 10px; color: #58a6ff;">(Nhấp chuột phải vào đây để tạo file, folder hoặc mở terminal)</span>
+          </div>
+        `;
+      } else {
+        items.forEach((item) => {
+          const itemEl = document.createElement('div');
+          itemEl.className = 'explorer-item';
+
+          const ext = item.extension.toLowerCase();
+          const isImg = ['.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.ico'].includes(ext);
+          const isCode = ['.js', '.ts', '.mjs', '.json', '.py', '.html', '.css', '.md', '.txt', '.sh', '.ps1', '.rs', '.go', '.cpp', '.h'].includes(ext);
+
+          let badgeHtml = '<span class="item-badge badge-folder">DIR</span>';
+
+          if (!item.isDirectory) {
+            if (isImg) {
+              badgeHtml = `<span class="item-badge badge-img">${ext.replace('.', '') || 'IMG'}</span>`;
+            } else if (isCode) {
+              badgeHtml = `<span class="item-badge badge-code">${ext.replace('.', '') || 'TXT'}</span>`;
+            } else {
+              badgeHtml = `<span class="item-badge badge-doc">${ext.replace('.', '') || 'FILE'}</span>`;
+            }
+          }
+
+          const sizeStr = item.isDirectory ? '' : formatBytes(item.sizeBytes);
+
+          itemEl.innerHTML = `
+            <div class="explorer-item-left" title="${item.path}">
+              ${badgeHtml}
+              <span style="font-weight: ${item.isDirectory ? '700' : '400'}; color: ${item.isDirectory ? '#79c0ff' : 'var(--text)'};">${item.name}</span>
+              <span style="font-size: 10px; color: var(--text-muted); margin-left: 6px;">${sizeStr}</span>
+            </div>
+          `;
+
+          itemEl.onclick = () => {
+            if (item.isDirectory) {
+              loadExplorerDirectory(paneId, item.path);
+            } else {
+              if (isImg) {
+                openFileInImageViewer(item.path);
+              } else {
+                openFileInNotepad(item.path);
+              }
+            }
+          };
+
+          itemEl.addEventListener('contextmenu', (e) => {
+            document.querySelectorAll('.explorer-item.selected').forEach(el => el.classList.remove('selected'));
+            itemEl.classList.add('selected');
+
+            const menuActions = [];
+
+            if (!item.isDirectory) {
+              menuActions.push({ label: 'Mở trong Notepad', hint: 'Editor', action: () => openFileInNotepad(item.path) });
+              if (isImg) {
+                menuActions.push({ label: 'Xem ảnh trực quan', hint: 'Viewer', action: () => openFileInImageViewer(item.path) });
+              }
+            }
+
+            menuActions.push({ label: 'Mở trong Terminal', hint: 'PowerShell', action: () => openItemInTerminal(item.path, item.isDirectory) });
+
+            if (!item.isDirectory) {
+              menuActions.push({ label: 'Tải tệp về máy', hint: 'Download', action: () => window.open(`/api/files/download?path=${encodeURIComponent(item.path)}`, '_blank') });
+            }
+
+            menuActions.push({ type: 'separator' });
+            menuActions.push({ label: 'Đổi tên...', hint: 'F2', action: () => renameExplorerItem(item.path, item.name) });
+            menuActions.push({ label: 'Xóa', hint: 'Delete', danger: true, action: () => deleteExplorerItem(item.path) });
+
+            showContextMenu(e, menuActions);
+          });
+
+          fileList.appendChild(itemEl);
+        });
+      }
+
+      if (footer) {
+        const dirCount = (leaf.currentItems || []).filter(i => i.isDirectory).length;
+        const fileCount = (leaf.currentItems || []).length - dirCount;
+        footer.innerHTML = `
+          <span>${dirCount} thư mục, ${fileCount} tệp tin</span>
+          <span>${leaf.currentPath}</span>
+        `;
+      }
+    }
+
+    function explorerNavigateUp(paneId) {
+      const leaf = allLeafsMap.get(paneId);
+      if (!leaf || !leaf.currentParent) return;
+      loadExplorerDirectory(paneId, leaf.currentParent);
+    }
+
+    function explorerRefresh(paneId) {
+      const leaf = allLeafsMap.get(paneId);
+      if (!leaf) return;
+      if (leaf.isGitHubView) {
+        fetchGitRepos();
+      } else {
+        loadExplorerDirectory(paneId, leaf.currentPath || '');
+      }
+    }
+
+    function explorerNewFile(paneId) {
+      if (!amIEditor()) {
+        showToast('Bạn đang ở chế độ Chỉ Xem. Hãy xin quyền trước khi tạo tệp!', 'warning');
+        return;
+      }
+      const leaf = allLeafsMap.get(paneId);
+      if (!leaf) return;
+      const name = prompt('Nhập tên tệp mới: (vd: app.js, notes.txt, index.html)');
+      if (!name) return;
+      const full = leaf.currentPath ? `${leaf.currentPath}/${name}` : name;
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'fs:create', path: full, isDir: false }));
+      }
+    }
+
+    function explorerNewFolder(paneId) {
+      if (!amIEditor()) {
+        showToast('Bạn đang ở chế độ Chỉ Xem. Hãy xin quyền trước khi tạo thư mục!', 'warning');
+        return;
+      }
+      const leaf = allLeafsMap.get(paneId);
+      if (!leaf) return;
+      const name = prompt('Nhập tên thư mục mới:');
+      if (!name) return;
+      const full = leaf.currentPath ? `${leaf.currentPath}/${name}` : name;
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'fs:create', path: full, isDir: true }));
+      }
+    }
+
+    function explorerOpenTerminalHere(paneId) {
+      const leaf = allLeafsMap.get(paneId);
+      const targetDir = leaf ? leaf.currentPath : undefined;
+      spawnTerminalPane(targetDir);
+    }
+
+    function openItemInTerminal(itemPath, isDir) {
+      let folder = itemPath;
+      if (!isDir) {
+        const idx = itemPath.lastIndexOf('/');
+        folder = idx !== -1 ? itemPath.substring(0, idx) : itemPath;
+      }
+      spawnTerminalPane(folder);
+    }
+
+    function renameExplorerItem(oldPath, curName) {
+      if (!amIEditor()) {
+        showToast('Bạn đang ở chế độ Chỉ Xem. Hãy xin quyền trước!', 'warning');
+        return;
+      }
+      const newName = prompt(`Đổi tên "${curName}" thành:`, curName);
+      if (!newName || newName === curName) return;
+      const parts = oldPath.split('/');
+      parts.pop();
+      parts.push(newName);
+      const newPath = parts.join('/');
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'fs:rename', oldPath, newPath }));
+      }
+    }
+
+    function deleteExplorerItem(itemPath) {
+      if (!amIEditor()) {
+        showToast('Bạn đang ở chế độ Chỉ Xem. Hãy xin quyền trước!', 'warning');
+        return;
+      }
+      if (confirm(`Bạn có chắc chắn muốn xóa "${itemPath}" không?`)) {
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({ type: 'fs:delete', path: itemPath }));
+        }
+      }
+    }
+
+    function formatBytes(bytes) {
+      if (bytes === 0) return '0 B';
+      const k = 1024;
+      const sizes = ['B', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+    }
+
+    // --- NOTEPAD (DIRECT TEXT/CODE EDITOR) SPAWNING ---
+
+    function spawnNotepadPane(filePath = '') {
+      const filename = filePath ? filePath.split('/').pop() : 'Untitled.txt';
+      const leafNode = createLeafNode({
+        title: `Notepad: ${filename}`,
+        serviceType: 'notepad',
+        showSaveBtn: true,
+      });
+
+      leafNode.filePath = filePath;
+      leafNode.isDirty = false;
+
+      addLeafToLayout(leafNode);
+
+      const bodyEl = leafNode.el.querySelector('.pane-body');
+      const notepadBox = document.createElement('div');
+      notepadBox.className = 'notepad-container';
+      notepadBox.innerHTML = `
+        <textarea class="notepad-textarea" id="${leafNode.paneId}_textarea" placeholder="Nhập nội dung văn bản hoặc code tại đây... (Ctrl+S để lưu trực tiếp)"></textarea>
+        <div class="notepad-status-bar">
+          <span id="${leafNode.paneId}_fileInfo">${filePath || 'Tệp mới (Chưa lưu đường dẫn)'}</span>
+          <span id="${leafNode.paneId}_cursorInfo">Dòng 1, Cột 1 | UTF-8 | Đã lưu</span>
+        </div>
+      `;
+      bodyEl.appendChild(notepadBox);
+
+      const textarea = leafNode.el.querySelector(`#${leafNode.paneId}_textarea`);
+      leafNode.textarea = textarea;
+
+      textarea.addEventListener('input', () => {
+        leafNode.isDirty = true;
+        updateNotepadStatusBar(leafNode.paneId);
+      });
+
+      textarea.addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.code === 'KeyS') {
+          e.preventDefault();
+          saveNotepad(leafNode.paneId);
+        }
+        if (e.key === 'Tab') {
+          e.preventDefault();
+          const start = textarea.selectionStart;
+          const end = textarea.selectionEnd;
+          textarea.value = textarea.value.substring(0, start) + '  ' + textarea.value.substring(end);
+          textarea.selectionStart = textarea.selectionEnd = start + 2;
+          leafNode.isDirty = true;
+          updateNotepadStatusBar(leafNode.paneId);
+        }
+      });
+
+      textarea.addEventListener('keyup', () => updateNotepadStatusBar(leafNode.paneId));
+      textarea.addEventListener('click', () => updateNotepadStatusBar(leafNode.paneId));
+
+      if (filePath && ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'fs:read', path: filePath }));
+      }
+
+      return leafNode;
+    }
+
+    function openFileInNotepad(filePath) {
+      for (const leaf of allLeafsMap.values()) {
+        if (leaf.serviceType === 'notepad' && leaf.filePath === filePath) {
+          focusLeafPane(leaf.paneId);
+          return;
+        }
+      }
+      spawnNotepadPane(filePath);
+    }
+
+    function saveNotepad(paneId) {
+      if (!amIEditor()) {
+        showToast('Bạn đang ở chế độ Chỉ Xem. Hãy xin quyền trước khi lưu tệp!', 'warning');
+        return;
+      }
+
+      const leaf = allLeafsMap.get(paneId);
+      if (!leaf || !leaf.textarea) return;
+
+      let path = leaf.filePath;
+      if (!path) {
+        path = prompt('Nhập đường dẫn tệp để lưu trực tiếp (vd: E:/UWS/notes.txt, E:/Projects/app.js):', 'E:/UWS/notes.txt');
+        if (!path) return;
+        leaf.filePath = path;
+        const titleEl = leaf.el.querySelector(`#${paneId}_title`);
+        if (titleEl) titleEl.innerText = `Notepad: ${path.split('/').pop()}`;
+        const fileInfo = leaf.el.querySelector(`#${paneId}_fileInfo`);
+        if (fileInfo) fileInfo.innerText = path;
+      }
+
+      const content = leaf.textarea.value;
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({
+          type: 'fs:write',
+          path,
+          content,
+        }));
+      }
+
+      leaf.isDirty = false;
+      updateNotepadStatusBar(paneId);
+    }
+
+    function updateNotepadStatusBar(paneId) {
+      const leaf = allLeafsMap.get(paneId);
+      if (!leaf || !leaf.textarea) return;
+
+      const cursorInfo = leaf.el.querySelector(`#${paneId}_cursorInfo`);
+      if (!cursorInfo) return;
+
+      const val = leaf.textarea.value;
+      const pos = leaf.textarea.selectionStart;
+      const lines = val.substring(0, pos).split('\n');
+      const curLine = lines.length;
+      const curCol = lines[lines.length - 1].length + 1;
+      const state = leaf.isDirty ? 'Chưa lưu (*)' : 'Đã lưu';
+
+      cursorInfo.innerText = `Dòng ${curLine}, Cột ${curCol} | Ký tự: ${val.length} | UTF-8 | ${state}`;
+    }
+
+    // --- IMAGE VIEWER SPAWNING ---
+
+    function spawnImageViewerPane(filePath) {
+      const filename = filePath.split('/').pop();
+      const leafNode = createLeafNode({
+        title: `Image: ${filename}`,
+        serviceType: 'image_viewer',
+      });
+
+      leafNode.filePath = filePath;
+      addLeafToLayout(leafNode);
+
+      const bodyEl = leafNode.el.querySelector('.pane-body');
+      const imgBox = document.createElement('div');
+      imgBox.className = 'image-viewer-container';
+      imgBox.innerHTML = `
+        <img src="/api/files/raw?path=${encodeURIComponent(filePath)}" alt="${filename}" />
+      `;
+      bodyEl.appendChild(imgBox);
+
+      return leafNode;
+    }
+
+    function openFileInImageViewer(filePath) {
+      for (const leaf of allLeafsMap.values()) {
+        if (leaf.serviceType === 'image_viewer' && leaf.filePath === filePath) {
+          focusLeafPane(leaf.paneId);
+          return;
+        }
+      }
+      spawnImageViewerPane(filePath);
+    }
+
+    // --- TELEMETRY PANE SPAWNING ---
+
+    function spawnTelemetryPane() {
+      const leafNode = createLeafNode({
+        title: 'Telemetry Dashboard',
+        serviceType: 'telemetry',
+      });
+
+      addLeafToLayout(leafNode);
+
+      const bodyEl = leafNode.el.querySelector('.pane-body');
+      const teleBody = document.createElement('div');
+      teleBody.className = 'telemetry-body';
+      teleBody.innerHTML = `
+        <div class="metric-list">
+          <div class="metric-line">
+            <span class="metric-key">OS:</span>
+            <span class="metric-val" id="${leafNode.paneId}_valOs">Đang tải...</span>
+          </div>
+          <div class="metric-line">
+            <span class="metric-key">GPU:</span>
+            <span class="metric-val" id="${leafNode.paneId}_valGpu" style="color: #7ee787;">Đang tải...</span>
+          </div>
+          <div class="metric-line">
+            <span class="metric-key">RAM:</span>
+            <span class="metric-val" id="${leafNode.paneId}_valRam">Đang tải...</span>
+          </div>
+          <div class="metric-line">
+            <span class="metric-key">Load:</span>
+            <span class="metric-val" id="${leafNode.paneId}_valLoad" style="color: #e3b341;">Đang tải...</span>
+          </div>
+          <div class="metric-line">
+            <span class="metric-key">Memory:</span>
+            <span class="metric-val" id="${leafNode.paneId}_valMemory">Đang tải...</span>
+          </div>
+        </div>
+      `;
+      bodyEl.appendChild(teleBody);
+
+      if (latestMetricsData) {
+        renderMetricsForPane(leafNode.paneId, latestMetricsData);
+      }
+
+      return leafNode;
+    }
+
+    function renderMetricsForPane(paneId, data) {
+      const leaf = allLeafsMap.get(paneId);
+      if (!leaf || !leaf.el) return;
+
+      const osEl = leaf.el.querySelector(`#${paneId}_valOs`);
+      const gpuEl = leaf.el.querySelector(`#${paneId}_valGpu`);
+      const ramEl = leaf.el.querySelector(`#${paneId}_valRam`);
+      const loadEl = leaf.el.querySelector(`#${paneId}_valLoad`);
+      const memEl = leaf.el.querySelector(`#${paneId}_valMemory`);
+
+      if (osEl) osEl.innerText = data.os || 'Windows';
+      if (gpuEl) gpuEl.innerText = data.gpu || 'N/A';
+
+      if (ramEl && data.memory) {
+        const mem = data.memory;
+        ramEl.innerHTML = `<span style="color: #79c0ff;">${mem.usedGB} / ${mem.totalGB} GB</span> <span class="sub">(${mem.usagePercent}% - Trống: ${mem.freeGB} GB)</span>`;
+      }
+
+      if (loadEl) loadEl.innerText = data.load || '0%';
+
+      if (memEl && data.disks) {
+        const disksStr = data.disks.map(d => `${d.mount} ${d.usagePercent}% (${d.usedGB}/${d.totalGB} GB)`).join('  |  ');
+        memEl.innerText = disksStr || 'N/A';
+      }
+    }
+
+    // --- WEBSOCKET CLIENT ---
+
+    function connectWS() {
+      const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsUrl = `${protocol}//${location.host}/ws`;
+      ws = new WebSocket(wsUrl);
+
+      const statusEl = document.getElementById('liveStatus');
+      const textEl = document.getElementById('liveStatusText');
+
+      ws.onopen = () => {
+        statusEl.style.color = 'var(--accent-green)';
+        textEl.innerText = 'Live (1s)';
+
+        const savedName = localStorage.getItem('uws_user_name') || '';
+        ws.send(JSON.stringify({
+          type: 'session:join',
+          workspaceId: 'default',
+          userName: savedName,
+        }));
+
+        fetchGitRepos();
+
+        if (allLeafsMap.size === 0) {
+          spawnTerminalPane();
+        }
+      };
+
+      ws.onmessage = (event) => {
+        try {
+          const msg = JSON.parse(event.data);
+
+          if (msg.type === 'session:joined') {
+            myUserId = msg.yourId;
+            myUserRole = msg.yourRole;
+            isHost = msg.isHost;
+            myUserName = msg.userName;
+            localStorage.setItem('uws_user_name', myUserName);
+
+            if (msg.metadata) {
+              activeUsersList = msg.metadata.activeUsers || [];
+              currentEditorId = msg.metadata.currentEditorId;
+              currentHostId = msg.metadata.hostUserId;
+              renderPresenceUsers(activeUsersList, currentHostId);
+              updateTurnControlUI();
+            }
+          } else if (msg.type === 'session:users_update') {
+            activeUsersList = msg.activeUsers || [];
+            currentHostId = msg.hostUserId;
+            currentEditorId = msg.currentEditorId;
+            renderPresenceUsers(activeUsersList, currentHostId);
+            updateTurnControlUI();
+          } else if (msg.type === 'session:user_event') {
+            if (msg.event === 'join') {
+              showToast(`${msg.user.name} vừa tham gia không gian làm việc!`, 'info');
+            } else if (msg.event === 'leave') {
+              showToast(`${msg.user.name} đã rời khỏi không gian làm việc.`, 'info');
+            }
+          } else if (msg.type === 'session:edit_requested') {
+            if (amIEditor() || isHost) {
+              showToast(`${msg.requesterName} đang xin quyền điều khiển!`, 'warning');
+              if (confirm(`"${msg.requesterName}" đang xin quyền điều khiển Workspace.\n\nBạn có đồng ý nhượng quyền không?`)) {
+                if (ws && ws.readyState === WebSocket.OPEN) {
+                  ws.send(JSON.stringify({ type: 'session:grant_edit', targetUserId: msg.requesterId }));
+                }
+              }
+            }
+          } else if (msg.type === 'session:edit_granted') {
+            currentEditorId = msg.editorId;
+            updateTurnControlUI();
+            const isMe = msg.editorId === myUserId;
+            showToast(isMe ? 'Bạn đã nhận quyền điều khiển Workspace!' : `Quyền điều khiển chuyển cho: ${msg.editorName}`, isMe ? 'success' : 'info');
+          } else if (msg.type === 'automation:slots') {
+            automationSlots = msg.slots || [];
+            renderActionsDropdown(automationSlots);
+          } else if (msg.type === 'automation:compiled') {
+            runCompiledCommandInTerminal(msg.command, msg.label);
+          } else if (msg.type === 'git:list') {
+            gitReposList = msg.repos || [];
+            allLeafsMap.forEach(leaf => {
+              if (leaf.serviceType === 'explorer' && leaf.isGitHubView) {
+                updateGitReposDOM(leaf.paneId);
+              }
+            });
+          } else if (msg.type === 'git:action_result') {
+            showToast(msg.message, msg.success ? 'success' : 'info');
+          } else if (msg.type === 'metrics:update') {
+            latestMetricsData = msg.data;
+            currentMachineName = msg.data.machineName || 'UWS-Node';
+            document.getElementById('valName').innerText = currentMachineName;
+
+            allLeafsMap.forEach((leafNode) => {
+              if (leafNode.serviceType === 'telemetry') {
+                renderMetricsForPane(leafNode.paneId, msg.data);
+              }
+            });
+          } else if (msg.type === 'terminal:created') {
+            let found = false;
+            for (const leafNode of allLeafsMap.values()) {
+              if (leafNode.serviceType === 'terminal' && leafNode.sessionId === msg.sessionId) {
+                found = true;
+                break;
+              }
+            }
+
+            if (!found) {
+              let waitingLeaf = null;
+              for (const leafNode of allLeafsMap.values()) {
+                if (leafNode.serviceType === 'terminal' && !leafNode.sessionId) {
+                  waitingLeaf = leafNode;
+                  break;
+                }
+              }
+
+              if (waitingLeaf) {
+                waitingLeaf.sessionId = msg.sessionId;
+                waitingLeaf.title = `Terminal: ${msg.cwd || 'storage\\workspaces\\default'}`;
+                const titleEl = waitingLeaf.el.querySelector(`#${waitingLeaf.paneId}_title`);
+                if (titleEl) titleEl.innerText = waitingLeaf.title;
+                if (waitingLeaf.fitAddon) waitingLeaf.fitAddon.fit();
+              }
+            }
+          } else if (msg.type === 'terminal:output') {
+            for (const leafNode of allLeafsMap.values()) {
+              if (leafNode.sessionId === msg.sessionId && leafNode.term) {
+                leafNode.term.write(msg.data);
+                break;
+              }
+            }
+          } else if (msg.type === 'terminal:closed') {
+            for (const leafNode of allLeafsMap.values()) {
+              if (leafNode.sessionId === msg.sessionId) {
+                if (leafNode.term) {
+                  leafNode.term.write(`\r\n\x1b[33m[Phiên Terminal kết thúc với mã ${msg.exitCode ?? 0}]\x1b[0m\r\n`);
+                }
+                break;
+              }
+            }
+          } else if (msg.type === 'fs:list') {
+            allLeafsMap.forEach((leaf) => {
+              if (leaf.serviceType === 'explorer' && !leaf.isGitHubView) {
+                renderExplorerList(leaf.paneId, msg.path, msg.parentPath, msg.items, msg.drives);
+              }
+            });
+          } else if (msg.type === 'fs:read') {
+            allLeafsMap.forEach((leaf) => {
+              if (leaf.serviceType === 'notepad' && leaf.filePath === msg.path && leaf.textarea) {
+                leaf.textarea.value = msg.content || '';
+                leaf.isDirty = false;
+                updateNotepadStatusBar(leaf.paneId);
+              }
+            });
+          } else if (msg.type === 'fs:saved' || msg.type === 'fs:created' || msg.type === 'fs:renamed' || msg.type === 'fs:deleted') {
+            allLeafsMap.forEach((leaf) => {
+              if (leaf.serviceType === 'explorer' && !leaf.isGitHubView) {
+                loadExplorerDirectory(leaf.paneId, leaf.currentPath || '');
+              }
+            });
+          } else if (msg.type === 'error') {
+            showToast(msg.message || 'Lỗi hệ thống', 'warning');
+          }
+        } catch (err) {
+          console.error('[WS Parse Error]:', err);
+        }
+      };
+
+      ws.onclose = () => {
+        statusEl.style.color = 'var(--accent-red)';
+        textEl.innerText = 'Mất kết nối...';
+        setTimeout(connectWS, 2000);
+      };
+
+      ws.onerror = () => {
+        ws.close();
+      };
+    }
+
+    function startRename() {
+      document.getElementById('nodeDisplay').style.display = 'none';
+      const form = document.getElementById('rename-form');
+      const input = document.getElementById('rename-input');
+      form.style.display = 'inline-flex';
+      input.value = currentMachineName;
+      input.focus();
+      input.select();
+    }
+
+    function cancelRename() {
+      document.getElementById('rename-form').style.display = 'none';
+      document.getElementById('nodeDisplay').style.display = 'inline-flex';
+    }
+
+    function submitRename(e) {
+      e.preventDefault();
+      const newName = document.getElementById('rename-input').value.trim();
+      if (newName && newName !== currentMachineName) {
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({ type: 'machine:rename', name: newName }));
+        }
+      }
+      cancelRename();
+    }
+
+    window.addEventListener('resize', () => {
+      setTimeout(fitAllTerminals, 100);
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      connectWS();
+    });
+  </script>
+</body>
+</html>

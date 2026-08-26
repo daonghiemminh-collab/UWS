@@ -1,0 +1,29 @@
+{
+  "name": "uws",
+  "version": "1.0.0",
+  "description": "Unifiable Workspace System",
+  "private": true,
+  "workspaces": [
+    "shared",
+    "server",
+    "client",
+    "desktop"
+  ],
+  "scripts": {
+    "server:dev": "npm --workspace=server run dev",
+    "client:dev": "npm --workspace=client run dev",
+    "desktop:dev": "npm --workspace=desktop run dev",
+    "desktop:start": "npm --workspace=desktop run start",
+    "dev": "npm run server:dev"
+  },
+  "keywords": [
+    "workspace",
+    "terminal",
+    "pty",
+    "metrics",
+    "remote-collaboration",
+    "desktop"
+  ],
+  "author": "",
+  "license": "MIT"
+}

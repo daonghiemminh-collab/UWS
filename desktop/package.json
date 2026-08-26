@@ -1,0 +1,18 @@
+{
+  "name": "@uws/desktop",
+  "version": "1.0.0",
+  "description": "UWS Native Desktop Shell with System Tray & Global Hotkeys",
+  "main": "dist/main.js",
+  "type": "module",
+  "scripts": {
+    "dev": "tsc && electron .",
+    "start": "tsc && electron .",
+    "build": "tsc"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "electron": "^34.0.0",
+    "typescript": "^5.7.2"
+  }
+}

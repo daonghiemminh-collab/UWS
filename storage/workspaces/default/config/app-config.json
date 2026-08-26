@@ -1,0 +1,11 @@
+{
+  "appName": "UWS Workspace",
+  "version": "1.0.0",
+  "environment": "development",
+  "features": {
+    "terminal": true,
+    "fileExplorer": true,
+    "notepad": true,
+    "telemetry": true
+  }
+}

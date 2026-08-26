@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+*/node_modules/
+dist/
+*/dist/
+build/
+*/build/
+.cache/
+
+# Environment & Local configs
+.env
+.env.local
+*.local
+
+# Logs
+logs/
+*.log
+
+# OS & Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# User storage
+storage/workspaces/*
+!storage/workspaces/default/
+!storage/workspaces/default/README.md
+storage/repos/*
+!storage/repos/.gitkeep

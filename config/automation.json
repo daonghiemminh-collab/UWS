@@ -1,0 +1,30 @@
+[
+  {
+    "id": "slot_1",
+    "label": "⚡ Git Quick Push",
+    "icon": "🚀",
+    "command": "git add . && git commit -m \"Auto-save from [{{MACHINE_NAME}}] at {{DATETIME}}\" && git push",
+    "description": "Tự động add toàn bộ file, commit kèm tên máy và push lên Git"
+  },
+  {
+    "id": "slot_2",
+    "label": "📥 Git Pull Sync",
+    "icon": "📥",
+    "command": "git pull",
+    "description": "Kéo các cập nhật mới nhất từ Git về máy"
+  },
+  {
+    "id": "slot_3",
+    "label": "📊 Git Status",
+    "icon": "🔍",
+    "command": "git status",
+    "description": "Kiểm tra nhanh trạng thái các file đã sửa đổi"
+  },
+  {
+    "id": "slot_4",
+    "label": "🔨 NPM Build",
+    "icon": "📦",
+    "command": "npm run build",
+    "description": "Chạy lệnh build mã nguồn dự án"
+  }
+]
