@@ -649,7 +649,8 @@
       min-width: 0;
     }
 
-    .pane-bg-layer {
+    .pane-body::before {
+      content: '';
       position: absolute;
       top: 0;
       left: 0;
@@ -659,29 +660,29 @@
       background-position: center;
       background-repeat: no-repeat;
       pointer-events: none;
-      z-index: 1;
+      z-index: 0;
       transition: background-image 0.25s ease, filter 0.25s ease, opacity 0.25s ease;
     }
 
-    .tiling-pane[data-service="terminal"] .pane-bg-layer {
+    .tiling-pane[data-service="terminal"] .pane-body::before {
       background-image: var(--bg-terminal-img, none);
       filter: blur(var(--bg-terminal-blur, 0px)) brightness(var(--bg-terminal-dim, 1));
       opacity: var(--bg-terminal-opacity, 0);
     }
 
-    .tiling-pane[data-service="explorer"] .pane-bg-layer {
+    .tiling-pane[data-service="explorer"] .pane-body::before {
       background-image: var(--bg-explorer-img, none);
       filter: blur(var(--bg-explorer-blur, 0px)) brightness(var(--bg-explorer-dim, 1));
       opacity: var(--bg-explorer-opacity, 0);
     }
 
-    .tiling-pane[data-service="notepad"] .pane-bg-layer {
+    .tiling-pane[data-service="notepad"] .pane-body::before {
       background-image: var(--bg-notepad-img, none);
       filter: blur(var(--bg-notepad-blur, 0px)) brightness(var(--bg-notepad-dim, 1));
       opacity: var(--bg-notepad-opacity, 0);
     }
 
-    .tiling-pane[data-service="telemetry"] .pane-bg-layer {
+    .tiling-pane[data-service="telemetry"] .pane-body::before {
       background-image: var(--bg-telemetry-img, none);
       filter: blur(var(--bg-telemetry-blur, 0px)) brightness(var(--bg-telemetry-dim, 1));
       opacity: var(--bg-telemetry-opacity, 0);
@@ -693,6 +694,8 @@
       height: 100%;
       padding: 4px 6px;
       position: relative;
+      z-index: 1;
+      background: transparent;
     }
 
     .terminal-viewer-notice-wrap {
@@ -768,6 +771,12 @@
     .xterm {
       height: 100%;
       padding: 2px;
+      background: transparent !important;
+    }
+
+    .xterm-viewport,
+    .xterm-screen {
+      background: transparent !important;
     }
 
     .xterm-viewport::-webkit-scrollbar {
@@ -783,8 +792,11 @@
     .telemetry-body {
       padding: 12px 16px;
       overflow-y: auto;
-      background: #11151e;
+      background: rgba(14, 18, 26, 0.65);
+      backdrop-filter: blur(8px);
       height: 100%;
+      position: relative;
+      z-index: 1;
     }
 
     .metric-list {
@@ -798,6 +810,10 @@
     .metric-line {
       display: flex;
       align-items: baseline;
+      background: rgba(22, 27, 34, 0.6);
+      padding: 6px 10px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
     }
 
     .metric-key {
@@ -823,13 +839,16 @@
       display: flex;
       flex-direction: column;
       height: 100%;
-      background: var(--bg);
+      background: transparent;
       overflow: hidden;
+      position: relative;
+      z-index: 1;
     }
 
     .explorer-nav-bar {
       padding: 6px 8px;
-      background: var(--card-header);
+      background: rgba(22, 27, 34, 0.85);
+      backdrop-filter: blur(8px);
       border-bottom: 1px solid var(--border);
       display: flex;
       flex-direction: column;
@@ -970,6 +989,8 @@
       display: flex;
       flex-direction: column;
       gap: 1px;
+      background: rgba(13, 17, 23, 0.6);
+      backdrop-filter: blur(8px);
     }
 
     .explorer-item {
@@ -1035,7 +1056,8 @@
 
     .explorer-footer-bar {
       height: 22px;
-      background: var(--card-header);
+      background: rgba(22, 27, 34, 0.85);
+      backdrop-filter: blur(8px);
       border-top: 1px solid var(--border);
       display: flex;
       align-items: center;
@@ -1701,14 +1723,17 @@
       display: flex;
       flex-direction: column;
       height: 100%;
-      background: var(--bg);
+      background: transparent;
       overflow: hidden;
+      position: relative;
+      z-index: 1;
     }
 
     .notepad-textarea {
       flex: 1;
       width: 100%;
-      background: var(--bg);
+      background: rgba(14, 18, 26, 0.65);
+      backdrop-filter: blur(8px);
       color: var(--text-bold);
       border: none;
       padding: 12px;
@@ -1721,7 +1746,8 @@
 
     .notepad-status-bar {
       height: 24px;
-      background: var(--card-header);
+      background: rgba(22, 27, 34, 0.85);
+      backdrop-filter: blur(8px);
       border-top: 1px solid var(--border);
       display: flex;
       align-items: center;
@@ -2902,6 +2928,8 @@
     function setWindowPresetBg(service, url) {
       windowConfigs[service].url = url;
       localStorage.setItem(`uws_bg_${service}_url`, url);
+      const input = document.getElementById(`win_bg_url_${service}`);
+      if (input) input.value = url;
       applyWindowBackgrounds();
       showToast(`Đã áp dụng mẫu nền cho ${service}!`, 'success');
     }
@@ -3865,6 +3893,10 @@
 
       bodyEl.appendChild(termMount);
 
+      const termBg = windowConfigs.terminal.url 
+        ? 'rgba(10, 13, 18, 0.45)' 
+        : (THEMES[currentThemeKey]?.termBg || '#0a0d12');
+
       const term = new Terminal({
         cursorBlink: true,
         cursorStyle: 'bar',
@@ -3872,7 +3904,7 @@
         fontFamily: '"JetBrains Mono", "SF Mono", "Fira Code", Consolas, monospace',
         lineHeight: 1.2,
         theme: {
-          background: '#0a0d12',
+          background: termBg,
           foreground: '#d1d7e0',
           cursor: '#58a6ff',
           selectionBackground: 'rgba(56, 139, 253, 0.4)',
