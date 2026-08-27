@@ -1,8 +1,8 @@
-// UWS Sample Application Entry
-console.log("⚡ Welcome to UWS (Unifiable Workspace System)!");
+// Meodusa Sample Application Entry
+console.log("⚡ Welcome to Meodusa (Futuristic Cyberpunk Workspace System)!");
 
 function startApp() {
-  const nodeName = "UWS-Node-Master";
+  const nodeName = "Meodusa-Node-Master";
   console.log(`Running daemon on: ${nodeName}`);
 }
 
