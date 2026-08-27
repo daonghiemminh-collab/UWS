@@ -75,7 +75,7 @@ export class SessionService {
     }
 
     const defaultName = isHost
-      ? 'Host (Máy Chủ)'
+      ? 'Host'
       : `Guest-${userId.substring(4, 8).toUpperCase()}`;
 
     const userName = requestedName && requestedName.trim() ? requestedName.trim() : defaultName;

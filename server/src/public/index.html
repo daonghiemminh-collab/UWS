@@ -73,53 +73,6 @@
       gap: 12px;
     }
 
-    /* NODE & QUICK ACTIONS WRAPPER */
-    .node-actions-group {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .node-title-wrap {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      cursor: pointer;
-      font-size: 12px;
-      color: #79c0ff;
-    }
-    .node-name {
-      font-weight: 700;
-    }
-    .rename-btn-hint {
-      font-size: 10px;
-      color: var(--text-muted);
-      border: 1px dashed var(--border);
-      padding: 1px 5px;
-      border-radius: 3px;
-    }
-    .node-title-wrap:hover .rename-btn-hint {
-      color: #fff;
-      border-color: var(--accent);
-    }
-
-    #rename-form {
-      display: none;
-      align-items: center;
-      gap: 6px;
-    }
-    #rename-input {
-      background: #0d1117;
-      border: 1px solid var(--accent);
-      color: #fff;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 12px;
-      font-family: inherit;
-      outline: none;
-      width: 140px;
-    }
-
     /* QUICK ACTIONS DROPDOWN */
     .actions-dropdown-wrap {
       position: relative;
@@ -127,18 +80,19 @@
     }
 
     .actions-dropdown-trigger {
-      background: #1f242e;
+      background: #1a202c;
       border: 1px solid var(--border);
-      color: var(--text);
-      padding: 3px 9px;
-      border-radius: 4px;
+      color: var(--text-bold);
+      padding: 4px 10px;
+      border-radius: 6px;
       font-size: 11px;
+      font-weight: 600;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 5px;
       font-family: inherit;
-      transition: all 0.12s;
+      transition: all 0.15s ease;
     }
     .actions-dropdown-trigger:hover {
       background: #283142;
@@ -149,15 +103,15 @@
     .actions-dropdown-menu {
       position: absolute;
       top: 100%;
-      left: 0;
-      margin-top: 4px;
+      right: 0;
+      margin-top: 5px;
       background: rgba(22, 27, 34, 0.98);
       backdrop-filter: blur(16px);
       border: 1px solid var(--border);
       border-radius: 6px;
       box-shadow: 0 12px 32px rgba(0, 0, 0, 0.8);
-      min-width: 200px;
-      padding: 4px;
+      min-width: 220px;
+      padding: 5px;
       z-index: 10000;
       display: none;
       flex-direction: column;
@@ -191,13 +145,13 @@
       font-weight: 600;
     }
 
-    /* MULTI-USER PRESENCE WIDGET */
+    /* MULTI-USER PRESENCE & IDENTITY WIDGET */
     .presence-container {
       display: flex;
       align-items: center;
       gap: 6px;
-      background: #161b24;
-      padding: 2px 8px;
+      background: #141822;
+      padding: 3px 6px 3px 10px;
       border-radius: 20px;
       border: 1px solid var(--border);
     }
@@ -205,38 +159,84 @@
     .presence-users-list {
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 5px;
     }
 
     .user-badge {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      gap: 5px;
       font-size: 11px;
-      padding: 1px 7px;
-      border-radius: 12px;
-      background: #21262d;
+      padding: 2px 8px;
+      border-radius: 14px;
+      background: #1f2530;
       color: var(--text);
       border: 1px solid var(--border);
       cursor: pointer;
-      transition: all 0.12s;
+      transition: all 0.15s ease;
+      position: relative;
     }
     .user-badge:hover {
       border-color: var(--accent);
       color: #fff;
+      background: #283142;
     }
     .user-badge.host {
-      background: rgba(63, 185, 80, 0.15);
-      border-color: rgba(63, 185, 80, 0.4);
+      background: rgba(63, 185, 80, 0.12);
+      border-color: rgba(63, 185, 80, 0.35);
       color: #7ee787;
     }
+    .user-badge.host:hover {
+      background: rgba(63, 185, 80, 0.22);
+      border-color: #3fb950;
+    }
     .user-badge.editor-now {
-      box-shadow: 0 0 6px rgba(63, 185, 80, 0.5);
+      box-shadow: 0 0 8px rgba(63, 185, 80, 0.35);
       border-color: #3fb950;
     }
     .user-badge.you {
       border-color: var(--accent);
-      box-shadow: 0 0 6px rgba(88, 166, 255, 0.3);
+      box-shadow: 0 0 8px rgba(88, 166, 255, 0.3);
+    }
+    .user-badge-name {
+      font-weight: 600;
+      color: #f0f6fc;
+      max-width: 130px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .user-badge.host .user-badge-name {
+      color: #7ee787;
+    }
+    .user-badge-tag {
+      font-size: 9px;
+      padding: 1px 4px;
+      border-radius: 3px;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+    .tag-you {
+      background: rgba(88, 166, 255, 0.2);
+      color: #79c0ff;
+    }
+    .tag-editor {
+      background: rgba(63, 185, 80, 0.2);
+      color: #7ee787;
+    }
+    .tag-viewer {
+      background: rgba(139, 148, 158, 0.18);
+      color: #8b949e;
+    }
+    .user-rename-icon {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-left: 2px;
+      transition: color 0.1s;
+    }
+    .user-badge:hover .user-rename-icon {
+      color: #58a6ff;
     }
 
     .share-btn {
@@ -244,7 +244,8 @@
       border: 1px solid #2ea043;
       color: #fff;
       font-size: 11px;
-      padding: 2px 8px;
+      font-weight: 600;
+      padding: 2px 9px;
       border-radius: 12px;
       cursor: pointer;
       display: inline-flex;
@@ -254,6 +255,7 @@
     }
     .share-btn:hover {
       background: #2ea043;
+      box-shadow: 0 0 8px rgba(46, 160, 67, 0.4);
     }
 
     .btn-save {
@@ -1357,38 +1359,24 @@
     </div>
 
     <div class="top-actions">
-      <!-- NODE & QUICK ACTIONS DROPDOWN -->
-      <div class="node-actions-group">
-        <div id="nodeDisplay" class="node-title-wrap" onclick="startRename()" title="Nhấp để đổi tên Node máy">
-          <span class="node-name">[<span id="valName">UWS-Node</span>]</span>
-          <span class="rename-btn-hint">rename</span>
-        </div>
-        <form id="rename-form" onsubmit="submitRename(event)">
-          <input type="text" id="rename-input" maxlength="32" placeholder="Tên máy..." />
-          <button type="submit" class="btn-save">Lưu</button>
-          <button type="button" class="btn-cancel" onclick="cancelRename()">Hủy</button>
-        </form>
-
-        <!-- STREAMLINED ACTIONS DROPDOWN -->
-        <div class="actions-dropdown-wrap">
-          <button class="actions-dropdown-trigger" id="actionsTriggerBtn" onclick="toggleActionsDropdown(event)">
-            <span>Actions</span>
-            <span style="font-size: 9px;">▾</span>
-          </button>
-          <div class="actions-dropdown-menu" id="actionsMenu">
-            <!-- Dynamic Slots Injected Here -->
-          </div>
+      <!-- QUICK ACTIONS DROPDOWN -->
+      <div class="actions-dropdown-wrap">
+        <button class="actions-dropdown-trigger" id="actionsTriggerBtn" onclick="toggleActionsDropdown(event)" title="Chạy nhanh các mẫu lệnh tự động hóa">
+          <span>⚡ Actions</span>
+          <span style="font-size: 9px;">▾</span>
+        </button>
+        <div class="actions-dropdown-menu" id="actionsMenu">
+          <!-- Dynamic Slots Injected Here -->
         </div>
       </div>
 
-      <!-- MULTI-USER PRESENCE WIDGET -->
+      <!-- MULTI-USER PRESENCE & IDENTITY WIDGET -->
       <div class="presence-container">
-        <span style="font-size: 11px; color: var(--text-muted);">Users:</span>
         <div class="presence-users-list" id="presenceList">
           <span class="user-badge host you">Connecting...</span>
         </div>
         <button class="share-btn" onclick="copyShareLink()" title="Sao chép liên kết mời người khác tham gia">
-          <span>Share</span>
+          <span>+ Share</span>
         </button>
       </div>
 
@@ -1512,6 +1500,29 @@
     </div>
   </div>
 
+  <!-- USER / NODE RENAME MODAL -->
+  <div id="rename-modal" class="uws-modal-overlay">
+    <div class="modal-box" style="width: 440px;">
+      <div class="modal-header">
+        <span id="renameModalTitle">Đổi Tên Hiển Thị & Định Danh Máy</span>
+        <button class="pane-close-btn" onclick="closeRenameModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label" id="renameModalLabel">Tên hiển thị của bạn:</label>
+          <input type="text" class="form-input" id="modalRenameInput" maxlength="32" placeholder="vd: máy shiba, John..." />
+          <div style="font-size: 11px; color: var(--text-muted); margin-top: 6px; line-height: 1.4;" id="renameModalHint">
+            💡 Bạn là Host: Tên này sẽ đồng bộ làm Tên hiển thị trong phòng & Tên Node máy trạm.
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeRenameModal()">Hủy</button>
+        <button class="btn-save" onclick="submitModalRename()">Lưu Thay Đổi</button>
+      </div>
+    </div>
+  </div>
+
   <!-- SCRIPTS -->
   <script src="/vendor/xterm/xterm.js"></script>
   <script src="/vendor/xterm/addon-fit.js"></script>
@@ -1617,6 +1628,68 @@
       }
     }
 
+    function openRenameModal() {
+      const modal = document.getElementById('rename-modal');
+      const input = document.getElementById('modalRenameInput');
+      const hint = document.getElementById('renameModalHint');
+      if (!modal || !input) return;
+
+      input.value = myUserName || currentMachineName || '';
+      if (isHost) {
+        hint.innerText = '💡 Bạn là Host: Tên này sẽ đồng bộ làm Tên hiển thị trong phòng & Tên Node máy trạm.';
+      } else {
+        hint.innerText = '💡 Bạn là Khách (Guest): Tên này sẽ hiển thị cho mọi người trong phòng.';
+      }
+      modal.style.display = 'flex';
+      setTimeout(() => {
+        input.focus();
+        input.select();
+      }, 50);
+    }
+
+    function closeRenameModal() {
+      const modal = document.getElementById('rename-modal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function submitModalRename() {
+      const input = document.getElementById('modalRenameInput');
+      if (!input) return;
+      const newName = input.value.trim();
+      if (!newName) {
+        showToast('Vui lòng nhập tên!', 'warning');
+        return;
+      }
+
+      myUserName = newName;
+      localStorage.setItem('uws_user_name', newName);
+
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'session:rename_user', userName: newName }));
+        if (isHost) {
+          ws.send(JSON.stringify({ type: 'machine:rename', name: newName }));
+          currentMachineName = newName;
+        }
+      }
+
+      closeRenameModal();
+      showToast(`Đã đổi tên thành: "${newName}"`, 'success');
+    }
+
+    // Allow Enter key to submit inside rename modal
+    document.addEventListener('keydown', (e) => {
+      const modal = document.getElementById('rename-modal');
+      if (modal && modal.style.display === 'flex') {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          submitModalRename();
+        } else if (e.key === 'Escape') {
+          e.preventDefault();
+          closeRenameModal();
+        }
+      }
+    });
+
     function renderPresenceUsers(users, hostId) {
       const listEl = document.getElementById('presenceList');
       if (!listEl) return;
@@ -1629,18 +1702,18 @@
 
         const badge = document.createElement('span');
         badge.className = `user-badge ${isHostUser ? 'host' : ''} ${isCurEditor ? 'editor-now' : ''} ${isMe ? 'you' : ''}`;
-        const meSuffix = isMe ? ' [You]' : '';
-        const roleSuffix = isCurEditor ? ' [Editor]' : ' [Viewer]';
-        badge.innerText = `${u.name}${meSuffix}${roleSuffix}`;
+        
+        const hostIcon = isHostUser ? '<span style="font-size: 11px; margin-right: 1px;" title="Host (Máy trạm)">👑</span>' : '<span style="font-size: 11px; margin-right: 1px;">👤</span>';
+        const meTag = isMe ? '<span class="user-badge-tag tag-you">You</span>' : '';
+        const roleTag = isCurEditor ? '<span class="user-badge-tag tag-editor">Editor</span>' : '<span class="user-badge-tag tag-viewer">Viewer</span>';
+        const renameIcon = isMe ? '<span class="user-rename-icon" title="Nhấp để đổi tên">✏️</span>' : '';
+
+        badge.innerHTML = `${hostIcon}<span class="user-badge-name" title="${u.name}">${u.name}</span>${meTag}${roleTag}${renameIcon}`;
+        badge.title = isMe ? 'Nhấp để đổi tên hiển thị / Tên máy' : `Người dùng: ${u.name} (${isCurEditor ? 'Editor' : 'Viewer'})`;
 
         badge.onclick = (e) => {
           if (isMe) {
-            const newName = prompt('Đổi tên hiển thị của bạn trong phòng:', myUserName);
-            if (newName && newName.trim() && newName.trim() !== myUserName) {
-              if (ws && ws.readyState === WebSocket.OPEN) {
-                ws.send(JSON.stringify({ type: 'session:rename_user', userName: newName.trim() }));
-              }
-            }
+            openRenameModal();
           } else if (amIEditor() || isHost) {
             showContextMenu(e, [
               { label: `Trao quyền điều khiển cho ${u.name}`, hint: 'Turn-based', action: () => grantEditControlToUser(u.id, u.name) },
@@ -3328,7 +3401,6 @@
           } else if (msg.type === 'metrics:update') {
             latestMetricsData = msg.data;
             currentMachineName = msg.data.machineName || 'UWS-Node';
-            document.getElementById('valName').innerText = currentMachineName;
 
             allLeafsMap.forEach((leafNode) => {
               if (leafNode.serviceType === 'telemetry') {
@@ -3414,32 +3486,6 @@
       ws.onerror = () => {
         ws.close();
       };
-    }
-
-    function startRename() {
-      document.getElementById('nodeDisplay').style.display = 'none';
-      const form = document.getElementById('rename-form');
-      const input = document.getElementById('rename-input');
-      form.style.display = 'inline-flex';
-      input.value = currentMachineName;
-      input.focus();
-      input.select();
-    }
-
-    function cancelRename() {
-      document.getElementById('rename-form').style.display = 'none';
-      document.getElementById('nodeDisplay').style.display = 'inline-flex';
-    }
-
-    function submitRename(e) {
-      e.preventDefault();
-      const newName = document.getElementById('rename-input').value.trim();
-      if (newName && newName !== currentMachineName) {
-        if (ws && ws.readyState === WebSocket.OPEN) {
-          ws.send(JSON.stringify({ type: 'machine:rename', name: newName }));
-        }
-      }
-      cancelRename();
     }
 
     window.addEventListener('resize', () => {

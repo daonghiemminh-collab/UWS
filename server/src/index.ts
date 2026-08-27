@@ -141,7 +141,9 @@ wss.on('connection', (ws, req) => {
   };
 
   // Auto-join default room initially
-  const { user: initialUser, room: initialRoom } = sessionService.joinRoom(ws, clientIp);
+  const isLocalClient = clientIp === '127.0.0.1' || clientIp === '::1' || clientIp === '::ffff:127.0.0.1';
+  const initialName = isLocalClient ? metricsService.getMachineName() : undefined;
+  const { user: initialUser, room: initialRoom } = sessionService.joinRoom(ws, clientIp, initialName);
 
   sendMsg({
     type: 'session:joined',
@@ -406,7 +408,12 @@ wss.on('connection', (ws, req) => {
 
         // --- SESSION / PRESENCE ---
         case 'session:join': {
-          const { user, room } = sessionService.joinRoom(ws, clientIp, msg.userName, msg.workspaceId || 'default');
+          const isLocal = clientIp === '127.0.0.1' || clientIp === '::1' || clientIp === '::ffff:127.0.0.1';
+          const defaultJoinName = isLocal ? (msg.userName || metricsService.getMachineName()) : msg.userName;
+          const { user, room } = sessionService.joinRoom(ws, clientIp, defaultJoinName, msg.workspaceId || 'default');
+          if (user.isHost && user.name) {
+            metricsService.setMachineName(user.name);
+          }
           sendMsg({
             type: 'session:joined',
             yourId: user.id,
@@ -428,6 +435,10 @@ wss.on('connection', (ws, req) => {
         case 'session:rename_user': {
           const res = sessionService.renameUser(ws, msg.userName);
           if (res) {
+            if (res.user.isHost) {
+              metricsService.setMachineName(res.user.name);
+              broadcastMetrics();
+            }
             sessionService.broadcastToRoom(res.room.id, {
               type: 'session:users_update',
               activeUsers: sessionService.getActiveUsers(res.room.id),
@@ -450,9 +461,18 @@ wss.on('connection', (ws, req) => {
         }
 
         case 'machine:rename': {
-          if (typeof msg.name === 'string') {
-            metricsService.setMachineName(msg.name);
+          if (typeof msg.name === 'string' && msg.name.trim()) {
+            metricsService.setMachineName(msg.name.trim());
             broadcastMetrics();
+            if (curUser && curUser.isHost) {
+              sessionService.renameUser(ws, msg.name.trim());
+              sessionService.broadcastToRoom(wsId, {
+                type: 'session:users_update',
+                activeUsers: sessionService.getActiveUsers(wsId),
+                hostUserId: sessionService.getOrCreateRoom(wsId).hostUserId,
+                currentEditorId: sessionService.getOrCreateRoom(wsId).currentEditorId,
+              });
+            }
           }
           break;
         }
