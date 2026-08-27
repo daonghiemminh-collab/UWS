@@ -1,5 +1,6 @@
 import { WebSocket } from 'ws';
 import crypto from 'crypto';
+import os from 'os';
 import type { WorkspaceUser, WorkspaceMetadata, UserRole } from '@uws/shared/types/workspace.js';
 
 export interface UserSession extends WorkspaceUser {
@@ -24,6 +25,25 @@ export class SessionService {
 
   constructor() {
     this.getOrCreateRoom('default', 'E:/UWS');
+  }
+
+  public isLocalOrHostIp(clientIp: string = ''): boolean {
+    if (!clientIp) return true;
+    const cleanIp = clientIp.replace(/^.*:/, '').toLowerCase().trim();
+    if (cleanIp === '127.0.0.1' || cleanIp === 'localhost' || clientIp === '::1') return true;
+
+    try {
+      const ifaces = os.networkInterfaces();
+      for (const list of Object.values(ifaces)) {
+        if (!list) continue;
+        for (const net of list) {
+          if (net.address === cleanIp || net.address === clientIp) {
+            return true;
+          }
+        }
+      }
+    } catch (e) {}
+    return false;
   }
 
   public getOrCreateRoom(workspaceId: string = 'default', wsPath: string = 'E:/UWS'): WorkspaceRoom {
@@ -51,7 +71,7 @@ export class SessionService {
   ): { user: UserSession; room: WorkspaceRoom; isNewJoin: boolean } {
     const room = this.getOrCreateRoom(workspaceId);
 
-    const isLocalhost = clientIp === '127.0.0.1' || clientIp === '::1' || clientIp === '::ffff:127.0.0.1' || clientIp.includes('127.0.0.1');
+    const isLocalhost = this.isLocalOrHostIp(clientIp);
 
     // Clean up stale disconnected sockets
     for (const [uid, u] of room.users.entries()) {
@@ -60,11 +80,18 @@ export class SessionService {
       }
     }
 
+    // Verify if host is actually present in room
+    const hostExists = room.hostUserId && room.users.has(room.hostUserId);
+    if (!hostExists) {
+      room.hostUserId = '';
+      room.currentEditorId = null;
+    }
+
     const existingEntry = this.wsToUserMap.get(ws);
     if (existingEntry && existingEntry.workspaceId === workspaceId) {
       const existingUser = room.users.get(existingEntry.userId);
       if (existingUser) {
-        if (isLocalhost) {
+        if (isLocalhost || !room.hostUserId) {
           existingUser.isHost = true;
           existingUser.role = 'owner';
           room.hostUserId = existingUser.id;
@@ -80,7 +107,7 @@ export class SessionService {
     const userId = `usr_${crypto.randomBytes(4).toString('hex')}`;
     const isFirstUser = room.users.size === 0;
 
-    // Localhost machine is ALWAYS the Host/Owner!
+    // Localhost or first user is ALWAYS Host/Owner!
     const isHost = isLocalhost || isFirstUser || !room.hostUserId;
     const role: UserRole = isHost ? 'owner' : 'viewer';
 
@@ -207,7 +234,7 @@ export class SessionService {
     if (!room) return false;
 
     // Host, Localhost, or Current Editor can ALWAYS edit!
-    const isLocalhost = user.ip === '127.0.0.1' || user.ip === '::1' || user.ip === '::ffff:127.0.0.1' || user.ip.includes('127.0.0.1');
+    const isLocalhost = this.isLocalOrHostIp(user.ip);
     return user.id === room.currentEditorId || user.isHost || user.role === 'owner' || isLocalhost;
   }
 

@@ -205,20 +205,77 @@ wss.on('connection', (ws, req) => {
       };
 
       switch (msg.type) {
-        // --- TURN-BASED PERMISSION LOCK ---
-        case 'session:request_edit': {
+        // --- TURN-BASED PERMISSION LOCK & HOST CONTROL ---
+        case 'session:claim_host': {
           if (!curUser) return;
           const room = sessionService.getOrCreateRoom(wsId);
-          if (curUser.id === room.currentEditorId || curUser.isHost) {
+          const isLocal = sessionService.isLocalOrHostIp(curUser.ip);
+          const hostExists = room.hostUserId && room.users.has(room.hostUserId);
+
+          if (isLocal || !hostExists || room.users.size <= 1 || curUser.isHost) {
+            curUser.isHost = true;
+            curUser.role = 'owner';
+            room.hostUserId = curUser.id;
+            room.currentEditorId = curUser.id;
+
             sendMsg({
+              type: 'session:joined',
+              yourId: curUser.id,
+              yourRole: curUser.role,
+              isHost: true,
+              userName: curUser.name,
+              workspaceId: room.id,
+              metadata: sessionService.getRoomMetadata(room.id),
+            });
+
+            sessionService.broadcastToRoom(wsId, {
               type: 'session:edit_granted',
               editorId: curUser.id,
               editorName: curUser.name,
             });
+
+            sessionService.broadcastToRoom(wsId, {
+              type: 'session:users_update',
+              activeUsers: sessionService.getActiveUsers(wsId),
+              hostUserId: room.hostUserId,
+              currentEditorId: room.currentEditorId,
+            });
+          }
+          break;
+        }
+
+        case 'session:request_edit': {
+          if (!curUser) return;
+          const room = sessionService.getOrCreateRoom(wsId);
+          const isLocal = sessionService.isLocalOrHostIp(curUser.ip);
+          const hostExists = room.hostUserId && room.users.has(room.hostUserId);
+
+          // If local machine, or already editor/host, or host is not in room, or single user: grant instantly!
+          if (isLocal || curUser.id === room.currentEditorId || curUser.isHost || !hostExists || room.users.size <= 1) {
+            if (isLocal || !hostExists) {
+              curUser.isHost = true;
+              curUser.role = 'owner';
+              room.hostUserId = curUser.id;
+            } else {
+              curUser.role = curUser.isHost ? 'owner' : 'editor';
+            }
+            room.currentEditorId = curUser.id;
+
+            sessionService.broadcastToRoom(wsId, {
+              type: 'session:edit_granted',
+              editorId: curUser.id,
+              editorName: curUser.name,
+            });
+            sessionService.broadcastToRoom(wsId, {
+              type: 'session:users_update',
+              activeUsers: sessionService.getActiveUsers(wsId),
+              hostUserId: room.hostUserId,
+              currentEditorId: room.currentEditorId,
+            });
             return;
           }
 
-          // Broadcast request to current editor/host
+          // Otherwise broadcast request to current editor/host
           sessionService.broadcastToRoom(wsId, {
             type: 'session:edit_requested',
             requesterId: curUser.id,

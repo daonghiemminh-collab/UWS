@@ -2308,8 +2308,25 @@
       return Boolean(isHost || (myUserId && currentEditorId === myUserId) || myUserRole === 'owner');
     }
 
+    function claimHostControl() {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'session:claim_host' }));
+        ws.send(JSON.stringify({ type: 'session:request_edit' }));
+      }
+    }
+
+    function requestEditControl() {
+      claimHostControl();
+      showToast('Đang nhận lại quyền điều khiển...', 'info');
+    }
+
     function updateTurnControlUI() {
       const isEditor = amIEditor();
+
+      // If active user list has only 1 user or isHost, and not editor, auto-claim
+      if (!isEditor && (isHost || activeUsersList.length <= 1)) {
+        claimHostControl();
+      }
 
       let editorUser = activeUsersList.find(u => u.id === currentEditorId);
       let editorName = editorUser ? editorUser.name : 'Người khác';
@@ -2336,13 +2353,6 @@
           }
         }
       });
-    }
-
-    function requestEditControl() {
-      if (ws && ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({ type: 'session:request_edit' }));
-        showToast('Đã gửi yêu cầu xin quyền điều khiển...', 'info');
-      }
     }
 
     function revokeEditControl() {

@@ -47,6 +47,7 @@ export type ClientMessage =
   | { type: 'session:join'; workspaceId?: string; userName?: string }
   | { type: 'session:leave'; workspaceId?: string }
   | { type: 'session:rename_user'; userName: string }
+  | { type: 'session:claim_host'; workspaceId?: string }
   | { type: 'session:request_edit'; workspaceId?: string }
   | { type: 'session:grant_edit'; targetUserId: string; workspaceId?: string }
   | { type: 'session:revoke_edit'; workspaceId?: string }
