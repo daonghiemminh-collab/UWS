@@ -3440,11 +3440,14 @@
         showSaveBtn: false,
       });
       leaf.isGitHubView = true;
-      insertLeafIntoLayout(leaf);
+      addLeafToLayout(leaf);
       renderGitReposHub(leaf.paneId);
       fetchGitRepos();
       return leaf;
     }
+
+    const spawnGitPane = spawnExplorerGitHub;
+    const spawnGitProjectsPane = spawnExplorerGitHub;
 
     function openGitReposHubInPane(paneId) {
       const leaf = allLeafsMap.get(paneId);
