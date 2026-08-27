@@ -17,10 +17,19 @@
       --text-bold: #f0f6fc;
       --text-muted: #8b949e;
       --accent: #58a6ff;
+      --accent-hover: #79c0ff;
       --accent-green: #3fb950;
       --accent-yellow: #d29922;
       --accent-red: #f85149;
       --accent-purple: #bc8cff;
+      --btn-bg: #1c222d;
+      --btn-bg-hover: #262f3e;
+      --btn-text: #f0f6fc;
+      --btn-primary-bg: #238636;
+      --btn-primary-text: #ffffff;
+      --topbar-bg: #10141d;
+      --dock-bg: #12161f;
+      --input-bg: #0b0e14;
     }
 
     * {
@@ -44,7 +53,7 @@
     /* TOP STATUS BAR */
     .top-bar {
       height: 40px;
-      background: #10141d;
+      background: var(--topbar-bg);
       border-bottom: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
@@ -80,9 +89,9 @@
     }
 
     .actions-dropdown-trigger {
-      background: #1a202c;
+      background: var(--btn-bg);
       border: 1px solid var(--border);
-      color: var(--text-bold);
+      color: var(--btn-text);
       padding: 4px 10px;
       border-radius: 6px;
       font-size: 11px;
@@ -95,9 +104,9 @@
       transition: all 0.15s ease;
     }
     .actions-dropdown-trigger:hover {
-      background: #283142;
+      background: var(--btn-bg-hover);
       border-color: var(--accent);
-      color: #fff;
+      color: var(--text-bold);
     }
 
     .actions-dropdown-menu {
@@ -105,7 +114,7 @@
       top: 100%;
       right: 0;
       margin-top: 5px;
-      background: rgba(22, 27, 34, 0.98);
+      background: var(--card-bg);
       backdrop-filter: blur(16px);
       border: 1px solid var(--border);
       border-radius: 6px;
@@ -134,15 +143,8 @@
       transition: background 0.1s;
     }
     .action-menu-item:hover {
-      background: #283142;
-      color: #fff;
-    }
-    .action-menu-item.config-btn {
-      color: #79c0ff;
-      border-top: 1px solid var(--border);
-      margin-top: 4px;
-      padding-top: 6px;
-      font-weight: 600;
+      background: var(--btn-bg-hover);
+      color: var(--text-bold);
     }
 
     /* MULTI-USER PRESENCE & IDENTITY WIDGET */
@@ -150,7 +152,7 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      background: #141822;
+      background: var(--topbar-bg);
       padding: 3px 6px 3px 10px;
       border-radius: 20px;
       border: 1px solid var(--border);
@@ -169,7 +171,7 @@
       font-size: 11px;
       padding: 2px 8px;
       border-radius: 14px;
-      background: #1f2530;
+      background: var(--btn-bg);
       color: var(--text);
       border: 1px solid var(--border);
       cursor: pointer;
@@ -178,21 +180,21 @@
     }
     .user-badge:hover {
       border-color: var(--accent);
-      color: #fff;
-      background: #283142;
+      color: var(--text-bold);
+      background: var(--btn-bg-hover);
     }
     .user-badge.host {
       background: rgba(63, 185, 80, 0.12);
-      border-color: rgba(63, 185, 80, 0.35);
-      color: #7ee787;
+      border-color: var(--accent-green);
+      color: var(--accent-green);
     }
     .user-badge.host:hover {
       background: rgba(63, 185, 80, 0.22);
-      border-color: #3fb950;
+      border-color: var(--accent-green);
     }
     .user-badge.editor-now {
       box-shadow: 0 0 8px rgba(63, 185, 80, 0.35);
-      border-color: #3fb950;
+      border-color: var(--accent-green);
     }
     .user-badge.you {
       border-color: var(--accent);
@@ -200,14 +202,14 @@
     }
     .user-badge-name {
       font-weight: 600;
-      color: #f0f6fc;
+      color: var(--text-bold);
       max-width: 130px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
     .user-badge.host .user-badge-name {
-      color: #7ee787;
+      color: var(--accent-green);
     }
     .user-badge-tag {
       font-size: 9px;
@@ -219,15 +221,15 @@
     }
     .tag-you {
       background: rgba(88, 166, 255, 0.2);
-      color: #79c0ff;
+      color: var(--accent);
     }
     .tag-editor {
       background: rgba(63, 185, 80, 0.2);
-      color: #7ee787;
+      color: var(--accent-green);
     }
     .tag-viewer {
       background: rgba(139, 148, 158, 0.18);
-      color: #8b949e;
+      color: var(--text-muted);
     }
     .user-rename-icon {
       font-size: 10px;
@@ -236,13 +238,13 @@
       transition: color 0.1s;
     }
     .user-badge:hover .user-rename-icon {
-      color: #58a6ff;
+      color: var(--accent);
     }
 
     .share-btn {
-      background: #238636;
-      border: 1px solid #2ea043;
-      color: #fff;
+      background: var(--btn-primary-bg);
+      border: 1px solid var(--btn-primary-bg);
+      color: var(--btn-primary-text);
       font-size: 11px;
       font-weight: 600;
       padding: 2px 9px;
@@ -254,14 +256,14 @@
       transition: all 0.15s;
     }
     .share-btn:hover {
-      background: #2ea043;
-      box-shadow: 0 0 8px rgba(46, 160, 67, 0.4);
+      filter: brightness(1.15);
+      box-shadow: 0 0 8px var(--accent);
     }
 
     .btn-save {
-      background: #238636;
-      border: 1px solid #2ea043;
-      color: white;
+      background: var(--btn-primary-bg);
+      border: 1px solid var(--btn-primary-bg);
+      color: var(--btn-primary-text);
       padding: 4px 10px;
       border-radius: 4px;
       font-size: 11px;
@@ -269,11 +271,12 @@
       cursor: pointer;
       display: inline-flex;
       align-items: center;
+      transition: all 0.12s;
     }
-    .btn-save:hover { background: #2ea043; }
+    .btn-save:hover { filter: brightness(1.15); }
 
     .btn-cancel {
-      background: #21262d;
+      background: var(--btn-bg);
       border: 1px solid var(--border);
       color: var(--text-muted);
       padding: 4px 8px;
@@ -281,8 +284,9 @@
       font-size: 11px;
       font-family: inherit;
       cursor: pointer;
+      transition: all 0.12s;
     }
-    .btn-cancel:hover { background: #30363d; color: #fff; }
+    .btn-cancel:hover { background: var(--btn-bg-hover); color: var(--text-bold); }
 
     .live-tag {
       font-size: 11px;
@@ -327,7 +331,7 @@
       left: 0;
       bottom: 0;
       width: 230px;
-      background: rgba(18, 22, 31, 0.98);
+      background: var(--dock-bg);
       backdrop-filter: blur(16px);
       border-right: 1px solid var(--border);
       box-shadow: 10px 0 30px rgba(0, 0, 0, 0.7);
@@ -357,9 +361,9 @@
 
     .dock-btn {
       width: 100%;
-      background: #181d26;
+      background: var(--btn-bg);
       border: 1px solid var(--border);
-      color: var(--text-bold);
+      color: var(--btn-text);
       padding: 9px 12px;
       border-radius: 6px;
       font-size: 12px;
@@ -371,9 +375,9 @@
       text-align: left;
     }
     .dock-btn:hover {
-      background: #232a38;
+      background: var(--btn-bg-hover);
       border-color: var(--accent);
-      color: #fff;
+      color: var(--text-bold);
       transform: translateX(3px);
     }
     .dock-btn:active {
@@ -381,25 +385,25 @@
     }
 
     .dock-btn.btn-accent {
-      background: rgba(56, 139, 253, 0.12);
-      border-color: rgba(56, 139, 253, 0.3);
-      color: #79c0ff;
+      background: rgba(88, 166, 255, 0.12);
+      border-color: var(--accent);
+      color: var(--accent);
     }
     .dock-btn.btn-accent:hover {
-      background: rgba(56, 139, 253, 0.22);
+      background: rgba(88, 166, 255, 0.22);
       border-color: var(--accent);
-      color: #fff;
+      color: var(--text-bold);
     }
 
     .dock-btn.btn-purple {
       background: rgba(188, 140, 255, 0.12);
-      border-color: rgba(188, 140, 255, 0.3);
-      color: #d2a8ff;
+      border-color: var(--accent-purple);
+      color: var(--accent-purple);
     }
     .dock-btn.btn-purple:hover {
       background: rgba(188, 140, 255, 0.22);
       border-color: var(--accent-purple);
-      color: #fff;
+      color: var(--text-bold);
     }
 
     /* WORKSPACE ROOT CONTAINER */
@@ -432,7 +436,7 @@
     /* SPLITTER GUTTER */
     .split-gutter {
       flex-shrink: 0;
-      background: #181d27;
+      background: var(--card-header);
       position: relative;
       z-index: 50;
       transition: background 0.15s;
@@ -446,7 +450,7 @@
     .split-gutter.gutter-row:hover,
     .split-gutter.gutter-row.resizing {
       background: var(--accent);
-      box-shadow: 0 0 8px rgba(88, 166, 255, 0.6);
+      box-shadow: 0 0 8px var(--accent);
     }
 
     .split-gutter.gutter-col {
@@ -457,7 +461,7 @@
     .split-gutter.gutter-col:hover,
     .split-gutter.gutter-col.resizing {
       background: var(--accent);
-      box-shadow: 0 0 8px rgba(88, 166, 255, 0.6);
+      box-shadow: 0 0 8px var(--accent);
     }
 
     /* TILING LEAF PANE */
@@ -476,8 +480,8 @@
     }
 
     .tiling-pane.active {
-      border-color: var(--accent);
-      box-shadow: 0 0 10px rgba(88, 166, 255, 0.25);
+      border-color: var(--border-focus);
+      box-shadow: 0 0 10px var(--accent);
     }
 
     .tiling-pane.dragging {
@@ -516,7 +520,7 @@
     }
 
     .pane-title-path {
-      color: #79c0ff;
+      color: var(--accent);
       font-weight: 600;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -530,17 +534,18 @@
     }
 
     .pane-save-btn {
-      background: #238636;
-      border: 1px solid #2ea043;
-      color: #fff;
+      background: var(--btn-primary-bg);
+      border: 1px solid var(--btn-primary-bg);
+      color: var(--btn-primary-text);
       font-size: 10px;
       padding: 1px 6px;
       border-radius: 3px;
       cursor: pointer;
       font-family: inherit;
+      transition: filter 0.12s;
     }
     .pane-save-btn:hover {
-      background: #2ea043;
+      filter: brightness(1.15);
     }
 
     .pane-close-btn {
@@ -566,7 +571,7 @@
     .pane-body {
       flex: 1;
       position: relative;
-      background: #0a0d12;
+      background: var(--bg);
       overflow: hidden;
       display: flex;
       flex-direction: column;
@@ -587,8 +592,8 @@
       bottom: 12px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(22, 27, 34, 0.95);
-      border: 1px solid rgba(210, 153, 34, 0.6);
+      background: var(--card-header);
+      border: 1px solid var(--accent-yellow);
       border-radius: 20px;
       padding: 4px 12px;
       display: none;
@@ -606,42 +611,41 @@
 
     .terminal-viewer-text {
       font-size: 11px;
-      color: #e3b341;
-      white-space: nowrap;
+      color: var(--accent-yellow);
+      font-weight: 600;
     }
 
-    .terminal-viewer-btn {
-      background: #d29922;
-      border: 1px solid #e3b341;
-      color: #111;
+    .terminal-request-btn {
+      background: var(--accent);
+      border: none;
+      color: #000;
       font-weight: 700;
       font-size: 10px;
-      padding: 2px 10px;
-      border-radius: 12px;
+      padding: 2px 8px;
+      border-radius: 10px;
       cursor: pointer;
       font-family: inherit;
       transition: all 0.12s;
-      white-space: nowrap;
     }
-    .terminal-viewer-btn:hover {
-      background: #e3b341;
-      transform: scale(1.04);
+    .terminal-request-btn:hover {
+      filter: brightness(1.15);
+      box-shadow: 0 0 8px var(--accent);
     }
 
     .terminal-revoke-btn {
-      background: rgba(248, 81, 73, 0.2);
-      border: 1px solid var(--accent-red);
-      color: #ff7b72;
+      background: var(--accent-red);
+      border: none;
+      color: #fff;
+      font-weight: 700;
       font-size: 10px;
       padding: 2px 8px;
-      border-radius: 12px;
+      border-radius: 10px;
       cursor: pointer;
       font-family: inherit;
-      white-space: nowrap;
+      transition: all 0.12s;
     }
     .terminal-revoke-btn:hover {
-      background: var(--accent-red);
-      color: #fff;
+      filter: brightness(1.15);
     }
 
     .xterm {
@@ -695,64 +699,56 @@
       display: flex;
       flex-direction: column;
       height: 100%;
-      background: #0d1117;
+      background: var(--bg);
       overflow: hidden;
     }
 
     .explorer-nav-bar {
-      background: #161b22;
+      padding: 6px 8px;
+      background: var(--card-header);
       border-bottom: 1px solid var(--border);
       display: flex;
       flex-direction: column;
-      gap: 4px;
-      padding: 6px 8px;
+      gap: 5px;
       flex-shrink: 0;
     }
 
-    .explorer-drive-chips {
+    .explorer-drives-row {
       display: flex;
       align-items: center;
-      gap: 5px;
-      overflow-x: auto;
-      padding-bottom: 2px;
-    }
-    .explorer-drive-chips::-webkit-scrollbar {
-      height: 3px;
-    }
-    .explorer-drive-chips::-webkit-scrollbar-thumb {
-      background: #30363d;
-      border-radius: 2px;
+      gap: 4px;
+      flex-wrap: wrap;
     }
 
     .drive-chip {
-      background: #1f242e;
+      background: var(--btn-bg);
       border: 1px solid var(--border);
       color: var(--text);
+      font-size: 11px;
+      font-weight: 600;
       padding: 2px 7px;
-      border-radius: 3px;
-      font-size: 10px;
+      border-radius: 4px;
       cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.12s;
+      transition: all 0.15s;
     }
     .drive-chip:hover,
     .drive-chip.active {
-      background: #283142;
+      background: var(--btn-bg-hover);
       border-color: var(--accent);
-      color: #79c0ff;
+      color: var(--accent);
     }
 
     .drive-chip.chip-git {
       background: rgba(188, 140, 255, 0.12);
-      border-color: rgba(188, 140, 255, 0.4);
-      color: #d2a8ff;
+      border-color: var(--accent-purple);
+      color: var(--accent-purple);
       font-weight: 600;
     }
     .drive-chip.chip-git:hover,
     .drive-chip.chip-git.active {
       background: rgba(188, 140, 255, 0.25);
       border-color: var(--accent-purple);
-      color: #fff;
+      color: var(--text-bold);
     }
 
     .explorer-breadcrumb-wrap {
@@ -768,14 +764,14 @@
       height: 3px;
     }
     .explorer-breadcrumb-wrap::-webkit-scrollbar-thumb {
-      background: #30363d;
+      background: var(--border);
       border-radius: 2px;
     }
 
     .breadcrumb-pill {
-      background: #21262d;
+      background: var(--btn-bg);
       border: 1px solid var(--border);
-      color: #79c0ff;
+      color: var(--accent);
       padding: 1px 6px;
       border-radius: 3px;
       cursor: pointer;
@@ -783,9 +779,9 @@
       transition: all 0.12s;
     }
     .breadcrumb-pill:hover {
-      background: #30363d;
+      background: var(--btn-bg-hover);
       border-color: var(--accent);
-      color: #fff;
+      color: var(--text-bold);
     }
     .breadcrumb-sep {
       color: var(--text-muted);
@@ -799,9 +795,9 @@
     }
 
     .explorer-path-input {
-      background: #0a0d12;
+      background: var(--input-bg);
       border: 1px solid var(--border);
-      color: #fff;
+      color: var(--text-bold);
       padding: 3px 8px;
       border-radius: 4px;
       font-size: 11px;
@@ -815,9 +811,9 @@
     }
 
     .explorer-btn {
-      background: #21262d;
+      background: var(--btn-bg);
       border: 1px solid var(--border);
-      color: var(--text);
+      color: var(--btn-text);
       padding: 3px 7px;
       border-radius: 4px;
       font-size: 11px;
@@ -830,9 +826,9 @@
       flex-shrink: 0;
     }
     .explorer-btn:hover {
-      background: #30363d;
+      background: var(--btn-bg-hover);
       border-color: var(--accent);
-      color: #fff;
+      color: var(--text-bold);
     }
 
     .explorer-list {
@@ -856,8 +852,8 @@
       transition: background 0.1s;
     }
     .explorer-item:hover {
-      background: #1f242e;
-      color: #fff;
+      background: var(--btn-bg-hover);
+      color: var(--text-bold);
     }
     .explorer-item.selected {
       background: rgba(88, 166, 255, 0.18);
@@ -881,14 +877,14 @@
       font-weight: 700;
       text-transform: uppercase;
     }
-    .badge-folder { background: rgba(88, 166, 255, 0.15); color: #79c0ff; }
-    .badge-code { background: rgba(63, 185, 80, 0.15); color: #7ee787; }
-    .badge-img { background: rgba(210, 153, 34, 0.15); color: #e3b341; }
-    .badge-doc { background: rgba(188, 140, 255, 0.15); color: #d2a8ff; }
+    .badge-folder { background: rgba(88, 166, 255, 0.15); color: var(--accent); }
+    .badge-code { background: rgba(63, 185, 80, 0.15); color: var(--accent-green); }
+    .badge-img { background: rgba(210, 153, 34, 0.15); color: var(--accent-yellow); }
+    .badge-doc { background: rgba(188, 140, 255, 0.15); color: var(--accent-purple); }
 
     .explorer-footer-bar {
       height: 22px;
-      background: #161b22;
+      background: var(--card-header);
       border-top: 1px solid var(--border);
       display: flex;
       align-items: center;
@@ -914,14 +910,14 @@
       align-items: center;
       justify-content: space-between;
       gap: 8px;
-      background: #161b24;
+      background: var(--card-header);
       padding: 8px 12px;
       border-radius: 6px;
       border: 1px solid var(--border);
     }
 
     .git-repo-card {
-      background: #11151e;
+      background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 6px;
       padding: 12px;
@@ -931,7 +927,7 @@
       transition: all 0.15s;
     }
     .git-repo-card:hover {
-      border-color: var(--accent-purple);
+      border-color: var(--accent);
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
     }
 
@@ -944,7 +940,7 @@
     .repo-title {
       font-size: 13px;
       font-weight: 700;
-      color: #d2a8ff;
+      color: var(--accent);
       display: flex;
       align-items: center;
     }
@@ -1125,7 +1121,7 @@
       width: 680px;
       max-width: 90vw;
       max-height: 85vh;
-      background: #161b24;
+      background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 8px;
       display: flex;
@@ -1140,7 +1136,7 @@
       max-width: 95vw;
       height: 620px;
       max-height: 90vh;
-      background: #141822;
+      background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 10px;
       display: flex;
@@ -1157,7 +1153,7 @@
 
     .settings-sidebar {
       width: 220px;
-      background: #0f131c;
+      background: var(--card-header);
       border-right: 1px solid var(--border);
       display: flex;
       flex-direction: column;
@@ -1183,13 +1179,13 @@
       transition: all 0.15s ease;
     }
     .settings-nav-btn:hover {
-      background: #1c2230;
-      color: #fff;
+      background: var(--btn-bg-hover);
+      color: var(--text-bold);
     }
     .settings-nav-btn.active {
       background: rgba(88, 166, 255, 0.15);
-      border-color: rgba(88, 166, 255, 0.35);
-      color: #79c0ff;
+      border-color: var(--accent);
+      color: var(--accent);
       font-weight: 700;
     }
 
@@ -1200,7 +1196,7 @@
       display: flex;
       flex-direction: column;
       gap: 16px;
-      background: #141822;
+      background: var(--card-bg);
     }
 
     .settings-pane {
@@ -1215,7 +1211,7 @@
     .settings-section-title {
       font-size: 13px;
       font-weight: 700;
-      color: #f0f6fc;
+      color: var(--text-bold);
       display: flex;
       align-items: center;
       gap: 8px;
@@ -1237,7 +1233,7 @@
     }
 
     .theme-card {
-      background: #10141e;
+      background: var(--card-bg);
       border: 2px solid var(--border);
       border-radius: 8px;
       padding: 10px;
@@ -1253,8 +1249,8 @@
     }
     .theme-card.active {
       border-color: var(--accent);
-      box-shadow: 0 0 12px rgba(88, 166, 255, 0.35);
-      background: #182030;
+      box-shadow: 0 0 12px var(--accent);
+      background: var(--btn-bg-hover);
     }
 
     .theme-preview-colors {
@@ -1272,7 +1268,7 @@
     .theme-card-name {
       font-size: 11px;
       font-weight: 600;
-      color: #f0f6fc;
+      color: var(--text-bold);
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -1280,7 +1276,7 @@
 
     /* ZOOM CONTROLS */
     .zoom-control-box {
-      background: #10141e;
+      background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 8px;
       padding: 14px;
@@ -1306,7 +1302,7 @@
 
     /* GITHUB REPO SETTINGS CARD */
     .repo-setting-item {
-      background: #10141e;
+      background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 8px;
       padding: 14px;
@@ -1327,7 +1323,7 @@
 
     .modal-header {
       height: 42px;
-      background: #1c212c;
+      background: var(--card-header);
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
@@ -1335,7 +1331,7 @@
       padding: 0 16px;
       font-size: 13px;
       font-weight: 700;
-      color: #79c0ff;
+      color: var(--accent);
     }
 
     .modal-body {
@@ -1349,7 +1345,7 @@
 
     .modal-footer {
       height: 48px;
-      background: #1c212c;
+      background: var(--card-header);
       border-top: 1px solid var(--border);
       display: flex;
       align-items: center;
@@ -1369,9 +1365,9 @@
       color: var(--text-muted);
     }
     .form-input {
-      background: #0d1117;
+      background: var(--input-bg);
       border: 1px solid var(--border);
-      color: #fff;
+      color: var(--text-bold);
       padding: 6px 10px;
       border-radius: 4px;
       font-size: 12px;
@@ -1383,7 +1379,7 @@
     }
 
     .slot-card {
-      background: #11151e;
+      background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 6px;
       padding: 12px;
@@ -1400,9 +1396,9 @@
 
     .slot-cmd-textarea {
       width: 100%;
-      background: #0d1117;
+      background: var(--input-bg);
       border: 1px solid var(--border);
-      color: #7ee787;
+      color: var(--accent-green);
       padding: 6px 8px;
       border-radius: 4px;
       font-size: 12px;
@@ -1425,17 +1421,17 @@
 
     .tag-chip {
       background: rgba(88, 166, 255, 0.12);
-      border: 1px solid rgba(88, 166, 255, 0.3);
-      color: #79c0ff;
+      border: 1px solid var(--border);
+      color: var(--accent);
       padding: 1px 6px;
       border-radius: 3px;
       cursor: pointer;
       transition: all 0.12s;
     }
     .tag-chip:hover {
-      background: rgba(88, 166, 255, 0.25);
+      background: var(--btn-bg-hover);
       border-color: var(--accent);
-      color: #fff;
+      color: var(--text-bold);
     }
 
     /* NOTEPAD (TEXT EDITOR) UI */
@@ -1443,33 +1439,32 @@
       display: flex;
       flex-direction: column;
       height: 100%;
-      background: #0d1117;
+      background: var(--bg);
       overflow: hidden;
     }
 
     .notepad-textarea {
       flex: 1;
       width: 100%;
-      background: #0a0d12;
-      color: #e6edf3;
+      background: var(--bg);
+      color: var(--text-bold);
       border: none;
+      padding: 12px;
+      font-size: 12px;
+      font-family: inherit;
       outline: none;
       resize: none;
-      padding: 10px 12px;
-      font-size: 13px;
-      line-height: 1.45;
-      font-family: "JetBrains Mono", "SF Mono", Consolas, monospace;
-      tab-size: 2;
+      line-height: 1.5;
     }
 
     .notepad-status-bar {
-      height: 22px;
-      background: #161b22;
+      height: 24px;
+      background: var(--card-header);
       border-top: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 10px;
+      padding: 0 12px;
       font-size: 10px;
       color: var(--text-muted);
       flex-shrink: 0;
@@ -1551,7 +1546,6 @@
   <!-- TOP BAR -->
   <div class="top-bar">
     <div class="brand-wrap">
-      <img src="/assets/logo.png" alt="UWS" style="width: 22px; height: 22px; object-fit: contain;" />
       <div class="brand-title">UWS // UNIFIABLE WORKSPACE SYSTEM</div>
     </div>
 
@@ -1605,7 +1599,7 @@
     </button>
 
     <div style="margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 4px;">
-      <button class="dock-btn btn-accent" onclick="openSystemSettingsModal()" style="background: rgba(88, 166, 255, 0.12); border-color: rgba(88, 166, 255, 0.35); color: #79c0ff; font-weight: 600;">
+      <button class="dock-btn btn-accent" onclick="openSystemSettingsModal()" style="background: rgba(88, 166, 255, 0.12); border-color: rgba(88, 166, 255, 0.35); color: var(--accent); font-weight: 600;">
         <span>⚙️ Cài Đặt Hệ Thống</span>
       </button>
     </div>
@@ -1641,32 +1635,23 @@
 
   <!-- CREATE GIT REPO MODAL -->
   <div id="create-repo-modal" class="uws-modal-overlay">
-    <div class="modal-box" style="width: 520px;">
+    <div class="modal-box">
       <div class="modal-header">
-        <span>Khởi Tạo & Phân Phối Git Repository</span>
+        <span>Khởi Tạo Git Repository Mới</span>
         <button class="pane-close-btn" onclick="closeCreateRepoModal()">✕</button>
       </div>
       <div class="modal-body">
         <div class="form-group">
-          <label class="form-label">Tên Repository / Dự Án:</label>
-          <input type="text" class="form-input" id="newRepoName" placeholder="vd: my-awesome-app, api-gateway" />
+          <label class="form-label">Tên Repository (Tên thư mục):</label>
+          <input type="text" class="form-input" id="newRepoName" placeholder="vd: my-awesome-app" />
         </div>
         <div class="form-group">
-          <label class="form-label">Mô tả dự án (Tùy chọn):</label>
-          <input type="text" class="form-input" id="newRepoDesc" placeholder="Mô tả ngắn về dự án..." />
+          <label class="form-label">Vị trí lưu (Mặc định trong kho workspace):</label>
+          <input type="text" class="form-input" id="newRepoParent" placeholder="Để trống để lưu tại storage/workspaces/default" />
         </div>
         <div class="form-group">
-          <label class="form-label">Mẫu .gitignore tự động:</label>
-          <select class="form-input" id="newRepoGitignore">
-            <option value="node">Node.js (node_modules, .env, dist, build)</option>
-            <option value="python">Python (venv, __pycache__, .env)</option>
-            <option value="general">Tổng quát (General logs, temp, .env)</option>
-            <option value="none">Không tạo .gitignore</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Liên kết Remote Git URL (Tùy chọn):</label>
-          <input type="text" class="form-input" id="newRepoRemote" placeholder="https://github.com/username/my-awesome-app.git" />
+          <label class="form-label">Remote URL GitHub (Tùy chọn):</label>
+          <input type="text" class="form-input" id="newRepoRemote" placeholder="https://github.com/username/repo.git" />
         </div>
       </div>
       <div class="modal-footer">
@@ -1676,20 +1661,20 @@
     </div>
   </div>
 
-  <!-- CLONE GIT REPO MODAL -->
+  <!-- CLONE REPO MODAL -->
   <div id="clone-repo-modal" class="uws-modal-overlay">
-    <div class="modal-box" style="width: 520px;">
+    <div class="modal-box">
       <div class="modal-header">
-        <span>Clone Git Repository Về Máy</span>
+        <span>Clone Repository Từ GitHub / Remote URL</span>
         <button class="pane-close-btn" onclick="closeCloneRepoModal()">✕</button>
       </div>
       <div class="modal-body">
         <div class="form-group">
-          <label class="form-label">Git Clone URL (HTTPS / SSH / LAN):</label>
-          <input type="text" class="form-input" id="cloneRepoUrl" placeholder="https://github.com/user/project.git" />
+          <label class="form-label">Git Clone URL:</label>
+          <input type="text" class="form-input" id="cloneRepoUrl" placeholder="https://github.com/username/repo.git" />
         </div>
         <div class="form-group">
-          <label class="form-label">Tên thư mục lưu (Tùy chọn):</label>
+          <label class="form-label">Tên thư mục đích (Tùy chọn):</label>
           <input type="text" class="form-input" id="cloneRepoName" placeholder="Để trống để tự lấy theo tên repo" />
         </div>
       </div>
@@ -1728,7 +1713,6 @@
     <div class="settings-modal-box">
       <div class="modal-header">
         <div style="display: flex; align-items: center; gap: 8px;">
-          <img src="/assets/logo.png" alt="UWS" style="width: 18px; height: 18px; object-fit: contain;" />
           <span>⚙️ Cài Đặt Hệ Thống // Settings & Customization</span>
         </div>
         <button class="pane-close-btn" onclick="closeSystemSettingsModal()">✕</button>
@@ -1755,24 +1739,18 @@
         <main class="settings-content-area">
           <!-- TAB 1: THEME & UI SCALE -->
           <div class="settings-pane active" id="pane_theme">
-            <div class="settings-section-title">🎨 Chủ Đề Màu Sắc (Color Theme)</div>
-            <div class="settings-section-desc">Thay đổi phong cách màu sắc giao diện UWS và Terminal tức thì.</div>
+            <div class="settings-section-title">🎨 Chủ Đề Màu Sắc Toàn Hệ Thống (Color Theme Combos)</div>
+            <div class="settings-section-desc">Thay đổi toàn bộ combo màu sắc (Nút bấm, chữ, nền, đường viền và Terminal) tức thì.</div>
             <div class="themes-grid" id="themesGridContainer"></div>
 
             <div class="settings-section-title" style="margin-top: 8px;">🔍 Tỉ Lệ Phóng To / Thu Nhỏ Giao Diện (UI Zoom)</div>
-            <div class="settings-section-desc">Điều chỉnh tỉ lệ phóng to thu nhỏ toàn bộ không gian làm việc và kích thước cửa sổ.</div>
+            <div class="settings-section-desc">Điều chỉnh tỉ lệ hiển thị không gian làm việc và kích thước cửa sổ.</div>
             <div class="zoom-control-box">
               <div class="zoom-slider-row">
-                <span style="font-size: 11px; font-weight: 600; color: var(--text-muted); min-width: 60px;">Tỉ lệ:</span>
+                <span style="font-size: 11px; font-weight: 600; color: var(--text-muted); min-width: 50px;">Tỉ lệ:</span>
                 <input type="range" class="zoom-slider" id="zoomSlider" min="75" max="140" step="5" value="100" oninput="onZoomSliderChange(this.value)" />
                 <span id="zoomValLabel" style="font-size: 13px; font-weight: 700; color: var(--accent); min-width: 48px; text-align: right;">100%</span>
-              </div>
-              <div class="zoom-presets-row">
-                <button class="explorer-btn" onclick="setUiZoom(0.85)">85% (Nhỏ gọn)</button>
-                <button class="explorer-btn" onclick="setUiZoom(1.0)">100% (Chuẩn)</button>
-                <button class="explorer-btn" onclick="setUiZoom(1.15)">115% (Vừa)</button>
-                <button class="explorer-btn" onclick="setUiZoom(1.25)">125% (Lớn)</button>
-                <button class="explorer-btn" onclick="setUiZoom(1.0)" style="margin-left: auto; color: #ff7b72;">↺ Đặt lại 100%</button>
+                <button class="explorer-btn" onclick="setUiZoom(1.0)" style="font-size: 10px; padding: 2px 7px; margin-left: 8px;" title="Đặt lại về mặc định 100%">↺ Đặt lại</button>
               </div>
             </div>
           </div>
@@ -2144,14 +2122,24 @@
           '--card-bg': '#12161f',
           '--card-header': '#181d27',
           '--border': '#2d333b',
+          '--border-focus': '#58a6ff',
+          '--text': '#c9d1d9',
+          '--text-bold': '#f0f6fc',
+          '--text-muted': '#8b949e',
           '--accent': '#58a6ff',
+          '--accent-hover': '#79c0ff',
           '--accent-green': '#3fb950',
           '--accent-yellow': '#d29922',
           '--accent-red': '#f85149',
           '--accent-purple': '#bc8cff',
-          '--text': '#c9d1d9',
-          '--text-bold': '#f0f6fc',
-          '--text-muted': '#8b949e',
+          '--btn-bg': '#1c222d',
+          '--btn-bg-hover': '#283244',
+          '--btn-text': '#f0f6fc',
+          '--btn-primary-bg': '#238636',
+          '--btn-primary-text': '#ffffff',
+          '--topbar-bg': '#10141d',
+          '--dock-bg': '#12161f',
+          '--input-bg': '#0b0e14',
         },
         termBg: '#090c10',
         termFg: '#c9d1d9',
@@ -2162,16 +2150,26 @@
         vars: {
           '--bg': '#070d19',
           '--card-bg': '#0b1528',
-          '--card-header': '#11203b',
+          '--card-header': '#101d36',
           '--border': '#1d3557',
+          '--border-focus': '#38bdf8',
+          '--text': '#cbd5e1',
+          '--text-bold': '#f8fafc',
+          '--text-muted': '#64748b',
           '--accent': '#38bdf8',
+          '--accent-hover': '#7dd3fc',
           '--accent-green': '#34d399',
           '--accent-yellow': '#fbbf24',
           '--accent-red': '#f87171',
           '--accent-purple': '#a78bfa',
-          '--text': '#cbd5e1',
-          '--text-bold': '#f8fafc',
-          '--text-muted': '#64748b',
+          '--btn-bg': '#152238',
+          '--btn-bg-hover': '#1e3252',
+          '--btn-text': '#f8fafc',
+          '--btn-primary-bg': '#0284c7',
+          '--btn-primary-text': '#ffffff',
+          '--topbar-bg': '#091122',
+          '--dock-bg': '#0b1528',
+          '--input-bg': '#050a14',
         },
         termBg: '#070d19',
         termFg: '#cbd5e1',
@@ -2182,16 +2180,26 @@
         vars: {
           '--bg': '#040d07',
           '--card-bg': '#081a0e',
-          '--card-header': '#0e2917',
+          '--card-header': '#0d2816',
           '--border': '#1b4d2b',
+          '--border-focus': '#22c55e',
+          '--text': '#bbf7d0',
+          '--text-bold': '#f0fdf4',
+          '--text-muted': '#4b7a59',
           '--accent': '#22c55e',
+          '--accent-hover': '#4ade80',
           '--accent-green': '#4ade80',
           '--accent-yellow': '#eab308',
           '--accent-red': '#ef4444',
-          '--accent-purple': '#a855f7',
-          '--text': '#bbf7d0',
-          '--text-bold': '#ffffff',
-          '--text-muted': '#4b7a59',
+          '--accent-purple': '#c084fc',
+          '--btn-bg': '#0e2917',
+          '--btn-bg-hover': '#163e23',
+          '--btn-text': '#f0fdf4',
+          '--btn-primary-bg': '#15803d',
+          '--btn-primary-text': '#ffffff',
+          '--topbar-bg': '#06140b',
+          '--dock-bg': '#081a0e',
+          '--input-bg': '#030a05',
         },
         termBg: '#040d07',
         termFg: '#bbf7d0',
@@ -2202,16 +2210,26 @@
         vars: {
           '--bg': '#0e0b1a',
           '--card-bg': '#151027',
-          '--card-header': '#20193b',
+          '--card-header': '#1f1738',
           '--border': '#3d2e6e',
+          '--border-focus': '#bd93f9',
+          '--text': '#f8f8f2',
+          '--text-bold': '#ffffff',
+          '--text-muted': '#7c6f9f',
           '--accent': '#bd93f9',
+          '--accent-hover': '#d8b4fe',
           '--accent-green': '#50fa7b',
           '--accent-yellow': '#f1fa8c',
           '--accent-red': '#ff5555',
           '--accent-purple': '#ff79c6',
-          '--text': '#f8f8f2',
-          '--text-bold': '#ffffff',
-          '--text-muted': '#6272a4',
+          '--btn-bg': '#231a40',
+          '--btn-bg-hover': '#312558',
+          '--btn-text': '#f8f8f2',
+          '--btn-primary-bg': '#7c3aed',
+          '--btn-primary-text': '#ffffff',
+          '--topbar-bg': '#100d1e',
+          '--dock-bg': '#151027',
+          '--input-bg': '#090712',
         },
         termBg: '#0e0b1a',
         termFg: '#f8f8f2',
@@ -2222,16 +2240,26 @@
         vars: {
           '--bg': '#140c08',
           '--card-bg': '#1d120c',
-          '--card-header': '#2c1c13',
+          '--card-header': '#2a1a11',
           '--border': '#593826',
+          '--border-focus': '#f59e0b',
+          '--text': '#fed7aa',
+          '--text-bold': '#fff7ed',
+          '--text-muted': '#9a745c',
           '--accent': '#f59e0b',
+          '--accent-hover': '#fbbf24',
           '--accent-green': '#10b981',
           '--accent-yellow': '#fbbf24',
           '--accent-red': '#f43f5e',
           '--accent-purple': '#c084fc',
-          '--text': '#fed7aa',
-          '--text-bold': '#ffffff',
-          '--text-muted': '#8c6851',
+          '--btn-bg': '#28180f',
+          '--btn-bg-hover': '#3d2517',
+          '--btn-text': '#fff7ed',
+          '--btn-primary-bg': '#d97706',
+          '--btn-primary-text': '#ffffff',
+          '--topbar-bg': '#170e09',
+          '--dock-bg': '#1d120c',
+          '--input-bg': '#0d0805',
         },
         termBg: '#140c08',
         termFg: '#fed7aa',
@@ -2244,14 +2272,24 @@
           '--card-bg': '#0a0a0a',
           '--card-header': '#141414',
           '--border': '#262626',
+          '--border-focus': '#60a5fa',
+          '--text': '#d4d4d4',
+          '--text-bold': '#ffffff',
+          '--text-muted': '#737373',
           '--accent': '#60a5fa',
+          '--accent-hover': '#93c5fd',
           '--accent-green': '#4ade80',
           '--accent-yellow': '#facc15',
           '--accent-red': '#f87171',
           '--accent-purple': '#c084fc',
-          '--text': '#d4d4d4',
-          '--text-bold': '#ffffff',
-          '--text-muted': '#737373',
+          '--btn-bg': '#171717',
+          '--btn-bg-hover': '#262626',
+          '--btn-text': '#ffffff',
+          '--btn-primary-bg': '#2563eb',
+          '--btn-primary-text': '#ffffff',
+          '--topbar-bg': '#050505',
+          '--dock-bg': '#0a0a0a',
+          '--input-bg': '#000000',
         },
         termBg: '#000000',
         termFg: '#ffffff',
