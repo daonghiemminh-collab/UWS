@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -39,7 +40,8 @@
       font-family: "JetBrains Mono", "SF Mono", "Fira Code", Consolas, monospace;
     }
 
-    html, body {
+    html,
+    body {
       width: 100%;
       height: 100%;
       overflow: hidden;
@@ -103,6 +105,7 @@
       font-family: inherit;
       transition: all 0.15s ease;
     }
+
     .actions-dropdown-trigger:hover {
       background: var(--btn-bg-hover);
       border-color: var(--accent);
@@ -142,6 +145,7 @@
       cursor: pointer;
       transition: background 0.1s;
     }
+
     .action-menu-item:hover {
       background: var(--btn-bg-hover);
       color: var(--text-bold);
@@ -178,28 +182,34 @@
       transition: all 0.15s ease;
       position: relative;
     }
+
     .user-badge:hover {
       border-color: var(--accent);
       color: var(--text-bold);
       background: var(--btn-bg-hover);
     }
+
     .user-badge.host {
       background: rgba(63, 185, 80, 0.12);
       border-color: var(--accent-green);
       color: var(--accent-green);
     }
+
     .user-badge.host:hover {
       background: rgba(63, 185, 80, 0.22);
       border-color: var(--accent-green);
     }
+
     .user-badge.editor-now {
       box-shadow: 0 0 8px rgba(63, 185, 80, 0.35);
       border-color: var(--accent-green);
     }
+
     .user-badge.you {
       border-color: var(--accent);
       box-shadow: 0 0 8px rgba(88, 166, 255, 0.3);
     }
+
     .user-badge-name {
       font-weight: 600;
       color: var(--text-bold);
@@ -208,9 +218,11 @@
       text-overflow: ellipsis;
       white-space: nowrap;
     }
+
     .user-badge.host .user-badge-name {
       color: var(--accent-green);
     }
+
     .user-badge-tag {
       font-size: 9px;
       padding: 1px 4px;
@@ -219,24 +231,29 @@
       font-weight: 700;
       letter-spacing: 0.3px;
     }
+
     .tag-you {
       background: rgba(88, 166, 255, 0.2);
       color: var(--accent);
     }
+
     .tag-editor {
       background: rgba(63, 185, 80, 0.2);
       color: var(--accent-green);
     }
+
     .tag-viewer {
       background: rgba(139, 148, 158, 0.18);
       color: var(--text-muted);
     }
+
     .user-rename-icon {
       font-size: 10px;
       color: var(--text-muted);
       margin-left: 2px;
       transition: color 0.1s;
     }
+
     .user-badge:hover .user-rename-icon {
       color: var(--accent);
     }
@@ -255,6 +272,7 @@
       font-family: inherit;
       transition: all 0.15s;
     }
+
     .share-btn:hover {
       filter: brightness(1.15);
       box-shadow: 0 0 8px var(--accent);
@@ -273,7 +291,10 @@
       align-items: center;
       transition: all 0.12s;
     }
-    .btn-save:hover { filter: brightness(1.15); }
+
+    .btn-save:hover {
+      filter: brightness(1.15);
+    }
 
     .btn-cancel {
       background: var(--btn-bg);
@@ -286,7 +307,11 @@
       cursor: pointer;
       transition: all 0.12s;
     }
-    .btn-cancel:hover { background: var(--btn-bg-hover); color: var(--text-bold); }
+
+    .btn-cancel:hover {
+      background: var(--btn-bg-hover);
+      color: var(--text-bold);
+    }
 
     .live-tag {
       font-size: 11px;
@@ -321,6 +346,7 @@
       cursor: pointer;
       transition: all 0.2s ease;
     }
+
     .sidebar-dock-trigger:hover {
       background: rgba(88, 166, 255, 0.3);
     }
@@ -344,7 +370,7 @@
       gap: 8px;
     }
 
-    .sidebar-dock-trigger:hover + .sidebar-dock,
+    .sidebar-dock-trigger:hover+.sidebar-dock,
     .sidebar-dock:hover {
       transform: translateX(0);
     }
@@ -374,12 +400,14 @@
       transition: all 0.15s ease;
       text-align: left;
     }
+
     .dock-btn:hover {
       background: var(--btn-bg-hover);
       border-color: var(--accent);
       color: var(--text-bold);
       transform: translateX(3px);
     }
+
     .dock-btn:active {
       transform: scale(0.98);
     }
@@ -389,6 +417,7 @@
       border-color: var(--accent);
       color: var(--accent);
     }
+
     .dock-btn.btn-accent:hover {
       background: rgba(88, 166, 255, 0.22);
       border-color: var(--accent);
@@ -400,6 +429,7 @@
       border-color: var(--accent-purple);
       color: var(--accent-purple);
     }
+
     .dock-btn.btn-purple:hover {
       background: rgba(188, 140, 255, 0.22);
       border-color: var(--accent-purple);
@@ -462,6 +492,7 @@
       cursor: col-resize;
       margin: 0 1px;
     }
+
     .split-gutter.gutter-row:hover,
     .split-gutter.gutter-row.resizing {
       background: var(--accent);
@@ -473,6 +504,7 @@
       cursor: row-resize;
       margin: 1px 0;
     }
+
     .split-gutter.gutter-col:hover,
     .split-gutter.gutter-col.resizing {
       background: var(--accent);
@@ -498,12 +530,15 @@
     .tiling-pane[data-service="terminal"] {
       opacity: var(--opacity-terminal, 1);
     }
+
     .tiling-pane[data-service="explorer"] {
       opacity: var(--opacity-explorer, 1);
     }
+
     .tiling-pane[data-service="notepad"] {
       opacity: var(--opacity-notepad, 1);
     }
+
     .tiling-pane[data-service="telemetry"] {
       opacity: var(--opacity-telemetry, 1);
     }
@@ -530,7 +565,10 @@
       flex-shrink: 0;
       user-select: none;
       cursor: grab;
+      position: relative;
+      z-index: 5;
     }
+
     .pane-header:active {
       cursor: grabbing;
     }
@@ -573,6 +611,7 @@
       font-family: inherit;
       transition: filter 0.12s;
     }
+
     .pane-save-btn:hover {
       filter: brightness(1.15);
     }
@@ -591,13 +630,14 @@
       align-items: center;
       justify-content: center;
     }
+
     .pane-close-btn:hover {
       color: var(--text-bold);
       background: var(--btn-bg-hover);
       border-color: var(--accent);
     }
 
-    /* PANE BODY */
+    /* PANE BODY & INDIVIDUAL WINDOW BACKGROUNDS */
     .pane-body {
       flex: 1;
       position: relative;
@@ -607,6 +647,44 @@
       flex-direction: column;
       min-height: 0;
       min-width: 0;
+    }
+
+    .pane-bg-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      pointer-events: none;
+      z-index: 1;
+      transition: background-image 0.25s ease, filter 0.25s ease, opacity 0.25s ease;
+    }
+
+    .tiling-pane[data-service="terminal"] .pane-bg-layer {
+      background-image: var(--bg-terminal-img, none);
+      filter: blur(var(--bg-terminal-blur, 0px)) brightness(var(--bg-terminal-dim, 1));
+      opacity: var(--bg-terminal-opacity, 0);
+    }
+
+    .tiling-pane[data-service="explorer"] .pane-bg-layer {
+      background-image: var(--bg-explorer-img, none);
+      filter: blur(var(--bg-explorer-blur, 0px)) brightness(var(--bg-explorer-dim, 1));
+      opacity: var(--bg-explorer-opacity, 0);
+    }
+
+    .tiling-pane[data-service="notepad"] .pane-bg-layer {
+      background-image: var(--bg-notepad-img, none);
+      filter: blur(var(--bg-notepad-blur, 0px)) brightness(var(--bg-notepad-dim, 1));
+      opacity: var(--bg-notepad-opacity, 0);
+    }
+
+    .tiling-pane[data-service="telemetry"] .pane-bg-layer {
+      background-image: var(--bg-telemetry-img, none);
+      filter: blur(var(--bg-telemetry-blur, 0px)) brightness(var(--bg-telemetry-dim, 1));
+      opacity: var(--bg-telemetry-opacity, 0);
     }
 
     /* TERMINAL MOUNT & VIEWER NOTIFICATION BAR */
@@ -635,8 +713,15 @@
     }
 
     @keyframes noticeFadeIn {
-      from { opacity: 0; transform: translate(-50%, 8px); }
-      to { opacity: 1; transform: translate(-50%, 0); }
+      from {
+        opacity: 0;
+        transform: translate(-50%, 8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+      }
     }
 
     .terminal-viewer-text {
@@ -657,6 +742,7 @@
       font-family: inherit;
       transition: all 0.12s;
     }
+
     .terminal-request-btn:hover {
       filter: brightness(1.15);
       box-shadow: 0 0 8px var(--accent);
@@ -674,6 +760,7 @@
       font-family: inherit;
       transition: all 0.12s;
     }
+
     .terminal-revoke-btn:hover {
       filter: brightness(1.15);
     }
@@ -682,9 +769,11 @@
       height: 100%;
       padding: 2px;
     }
+
     .xterm-viewport::-webkit-scrollbar {
       width: 6px;
     }
+
     .xterm-viewport::-webkit-scrollbar-thumb {
       background: #30363d;
       border-radius: 3px;
@@ -697,6 +786,7 @@
       background: #11151e;
       height: 100%;
     }
+
     .metric-list {
       display: flex;
       flex-direction: column;
@@ -704,20 +794,24 @@
       font-size: 12px;
       line-height: 1.4;
     }
+
     .metric-line {
       display: flex;
       align-items: baseline;
     }
+
     .metric-key {
       font-weight: 700;
       color: var(--text-bold);
       min-width: 80px;
       flex-shrink: 0;
     }
+
     .metric-val {
       color: #a5d6ff;
       word-break: break-word;
     }
+
     .metric-val .sub {
       color: var(--text-muted);
       font-size: 10px;
@@ -761,6 +855,7 @@
       cursor: pointer;
       transition: all 0.15s;
     }
+
     .drive-chip:hover,
     .drive-chip.active {
       background: var(--btn-bg-hover);
@@ -774,6 +869,7 @@
       color: var(--accent);
       font-weight: 600;
     }
+
     .drive-chip.chip-git:hover,
     .drive-chip.chip-git.active {
       background: var(--btn-bg-hover);
@@ -790,9 +886,11 @@
       white-space: nowrap;
       padding: 2px 0;
     }
+
     .explorer-breadcrumb-wrap::-webkit-scrollbar {
       height: 3px;
     }
+
     .explorer-breadcrumb-wrap::-webkit-scrollbar-thumb {
       background: var(--border);
       border-radius: 2px;
@@ -808,11 +906,13 @@
       font-size: 11px;
       transition: all 0.12s;
     }
+
     .breadcrumb-pill:hover {
       background: var(--btn-bg-hover);
       border-color: var(--accent);
       color: var(--text-bold);
     }
+
     .breadcrumb-sep {
       color: var(--text-muted);
       font-size: 10px;
@@ -836,6 +936,7 @@
       flex: 1;
       min-width: 80px;
     }
+
     .explorer-path-input:focus {
       border-color: var(--accent);
     }
@@ -855,6 +956,7 @@
       transition: all 0.15s;
       flex-shrink: 0;
     }
+
     .explorer-btn:hover {
       background: var(--btn-bg-hover);
       border-color: var(--accent);
@@ -881,10 +983,12 @@
       cursor: pointer;
       transition: background 0.1s;
     }
+
     .explorer-item:hover {
       background: var(--btn-bg-hover);
       color: var(--text-bold);
     }
+
     .explorer-item.selected {
       background: rgba(88, 166, 255, 0.18);
       border-left: 2px solid var(--accent);
@@ -911,10 +1015,23 @@
       color: var(--text-muted);
       letter-spacing: 0.5px;
     }
-    .badge-folder { color: var(--accent); border-color: var(--accent); }
-    .badge-code { color: var(--accent-green); }
-    .badge-img { color: var(--accent-yellow); }
-    .badge-doc { color: var(--accent-purple); }
+
+    .badge-folder {
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .badge-code {
+      color: var(--accent-green);
+    }
+
+    .badge-img {
+      color: var(--accent-yellow);
+    }
+
+    .badge-doc {
+      color: var(--accent-purple);
+    }
 
     .explorer-footer-bar {
       height: 22px;
@@ -960,6 +1077,7 @@
       gap: 8px;
       transition: all 0.15s;
     }
+
     .git-repo-card:hover {
       border-color: var(--accent);
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
@@ -1054,8 +1172,15 @@
     }
 
     @keyframes menuFadeIn {
-      from { opacity: 0; transform: scale(0.96); }
-      to { opacity: 1; transform: scale(1); }
+      from {
+        opacity: 0;
+        transform: scale(0.96);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
     }
 
     .context-menu-item {
@@ -1069,21 +1194,26 @@
       cursor: pointer;
       transition: background 0.1s, color 0.1s;
     }
+
     .context-menu-item:hover {
       background: #283142;
       color: #fff;
     }
+
     .context-menu-item .menu-hint {
       font-size: 10px;
       color: var(--text-muted);
     }
+
     .context-menu-item.danger {
       color: #ff7b72;
     }
+
     .context-menu-item.danger:hover {
       background: rgba(248, 81, 73, 0.2);
       color: #ff7b72;
     }
+
     .context-menu-sep {
       height: 1px;
       background: var(--border);
@@ -1117,17 +1247,41 @@
       animation: toastSlideIn 0.25s ease-out, toastFadeOut 0.3s ease-in 3.7s forwards;
       pointer-events: auto;
     }
-    .toast-msg.success { border-left: 3px solid var(--accent-green); }
-    .toast-msg.info { border-left: 3px solid var(--accent); }
-    .toast-msg.warning { border-left: 3px solid var(--accent-yellow); }
+
+    .toast-msg.success {
+      border-left: 3px solid var(--accent-green);
+    }
+
+    .toast-msg.info {
+      border-left: 3px solid var(--accent);
+    }
+
+    .toast-msg.warning {
+      border-left: 3px solid var(--accent-yellow);
+    }
 
     @keyframes toastSlideIn {
-      from { transform: translateX(100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
     }
+
     @keyframes toastFadeOut {
-      from { opacity: 1; transform: translateY(0); }
-      to { opacity: 0; transform: translateY(-10px); }
+      from {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      to {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
     }
 
     /* MODAL WINDOWS */
@@ -1147,8 +1301,13 @@
     }
 
     @keyframes modalFadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
     }
 
     .modal-box {
@@ -1212,10 +1371,12 @@
       text-align: left;
       transition: all 0.15s ease;
     }
+
     .settings-nav-btn:hover {
       background: var(--btn-bg-hover);
       color: var(--text-bold);
     }
+
     .settings-nav-btn.active {
       background: rgba(88, 166, 255, 0.15);
       border-color: var(--accent);
@@ -1238,6 +1399,7 @@
       flex-direction: column;
       gap: 14px;
     }
+
     .settings-pane.active {
       display: flex;
     }
@@ -1252,6 +1414,7 @@
       padding-bottom: 8px;
       border-bottom: 1px solid var(--border);
     }
+
     .settings-section-desc {
       font-size: 11px;
       color: var(--text-muted);
@@ -1277,10 +1440,12 @@
       flex-direction: column;
       gap: 8px;
     }
+
     .theme-card:hover {
       border-color: var(--accent);
       transform: translateY(-2px);
     }
+
     .theme-card.active {
       border-color: var(--accent);
       box-shadow: 0 0 12px var(--accent);
@@ -1294,6 +1459,7 @@
       overflow: hidden;
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
+
     .theme-preview-block {
       flex: 1;
       height: 100%;
@@ -1318,20 +1484,75 @@
       flex-direction: column;
       gap: 12px;
     }
+
     .zoom-slider-row {
       display: flex;
       align-items: center;
       gap: 14px;
     }
+
     .zoom-slider {
       flex: 1;
       accent-color: var(--accent);
       cursor: pointer;
     }
+
     .zoom-presets-row {
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
+    }
+
+    /* WINDOW-SPECIFIC BACKGROUND & OPACITY TABS */
+    .window-settings-tabs {
+      display: flex;
+      gap: 6px;
+      margin-top: 4px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+      overflow-x: auto;
+    }
+
+    .win-tab-btn {
+      background: var(--btn-bg);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+
+    .win-tab-btn:hover {
+      background: var(--btn-bg-hover);
+      color: var(--text-bold);
+      border-color: var(--accent);
+    }
+
+    .win-tab-btn.active {
+      background: var(--btn-bg-hover);
+      border-color: var(--accent);
+      color: var(--accent);
+      font-weight: 700;
+      box-shadow: 0 0 8px var(--accent);
+    }
+
+    .window-settings-panel {
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px;
+    }
+
+    .window-settings-panel.active {
+      display: flex;
     }
 
     /* GITHUB REPO SETTINGS CARD */
@@ -1344,11 +1565,13 @@
       flex-direction: column;
       gap: 10px;
     }
+
     .repo-setting-top {
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
+
     .repo-remote-input-group {
       display: flex;
       gap: 8px;
@@ -1393,11 +1616,13 @@
       flex-direction: column;
       gap: 4px;
     }
+
     .form-label {
       font-size: 11px;
       font-weight: 600;
       color: var(--text-muted);
     }
+
     .form-input {
       background: var(--input-bg);
       border: 1px solid var(--border);
@@ -1408,6 +1633,7 @@
       font-family: inherit;
       outline: none;
     }
+
     .form-input:focus {
       border-color: var(--accent);
     }
@@ -1441,6 +1667,7 @@
       min-height: 48px;
       outline: none;
     }
+
     .slot-cmd-textarea:focus {
       border-color: var(--accent);
     }
@@ -1462,6 +1689,7 @@
       cursor: pointer;
       transition: all 0.12s;
     }
+
     .tag-chip:hover {
       background: var(--btn-bg-hover);
       border-color: var(--accent);
@@ -1564,6 +1792,7 @@
       color: var(--text-muted);
       gap: 12px;
     }
+
     .empty-state button {
       background: #238636;
       border: 1px solid #2ea043;
@@ -1576,6 +1805,7 @@
     }
   </style>
 </head>
+
 <body>
   <!-- TOP BAR -->
   <div class="top-bar">
@@ -1586,7 +1816,8 @@
     <div class="top-actions">
       <!-- QUICK ACTIONS DROPDOWN -->
       <div class="actions-dropdown-wrap">
-        <button class="actions-dropdown-trigger" id="actionsTriggerBtn" onclick="toggleActionsDropdown(event)" title="Chạy nhanh các mẫu lệnh tự động hóa">
+        <button class="actions-dropdown-trigger" id="actionsTriggerBtn" onclick="toggleActionsDropdown(event)"
+          title="Chạy nhanh các mẫu lệnh tự động hóa">
           <span>Actions</span>
           <span style="font-size: 9px;">▾</span>
         </button>
@@ -1632,8 +1863,10 @@
       <span>Telemetry</span>
     </button>
 
-    <div style="margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 4px;">
-      <button class="dock-btn btn-accent" onclick="openSystemSettingsModal()" style="background: rgba(88, 166, 255, 0.12); border-color: rgba(88, 166, 255, 0.35); color: var(--accent); font-weight: 600;">
+    <div
+      style="margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 4px;">
+      <button class="dock-btn btn-accent" onclick="openSystemSettingsModal()"
+        style="background: rgba(88, 166, 255, 0.12); border-color: rgba(88, 166, 255, 0.35); color: var(--accent); font-weight: 600;">
         <span>⚙️ Cài Đặt Hệ Thống</span>
       </button>
     </div>
@@ -1681,7 +1914,8 @@
         </div>
         <div class="form-group">
           <label class="form-label">Vị trí lưu (Mặc định trong kho workspace):</label>
-          <input type="text" class="form-input" id="newRepoParent" placeholder="Để trống để lưu tại storage/workspaces/default" />
+          <input type="text" class="form-input" id="newRepoParent"
+            placeholder="Để trống để lưu tại storage/workspaces/default" />
         </div>
         <div class="form-group">
           <label class="form-label">Remote URL GitHub (Tùy chọn):</label>
@@ -1729,8 +1963,10 @@
       <div class="modal-body">
         <div class="form-group">
           <label class="form-label" id="renameModalLabel">Tên hiển thị của bạn:</label>
-          <input type="text" class="form-input" id="modalRenameInput" maxlength="32" placeholder="vd: máy shiba, John..." />
-          <div style="font-size: 11px; color: var(--text-muted); margin-top: 6px; line-height: 1.4;" id="renameModalHint">
+          <input type="text" class="form-input" id="modalRenameInput" maxlength="32"
+            placeholder="vd: máy shiba, John..." />
+          <div style="font-size: 11px; color: var(--text-muted); margin-top: 6px; line-height: 1.4;"
+            id="renameModalHint">
             Ghi chú: Bạn là Host - Tên này sẽ đồng bộ làm Tên hiển thị trong phòng & Tên Node máy trạm.
           </div>
         </div>
@@ -1751,7 +1987,7 @@
         </div>
         <button class="pane-close-btn" onclick="closeSystemSettingsModal()">✕</button>
       </div>
-      
+
       <div class="settings-layout">
         <!-- SIDEBAR TABS -->
         <aside class="settings-sidebar">
@@ -1774,82 +2010,159 @@
           <!-- TAB 1: THEME, BACKGROUND & UI SCALE -->
           <div class="settings-pane active" id="pane_theme">
             <div class="settings-section-title">Chủ Đề Màu Sắc Toàn Hệ Thống (Color Theme Combos)</div>
-            <div class="settings-section-desc">Thay đổi toàn bộ combo màu sắc (Nút bấm, chữ, nền, đường viền và Terminal) tức thì.</div>
             <div class="themes-grid" id="themesGridContainer"></div>
 
-            <div class="settings-section-title" style="margin-top: 8px;">Tỉ Lệ Phóng To / Thu Nhỏ Giao Diện (UI Zoom)</div>
-            <div class="settings-section-desc">Điều chỉnh tỉ lệ hiển thị không gian làm việc và kích thước cửa sổ.</div>
+            <div class="settings-section-title" style="margin-top: 8px;">Tỉ Lệ Phóng To / Thu Nhỏ Giao Diện (UI Zoom)
+            </div>
             <div class="zoom-control-box">
               <div class="zoom-slider-row">
-                <span style="font-size: 11px; font-weight: 600; color: var(--text-muted); min-width: 50px;">Tỉ lệ:</span>
-                <input type="range" class="zoom-slider" id="zoomSlider" min="75" max="140" step="5" value="100" oninput="onZoomSliderChange(this.value)" />
-                <span id="zoomValLabel" style="font-size: 13px; font-weight: 700; color: var(--accent); min-width: 48px; text-align: right;">100%</span>
-                <button class="explorer-btn" onclick="setUiZoom(1.0)" style="font-size: 10px; padding: 2px 7px; margin-left: 8px;" title="Đặt lại về mặc định 100%">Đặt lại</button>
+                <span style="font-size: 11px; font-weight: 600; color: var(--text-muted); min-width: 50px;">Tỉ
+                  lệ:</span>
+                <input type="range" class="zoom-slider" id="zoomSlider" min="75" max="140" step="5" value="100"
+                  oninput="onZoomSliderChange(this.value)" />
+                <span id="zoomValLabel"
+                  style="font-size: 13px; font-weight: 700; color: var(--accent); min-width: 48px; text-align: right;">100%</span>
+                <button class="explorer-btn" onclick="setUiZoom(1.0)"
+                  style="font-size: 10px; padding: 2px 7px; margin-left: 8px;" title="Đặt lại về mặc định 100%">Đặt
+                  lại</button>
               </div>
             </div>
 
-            <div class="settings-section-title" style="margin-top: 8px;">Hình Nền Không Gian Làm Việc (Workspace Background)</div>
-            <div class="settings-section-desc">Tùy chỉnh ảnh nền cho toàn bộ khu vực làm việc UWS.</div>
-            <div class="zoom-control-box" style="gap: 10px;">
+            <div class="settings-section-title" style="margin-top: 14px;">Hình Nền & Độ Trong Suốt Riêng Cho Từng Cửa Sổ</div>
+            <div class="settings-section-desc">Cài đặt hình nền, độ mờ (Blur), làm tối (Dim) và độ trong suốt (Glass Opacity) độc lập cho từng dịch vụ cửa sổ (trừ Git Projects).</div>
+
+            <div class="window-settings-tabs">
+              <button class="win-tab-btn active" id="wtab_btn_terminal" onclick="switchWindowSettingsTab('terminal')">PowerShell Terminal</button>
+              <button class="win-tab-btn" id="wtab_btn_explorer" onclick="switchWindowSettingsTab('explorer')">File Explorer</button>
+              <button class="win-tab-btn" id="wtab_btn_notepad" onclick="switchWindowSettingsTab('notepad')">Notepad Editor</button>
+              <button class="win-tab-btn" id="wtab_btn_telemetry" onclick="switchWindowSettingsTab('telemetry')">Telemetry Dashboard</button>
+            </div>
+
+            <!-- TERMINAL SETTINGS PANEL -->
+            <div class="window-settings-panel active" id="wtab_pane_terminal">
               <div style="display: flex; gap: 8px;">
-                <input type="text" class="form-input" id="settingsBgUrlInput" placeholder="Nhập link ảnh nền (vd: https://images.unsplash.com/...)" style="flex: 1;" />
-                <button class="btn-save" onclick="applyCustomBackground()">Áp Dụng</button>
-                <button class="explorer-btn" onclick="clearCustomBackground()">Xóa Nền</button>
+                <input type="text" class="form-input" id="win_bg_url_terminal" placeholder="Dán link ảnh nền cho PowerShell Terminal (https://...)" style="flex: 1;" />
+                <button class="btn-save" onclick="applyWindowBg('terminal')">Áp Dụng</button>
+                <button class="explorer-btn" onclick="clearWindowBg('terminal')">Xóa Nền</button>
               </div>
               <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
                 <span style="font-size: 11px; color: var(--text-muted);">Mẫu nền sẵn:</span>
-                <button class="explorer-btn" onclick="setPresetBackground('cyber')">Cyber Grid</button>
-                <button class="explorer-btn" onclick="setPresetBackground('nebula')">Deep Nebula</button>
-                <button class="explorer-btn" onclick="setPresetBackground('aurora')">Aurora Night</button>
-                <button class="explorer-btn" onclick="setPresetBackground('minimal')">Minimal Slate</button>
+                <button class="explorer-btn" onclick="setWindowPresetBg('terminal', 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1600&auto=format&fit=crop')">Cyber Matrix</button>
+                <button class="explorer-btn" onclick="setWindowPresetBg('terminal', 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1600&auto=format&fit=crop')">Dark Cyberpunk</button>
+                <button class="explorer-btn" onclick="setWindowPresetBg('terminal', 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?q=80&w=1600&auto=format&fit=crop')">Deep Space</button>
               </div>
-              <div style="display: flex; gap: 20px; align-items: center; margin-top: 4px; flex-wrap: wrap;">
-                <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 200px;">
-                  <span style="font-size: 11px; color: var(--text-muted); min-width: 70px;">Độ mờ (Blur):</span>
-                  <input type="range" class="zoom-slider" id="bgBlurSlider" min="0" max="25" step="1" value="0" oninput="onBgBlurChange(this.value)" />
-                  <span id="bgBlurValLabel" style="font-size: 11px; color: var(--accent); min-width: 32px; text-align: right;">0px</span>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-top: 4px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <span style="font-size: 11px; color: var(--text-muted); min-width: 75px;">Độ mờ Blur:</span>
+                  <input type="range" class="zoom-slider" id="win_blur_terminal" min="0" max="25" step="1" value="0" oninput="onWindowBlurChange('terminal', this.value)" />
+                  <span id="win_blur_val_terminal" style="font-size: 11px; color: var(--accent); min-width: 32px; text-align: right;">0px</span>
                 </div>
-                <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 200px;">
-                  <span style="font-size: 11px; color: var(--text-muted); min-width: 70px;">Làm tối (Dim):</span>
-                  <input type="range" class="zoom-slider" id="bgDimSlider" min="0" max="80" step="5" value="0" oninput="onBgDimChange(this.value)" />
-                  <span id="bgDimValLabel" style="font-size: 11px; color: var(--accent); min-width: 32px; text-align: right;">0%</span>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <span style="font-size: 11px; color: var(--text-muted); min-width: 75px;">Làm tối Dim:</span>
+                  <input type="range" class="zoom-slider" id="win_dim_terminal" min="0" max="90" step="5" value="30" oninput="onWindowDimChange('terminal', this.value)" />
+                  <span id="win_dim_val_terminal" style="font-size: 11px; color: var(--accent); min-width: 32px; text-align: right;">30%</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <span style="font-size: 11px; color: var(--text-muted); min-width: 75px;">Trong suốt:</span>
+                  <input type="range" class="zoom-slider" id="win_opacity_terminal" min="30" max="100" step="5" value="100" oninput="onWindowOpacityChange('terminal', this.value)" />
+                  <span id="win_opacity_val_terminal" style="font-size: 11px; color: var(--accent); min-width: 32px; text-align: right;">100%</span>
                 </div>
               </div>
             </div>
 
-            <div class="settings-section-title" style="margin-top: 8px;">Độ Trong Suốt Cửa Sổ (Window Opacity / Glass Effect)</div>
-            <div class="settings-section-desc">Điều chỉnh độ trong suốt riêng biệt cho từng loại cửa sổ hiển thị nền phía sau.</div>
-            <div class="zoom-control-box" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px;">
-              <div style="display: flex; flex-direction: column; gap: 6px; background: var(--input-bg); padding: 10px; border-radius: 6px; border: 1px solid var(--border);">
-                <div style="display: flex; justify-content: space-between; font-size: 11px;">
-                  <span style="font-weight: 600; color: var(--text-bold);">PowerShell Terminal</span>
-                  <span id="opacity_terminal_val" style="font-weight: 700; color: var(--accent);">100%</span>
-                </div>
-                <input type="range" class="zoom-slider" id="opacity_terminal_slider" min="30" max="100" step="5" value="100" oninput="onPaneOpacityChange('terminal', this.value)" />
+            <!-- EXPLORER SETTINGS PANEL -->
+            <div class="window-settings-panel" id="wtab_pane_explorer">
+              <div style="display: flex; gap: 8px;">
+                <input type="text" class="form-input" id="win_bg_url_explorer" placeholder="Dán link ảnh nền cho File Explorer (https://...)" style="flex: 1;" />
+                <button class="btn-save" onclick="applyWindowBg('explorer')">Áp Dụng</button>
+                <button class="explorer-btn" onclick="clearWindowBg('explorer')">Xóa Nền</button>
               </div>
-
-              <div style="display: flex; flex-direction: column; gap: 6px; background: var(--input-bg); padding: 10px; border-radius: 6px; border: 1px solid var(--border);">
-                <div style="display: flex; justify-content: space-between; font-size: 11px;">
-                  <span style="font-weight: 600; color: var(--text-bold);">File Explorer</span>
-                  <span id="opacity_explorer_val" style="font-weight: 700; color: var(--accent);">100%</span>
-                </div>
-                <input type="range" class="zoom-slider" id="opacity_explorer_slider" min="30" max="100" step="5" value="100" oninput="onPaneOpacityChange('explorer', this.value)" />
+              <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                <span style="font-size: 11px; color: var(--text-muted);">Mẫu nền sẵn:</span>
+                <button class="explorer-btn" onclick="setWindowPresetBg('explorer', 'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?q=80&w=1600&auto=format&fit=crop')">Aurora Night</button>
+                <button class="explorer-btn" onclick="setWindowPresetBg('explorer', 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1600&auto=format&fit=crop')">Minimal Slate</button>
+                <button class="explorer-btn" onclick="setWindowPresetBg('explorer', 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1600&auto=format&fit=crop')">Ocean Breeze</button>
               </div>
-
-              <div style="display: flex; flex-direction: column; gap: 6px; background: var(--input-bg); padding: 10px; border-radius: 6px; border: 1px solid var(--border);">
-                <div style="display: flex; justify-content: space-between; font-size: 11px;">
-                  <span style="font-weight: 600; color: var(--text-bold);">Notepad Editor</span>
-                  <span id="opacity_notepad_val" style="font-weight: 700; color: var(--accent);">100%</span>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-top: 4px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <span style="font-size: 11px; color: var(--text-muted); min-width: 75px;">Độ mờ Blur:</span>
+                  <input type="range" class="zoom-slider" id="win_blur_explorer" min="0" max="25" step="1" value="0" oninput="onWindowBlurChange('explorer', this.value)" />
+                  <span id="win_blur_val_explorer" style="font-size: 11px; color: var(--accent); min-width: 32px; text-align: right;">0px</span>
                 </div>
-                <input type="range" class="zoom-slider" id="opacity_notepad_slider" min="30" max="100" step="5" value="100" oninput="onPaneOpacityChange('notepad', this.value)" />
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <span style="font-size: 11px; color: var(--text-muted); min-width: 75px;">Làm tối Dim:</span>
+                  <input type="range" class="zoom-slider" id="win_dim_explorer" min="0" max="90" step="5" value="30" oninput="onWindowDimChange('explorer', this.value)" />
+                  <span id="win_dim_val_explorer" style="font-size: 11px; color: var(--accent); min-width: 32px; text-align: right;">30%</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <span style="font-size: 11px; color: var(--text-muted); min-width: 75px;">Trong suốt:</span>
+                  <input type="range" class="zoom-slider" id="win_opacity_explorer" min="30" max="100" step="5" value="100" oninput="onWindowOpacityChange('explorer', this.value)" />
+                  <span id="win_opacity_val_explorer" style="font-size: 11px; color: var(--accent); min-width: 32px; text-align: right;">100%</span>
+                </div>
               </div>
+            </div>
 
-              <div style="display: flex; flex-direction: column; gap: 6px; background: var(--input-bg); padding: 10px; border-radius: 6px; border: 1px solid var(--border);">
-                <div style="display: flex; justify-content: space-between; font-size: 11px;">
-                  <span style="font-weight: 600; color: var(--text-bold);">Telemetry Dashboard</span>
-                  <span id="opacity_telemetry_val" style="font-weight: 700; color: var(--accent);">100%</span>
+            <!-- NOTEPAD SETTINGS PANEL -->
+            <div class="window-settings-panel" id="wtab_pane_notepad">
+              <div style="display: flex; gap: 8px;">
+                <input type="text" class="form-input" id="win_bg_url_notepad" placeholder="Dán link ảnh nền cho Notepad Editor (https://...)" style="flex: 1;" />
+                <button class="btn-save" onclick="applyWindowBg('notepad')">Áp Dụng</button>
+                <button class="explorer-btn" onclick="clearWindowBg('notepad')">Xóa Nền</button>
+              </div>
+              <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                <span style="font-size: 11px; color: var(--text-muted);">Mẫu nền sẵn:</span>
+                <button class="explorer-btn" onclick="setWindowPresetBg('notepad', 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1600&auto=format&fit=crop')">Night Coding</button>
+                <button class="explorer-btn" onclick="setWindowPresetBg('notepad', 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?q=80&w=1600&auto=format&fit=crop')">Studio Gradient</button>
+                <button class="explorer-btn" onclick="setWindowPresetBg('notepad', 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=1600&auto=format&fit=crop')">Workspace Desk</button>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-top: 4px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <span style="font-size: 11px; color: var(--text-muted); min-width: 75px;">Độ mờ Blur:</span>
+                  <input type="range" class="zoom-slider" id="win_blur_notepad" min="0" max="25" step="1" value="0" oninput="onWindowBlurChange('notepad', this.value)" />
+                  <span id="win_blur_val_notepad" style="font-size: 11px; color: var(--accent); min-width: 32px; text-align: right;">0px</span>
                 </div>
-                <input type="range" class="zoom-slider" id="opacity_telemetry_slider" min="30" max="100" step="5" value="100" oninput="onPaneOpacityChange('telemetry', this.value)" />
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <span style="font-size: 11px; color: var(--text-muted); min-width: 75px;">Làm tối Dim:</span>
+                  <input type="range" class="zoom-slider" id="win_dim_notepad" min="0" max="90" step="5" value="30" oninput="onWindowDimChange('notepad', this.value)" />
+                  <span id="win_dim_val_notepad" style="font-size: 11px; color: var(--accent); min-width: 32px; text-align: right;">30%</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <span style="font-size: 11px; color: var(--text-muted); min-width: 75px;">Trong suốt:</span>
+                  <input type="range" class="zoom-slider" id="win_opacity_notepad" min="30" max="100" step="5" value="100" oninput="onWindowOpacityChange('notepad', this.value)" />
+                  <span id="win_opacity_val_notepad" style="font-size: 11px; color: var(--accent); min-width: 32px; text-align: right;">100%</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- TELEMETRY SETTINGS PANEL -->
+            <div class="window-settings-panel" id="wtab_pane_telemetry">
+              <div style="display: flex; gap: 8px;">
+                <input type="text" class="form-input" id="win_bg_url_telemetry" placeholder="Dán link ảnh nền cho Telemetry Dashboard (https://...)" style="flex: 1;" />
+                <button class="btn-save" onclick="applyWindowBg('telemetry')">Áp Dụng</button>
+                <button class="explorer-btn" onclick="clearWindowBg('telemetry')">Xóa Nền</button>
+              </div>
+              <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                <span style="font-size: 11px; color: var(--text-muted);">Mẫu nền sẵn:</span>
+                <button class="explorer-btn" onclick="setWindowPresetBg('telemetry', 'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1600&auto=format&fit=crop')">HUD Matrix</button>
+                <button class="explorer-btn" onclick="setWindowPresetBg('telemetry', 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1600&auto=format&fit=crop')">Sci-Fi Blue</button>
+                <button class="explorer-btn" onclick="setWindowPresetBg('telemetry', 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1600&auto=format&fit=crop')">Cyber Grid</button>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-top: 4px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <span style="font-size: 11px; color: var(--text-muted); min-width: 75px;">Độ mờ Blur:</span>
+                  <input type="range" class="zoom-slider" id="win_blur_telemetry" min="0" max="25" step="1" value="0" oninput="onWindowBlurChange('telemetry', this.value)" />
+                  <span id="win_blur_val_telemetry" style="font-size: 11px; color: var(--accent); min-width: 32px; text-align: right;">0px</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <span style="font-size: 11px; color: var(--text-muted); min-width: 75px;">Làm tối Dim:</span>
+                  <input type="range" class="zoom-slider" id="win_dim_telemetry" min="0" max="90" step="5" value="30" oninput="onWindowDimChange('telemetry', this.value)" />
+                  <span id="win_dim_val_telemetry" style="font-size: 11px; color: var(--accent); min-width: 32px; text-align: right;">30%</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <span style="font-size: 11px; color: var(--text-muted); min-width: 75px;">Trong suốt:</span>
+                  <input type="range" class="zoom-slider" id="win_opacity_telemetry" min="30" max="100" step="5" value="100" oninput="onWindowOpacityChange('telemetry', this.value)" />
+                  <span id="win_opacity_val_telemetry" style="font-size: 11px; color: var(--accent); min-width: 32px; text-align: right;">100%</span>
+                </div>
               </div>
             </div>
           </div>
@@ -1858,8 +2171,10 @@
           <div class="settings-pane" id="pane_automation">
             <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
               <div>
-                <div class="settings-section-title" style="border-bottom: none; padding-bottom: 0;">Mẫu Lệnh Tự Động Hóa & Git</div>
-                <div class="settings-section-desc" style="margin-top: 4px;">Cấu hình các slot lệnh chạy nhanh hiển thị trong menu <code>Actions ▾</code> trên Top Bar.</div>
+                <div class="settings-section-title" style="border-bottom: none; padding-bottom: 0;">Mẫu Lệnh Tự Động Hóa
+                  & Git</div>
+                <div class="settings-section-desc" style="margin-top: 4px;">Cấu hình các slot lệnh chạy nhanh hiển thị
+                  trong menu <code>Actions ▾</code> trên Top Bar.</div>
               </div>
               <div style="display: flex; gap: 8px;">
                 <button class="explorer-btn" onclick="addNewSlot()">Thêm Slot</button>
@@ -1873,8 +2188,10 @@
           <div class="settings-pane" id="pane_github">
             <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
               <div>
-                <div class="settings-section-title" style="border-bottom: none; padding-bottom: 0;">GitHub & Quản Lý Liên Kết Repositories</div>
-                <div class="settings-section-desc" style="margin-top: 4px;">Cập nhật Remote URL (origin), kiểm tra kết nối GitHub và đồng bộ mã nguồn.</div>
+                <div class="settings-section-title" style="border-bottom: none; padding-bottom: 0;">GitHub & Quản Lý
+                  Liên Kết Repositories</div>
+                <div class="settings-section-desc" style="margin-top: 4px;">Cập nhật Remote URL (origin), kiểm tra kết
+                  nối GitHub và đồng bộ mã nguồn.</div>
               </div>
               <div style="display: flex; gap: 6px;">
                 <button class="btn-save" onclick="openCreateRepoModal()">Tạo Repo Mới</button>
@@ -1888,24 +2205,30 @@
           <!-- TAB 4: NODE & IDENTITY -->
           <div class="settings-pane" id="pane_node">
             <div class="settings-section-title">Định Danh Máy Trạm & Kết Nối Mạng LAN</div>
-            <div class="settings-section-desc">Thông tin máy trạm Node, tên hiển thị và liên kết chia sẻ trong mạng nội bộ.</div>
-            
-            <div class="form-group" style="background: var(--input-bg); padding: 14px; border: 1px solid var(--border); border-radius: 8px;">
+            <div class="settings-section-desc">Thông tin máy trạm Node, tên hiển thị và liên kết chia sẻ trong mạng nội
+              bộ.</div>
+
+            <div class="form-group"
+              style="background: var(--input-bg); padding: 14px; border: 1px solid var(--border); border-radius: 8px;">
               <label class="form-label">Tên Máy / Định Danh Node:</label>
               <div style="display: flex; gap: 8px; margin-top: 4px;">
-                <input type="text" class="form-input" id="settingsMachineNameInput" style="flex: 1;" placeholder="Tên máy..." />
+                <input type="text" class="form-input" id="settingsMachineNameInput" style="flex: 1;"
+                  placeholder="Tên máy..." />
                 <button class="btn-save" onclick="saveMachineNameFromSettings()">Đổi Tên</button>
               </div>
-              <span style="font-size: 10px; color: var(--text-muted); margin-top: 4px;">Tên này được dùng để định danh máy và thay thế thẻ biến <code>{{MACHINE_NAME}}</code> trong tự động hóa.</span>
+              <span style="font-size: 10px; color: var(--text-muted); margin-top: 4px;">Tên này được dùng để định danh
+                máy và thay thế thẻ biến <code>{{MACHINE_NAME}}</code> trong tự động hóa.</span>
             </div>
 
-            <div class="form-group" style="background: var(--input-bg); padding: 14px; border: 1px solid var(--border); border-radius: 8px;">
+            <div class="form-group"
+              style="background: var(--input-bg); padding: 14px; border: 1px solid var(--border); border-radius: 8px;">
               <label class="form-label">Liên Kết Mạng LAN (Local Area Network):</label>
               <div style="display: flex; gap: 8px; margin-top: 4px;">
                 <input type="text" class="form-input" id="settingsLanUrlInput" style="flex: 1;" readonly value="" />
                 <button class="explorer-btn" onclick="copyShareLink()">Sao Chép</button>
               </div>
-              <span style="font-size: 10px; color: var(--text-muted); margin-top: 4px;">Chia sẻ liên kết này cho các máy khác trong cùng mạng Wi-Fi/LAN để cùng tham gia làm việc.</span>
+              <span style="font-size: 10px; color: var(--text-muted); margin-top: 4px;">Chia sẻ liên kết này cho các máy
+                khác trong cùng mạng Wi-Fi/LAN để cùng tham gia làm việc.</span>
             </div>
           </div>
         </main>
@@ -2091,7 +2414,7 @@
 
         const badge = document.createElement('span');
         badge.className = `user-badge ${isHostUser ? 'host' : ''} ${isCurEditor ? 'editor-now' : ''} ${isMe ? 'you' : ''}`;
-        
+
         const hostTag = isHostUser ? '<span class="user-badge-tag tag-host">Host</span>' : '';
         const meTag = isMe ? '<span class="user-badge-tag tag-you">You</span>' : '';
         const roleTag = isCurEditor ? '<span class="user-badge-tag tag-editor">Editor</span>' : '<span class="user-badge-tag tag-viewer">Viewer</span>';
@@ -2466,113 +2789,142 @@
       setUiZoom(scale);
     }
 
-    // --- WORKSPACE BACKGROUND & PANE OPACITY CONTROLS ---
+    // --- WORKSPACE & PER-WINDOW BACKGROUND CONTROLS ---
 
-    const WALLPAPER_PRESETS = {
-      cyber: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1600&auto=format&fit=crop',
-      nebula: 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?q=80&w=1600&auto=format&fit=crop',
-      aurora: 'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?q=80&w=1600&auto=format&fit=crop',
-      minimal: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1600&auto=format&fit=crop',
+    const WINDOW_SERVICES = ['terminal', 'explorer', 'notepad', 'telemetry'];
+
+    const windowConfigs = {
+      terminal: {
+        url: localStorage.getItem('uws_bg_terminal_url') || '',
+        blur: parseInt(localStorage.getItem('uws_bg_terminal_blur') || '0', 10),
+        dim: parseInt(localStorage.getItem('uws_bg_terminal_dim') || '30', 10),
+        opacity: parseInt(localStorage.getItem('uws_opacity_terminal') || '100', 10),
+      },
+      explorer: {
+        url: localStorage.getItem('uws_bg_explorer_url') || '',
+        blur: parseInt(localStorage.getItem('uws_bg_explorer_blur') || '0', 10),
+        dim: parseInt(localStorage.getItem('uws_bg_explorer_dim') || '30', 10),
+        opacity: parseInt(localStorage.getItem('uws_opacity_explorer') || '100', 10),
+      },
+      notepad: {
+        url: localStorage.getItem('uws_bg_notepad_url') || '',
+        blur: parseInt(localStorage.getItem('uws_bg_notepad_blur') || '0', 10),
+        dim: parseInt(localStorage.getItem('uws_bg_notepad_dim') || '30', 10),
+        opacity: parseInt(localStorage.getItem('uws_opacity_notepad') || '100', 10),
+      },
+      telemetry: {
+        url: localStorage.getItem('uws_bg_telemetry_url') || '',
+        blur: parseInt(localStorage.getItem('uws_bg_telemetry_blur') || '0', 10),
+        dim: parseInt(localStorage.getItem('uws_bg_telemetry_dim') || '30', 10),
+        opacity: parseInt(localStorage.getItem('uws_opacity_telemetry') || '100', 10),
+      },
     };
 
-    let customBgUrl = localStorage.getItem('uws_custom_bg') || '';
-    let customBgBlur = parseInt(localStorage.getItem('uws_bg_blur') || '0', 10);
-    let customBgDim = parseInt(localStorage.getItem('uws_bg_dim') || '0', 10);
-
-    const paneOpacities = {
-      terminal: parseInt(localStorage.getItem('uws_opacity_terminal') || '100', 10),
-      explorer: parseInt(localStorage.getItem('uws_opacity_explorer') || '100', 10),
-      notepad: parseInt(localStorage.getItem('uws_opacity_notepad') || '100', 10),
-      telemetry: parseInt(localStorage.getItem('uws_opacity_telemetry') || '100', 10),
-    };
-
-    function applyWorkspaceBackground() {
-      const bgLayer = document.getElementById('workspace-bg-layer');
-      if (!bgLayer) return;
-
-      if (customBgUrl) {
-        bgLayer.style.backgroundImage = `url('${customBgUrl}')`;
-        bgLayer.style.filter = `blur(${customBgBlur}px) brightness(${1 - customBgDim / 100})`;
-        bgLayer.style.opacity = '1';
-      } else {
-        bgLayer.style.backgroundImage = 'none';
-        bgLayer.style.opacity = '0';
-      }
-
-      const input = document.getElementById('settingsBgUrlInput');
-      if (input) input.value = customBgUrl;
-
-      const blurSlider = document.getElementById('bgBlurSlider');
-      if (blurSlider) blurSlider.value = customBgBlur;
-      const blurLabel = document.getElementById('bgBlurValLabel');
-      if (blurLabel) blurLabel.innerText = `${customBgBlur}px`;
-
-      const dimSlider = document.getElementById('bgDimSlider');
-      if (dimSlider) dimSlider.value = customBgDim;
-      const dimLabel = document.getElementById('bgDimValLabel');
-      if (dimLabel) dimLabel.innerText = `${customBgDim}%`;
-    }
-
-    function applyCustomBackground() {
-      const input = document.getElementById('settingsBgUrlInput');
-      if (!input) return;
-      customBgUrl = input.value.trim();
-      localStorage.setItem('uws_custom_bg', customBgUrl);
-      applyWorkspaceBackground();
-      showToast(customBgUrl ? 'Đã áp dụng hình nền!' : 'Đã xóa hình nền', 'success');
-    }
-
-    function clearCustomBackground() {
-      customBgUrl = '';
-      localStorage.removeItem('uws_custom_bg');
-      const input = document.getElementById('settingsBgUrlInput');
-      if (input) input.value = '';
-      applyWorkspaceBackground();
-      showToast('Đã xóa hình nền!', 'info');
-    }
-
-    function setPresetBackground(presetKey) {
-      const url = WALLPAPER_PRESETS[presetKey];
-      if (!url) return;
-      customBgUrl = url;
-      localStorage.setItem('uws_custom_bg', url);
-      applyWorkspaceBackground();
-      showToast(`Đã áp dụng mẫu nền: ${presetKey}`, 'success');
-    }
-
-    function onBgBlurChange(val) {
-      customBgBlur = parseInt(val, 10);
-      localStorage.setItem('uws_bg_blur', customBgBlur);
-      applyWorkspaceBackground();
-    }
-
-    function onBgDimChange(val) {
-      customBgDim = parseInt(val, 10);
-      localStorage.setItem('uws_bg_dim', customBgDim);
-      applyWorkspaceBackground();
-    }
-
-    function onPaneOpacityChange(serviceType, val) {
-      const numVal = parseInt(val, 10);
-      paneOpacities[serviceType] = numVal;
-      localStorage.setItem(`uws_opacity_${serviceType}`, numVal);
-
-      const label = document.getElementById(`opacity_${serviceType}_val`);
-      if (label) label.innerText = `${numVal}%`;
-
-      const decimal = numVal / 100;
-      document.documentElement.style.setProperty(`--opacity-${serviceType}`, decimal.toString());
-    }
-
-    function initPaneOpacities() {
-      ['terminal', 'explorer', 'notepad', 'telemetry'].forEach(service => {
-        const val = paneOpacities[service] || 100;
-        document.documentElement.style.setProperty(`--opacity-${service}`, (val / 100).toString());
-        const slider = document.getElementById(`opacity_${service}_slider`);
-        if (slider) slider.value = val;
-        const label = document.getElementById(`opacity_${service}_val`);
-        if (label) label.innerText = `${val}%`;
+    function switchWindowSettingsTab(service) {
+      WINDOW_SERVICES.forEach(s => {
+        const btn = document.getElementById(`wtab_btn_${s}`);
+        const pane = document.getElementById(`wtab_pane_${s}`);
+        if (btn) btn.classList.toggle('active', s === service);
+        if (pane) pane.classList.toggle('active', s === service);
       });
+    }
+
+    function applyWindowBackgrounds() {
+      WINDOW_SERVICES.forEach(s => {
+        const cfg = windowConfigs[s];
+        if (!cfg) return;
+
+        if (cfg.url) {
+          document.documentElement.style.setProperty(`--bg-${s}-img`, `url("${cfg.url}")`);
+          document.documentElement.style.setProperty(`--bg-${s}-blur`, `${cfg.blur}px`);
+          document.documentElement.style.setProperty(`--bg-${s}-dim`, `${1 - (cfg.dim / 100)}`);
+          document.documentElement.style.setProperty(`--bg-${s}-opacity`, '1');
+        } else {
+          document.documentElement.style.setProperty(`--bg-${s}-img`, 'none');
+          document.documentElement.style.setProperty(`--bg-${s}-opacity`, '0');
+        }
+
+        document.documentElement.style.setProperty(`--opacity-${s}`, `${cfg.opacity / 100}`);
+
+        // Update UI inputs if present
+        const urlInput = document.getElementById(`win_bg_url_${s}`);
+        if (urlInput) urlInput.value = cfg.url;
+
+        const blurSlider = document.getElementById(`win_blur_${s}`);
+        if (blurSlider) blurSlider.value = cfg.blur;
+        const blurLabel = document.getElementById(`win_blur_val_${s}`);
+        if (blurLabel) blurLabel.innerText = `${cfg.blur}px`;
+
+        const dimSlider = document.getElementById(`win_dim_${s}`);
+        if (dimSlider) dimSlider.value = cfg.dim;
+        const dimLabel = document.getElementById(`win_dim_val_${s}`);
+        if (dimLabel) dimLabel.innerText = `${cfg.dim}%`;
+
+        const opSlider = document.getElementById(`win_opacity_${s}`);
+        if (opSlider) opSlider.value = cfg.opacity;
+        const opLabel = document.getElementById(`win_opacity_val_${s}`);
+        if (opLabel) opLabel.innerText = `${cfg.opacity}%`;
+
+        // Update terminal background transparency
+        if (s === 'terminal') {
+          const termBg = cfg.url ? 'rgba(9, 12, 16, 0.45)' : (THEMES[currentThemeKey]?.termBg || '#090c10');
+          allLeafsMap.forEach(leaf => {
+            if (leaf.serviceType === 'terminal' && leaf.term) {
+              leaf.term.options.theme = {
+                ...leaf.term.options.theme,
+                background: termBg,
+              };
+            }
+          });
+        }
+      });
+    }
+
+    function applyWindowBg(service) {
+      const input = document.getElementById(`win_bg_url_${service}`);
+      if (!input) return;
+      const url = input.value.trim();
+      windowConfigs[service].url = url;
+      localStorage.setItem(`uws_bg_${service}_url`, url);
+      applyWindowBackgrounds();
+      showToast(url ? `Đã áp dụng hình nền cho ${service}!` : `Đã xóa nền của ${service}`, 'success');
+    }
+
+    function clearWindowBg(service) {
+      windowConfigs[service].url = '';
+      localStorage.removeItem(`uws_bg_${service}_url`);
+      const input = document.getElementById(`win_bg_url_${service}`);
+      if (input) input.value = '';
+      applyWindowBackgrounds();
+      showToast(`Đã xóa hình nền của ${service}!`, 'info');
+    }
+
+    function setWindowPresetBg(service, url) {
+      windowConfigs[service].url = url;
+      localStorage.setItem(`uws_bg_${service}_url`, url);
+      applyWindowBackgrounds();
+      showToast(`Đã áp dụng mẫu nền cho ${service}!`, 'success');
+    }
+
+    function onWindowBlurChange(service, val) {
+      const num = parseInt(val, 10);
+      windowConfigs[service].blur = num;
+      localStorage.setItem(`uws_bg_${service}_blur`, num);
+      applyWindowBackgrounds();
+    }
+
+    function onWindowDimChange(service, val) {
+      const num = parseInt(val, 10);
+      windowConfigs[service].dim = num;
+      localStorage.setItem(`uws_bg_${service}_dim`, num);
+      applyWindowBackgrounds();
+    }
+
+    function onWindowOpacityChange(service, val) {
+      const num = parseInt(val, 10);
+      windowConfigs[service].opacity = num;
+      localStorage.setItem(`uws_opacity_${service}`, num);
+      applyWindowBackgrounds();
     }
 
     // --- SYSTEM SETTINGS MODAL CONTROLS ---
@@ -2583,8 +2935,8 @@
 
       switchSettingsTab(initialTab);
       renderThemesGrid();
-      applyWorkspaceBackground();
-      initPaneOpacities();
+      applyWindowBackgrounds();
+      switchWindowSettingsTab('terminal');
       renderSettingsSlotsList();
       renderSettingsGitRepos();
 
@@ -2744,7 +3096,7 @@
 
         const remoteVal = repo.remoteUrl || '';
         const isClean = repo.isClean;
-        const statusBadge = isClean 
+        const statusBadge = isClean
           ? '<span class="user-badge-tag tag-editor" style="background: rgba(63, 185, 80, 0.2); color: var(--accent-green);">Sạch</span>'
           : `<span class="user-badge-tag tag-viewer" style="background: rgba(210, 153, 34, 0.2); color: var(--accent-yellow);">${repo.uncommittedCount} thay đổi</span>`;
 
@@ -3212,7 +3564,7 @@
                 rows: leafNode.term.rows,
               }));
             }
-          } catch (e) {}
+          } catch (e) { }
         }
       });
       resizeObserver.observe(paneEl);
@@ -3349,7 +3701,7 @@
                 rows: leaf.term.rows,
               }));
             }
-          } catch (e) {}
+          } catch (e) { }
         }
       });
     }
@@ -3579,7 +3931,7 @@
       term.attachCustomKeyEventHandler((e) => {
         if (e.type === 'keydown') {
           if (e.ctrlKey && e.code === 'KeyC' && term.hasSelection()) {
-            navigator.clipboard.writeText(term.getSelection()).catch(() => {});
+            navigator.clipboard.writeText(term.getSelection()).catch(() => { });
             return false;
           }
           if (e.ctrlKey && e.shiftKey && e.code === 'KeyV') {
@@ -3591,7 +3943,7 @@
               if (text && ws && ws.readyState === WebSocket.OPEN && leafNode.sessionId) {
                 ws.send(JSON.stringify({ type: 'terminal:input', sessionId: leafNode.sessionId, data: text }));
               }
-            }).catch(() => {});
+            }).catch(() => { });
             return false;
           }
         }
@@ -4427,8 +4779,7 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       applyTheme(currentThemeKey);
-      applyWorkspaceBackground();
-      initPaneOpacities();
+      applyWindowBackgrounds();
       const savedScale = parseFloat(localStorage.getItem('uws_zoom_scale') || '1.0');
       if (savedScale !== 1.0) {
         setUiZoom(savedScale);
@@ -4437,4 +4788,5 @@
     });
   </script>
 </body>
+
 </html>
