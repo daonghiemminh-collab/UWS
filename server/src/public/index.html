@@ -4802,6 +4802,13 @@
       setTimeout(fitAllTerminals, 100);
     });
 
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'F5' || (e.ctrlKey && e.key.toLowerCase() === 'r')) {
+        e.preventDefault();
+        window.location.reload();
+      }
+    });
+
     window.addEventListener('DOMContentLoaded', () => {
       applyTheme(currentThemeKey);
       applyWindowBackgrounds();

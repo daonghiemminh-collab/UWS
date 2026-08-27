@@ -79,6 +79,20 @@ function createWindow() {
     },
   });
 
+  // Enable F5, Ctrl+F5, Ctrl+R, Ctrl+Shift+R reload and F12, Ctrl+Shift+I DevTools
+  mainWindow.webContents.on('before-input-event', (event, input) => {
+    if (input.type === 'keyDown') {
+      if (input.key === 'F5' || (input.control && input.key.toLowerCase() === 'r')) {
+        event.preventDefault();
+        mainWindow?.webContents.reloadIgnoringCache();
+      }
+      if (input.key === 'F12' || (input.control && input.shift && input.key.toLowerCase() === 'i')) {
+        event.preventDefault();
+        mainWindow?.webContents.toggleDevTools();
+      }
+    }
+  });
+
   mainWindow.loadURL(SERVER_URL);
 
   mainWindow.on('close', (e) => {
