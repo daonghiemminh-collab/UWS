@@ -1071,10 +1071,10 @@
 
     /* GIT REPOS HUB VIEW */
     .git-hub-container {
-      padding: 12px;
+      padding: 10px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
       height: 100%;
       overflow-y: auto;
       position: relative;
@@ -1084,23 +1084,61 @@
 
     .git-hub-header {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
+      flex-direction: column;
       gap: 8px;
       background: var(--card-header);
-      padding: 8px 12px;
+      padding: 8px 10px;
       border-radius: 6px;
       border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .git-hub-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .git-hub-title-wrap {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .git-hub-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #d2a8ff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .git-hub-sub {
+      font-size: 10px;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .git-hub-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-wrap: wrap;
+      flex-shrink: 0;
     }
 
     .git-repo-card {
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 6px;
-      padding: 12px;
+      padding: 10px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
       transition: all 0.15s;
     }
 
@@ -1113,20 +1151,24 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 6px;
+      flex-wrap: wrap;
     }
 
     .repo-title {
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 700;
       color: var(--accent);
       display: flex;
       align-items: center;
+      word-break: break-word;
     }
 
     .repo-badges {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
+      flex-wrap: wrap;
     }
 
     .badge-branch {
@@ -1135,7 +1177,8 @@
       color: #79c0ff;
       padding: 1px 6px;
       border-radius: 10px;
-      font-size: 10px;
+      font-size: 9px;
+      white-space: nowrap;
     }
 
     .badge-clean {
@@ -1144,7 +1187,8 @@
       color: #7ee787;
       padding: 1px 6px;
       border-radius: 10px;
-      font-size: 10px;
+      font-size: 9px;
+      white-space: nowrap;
     }
 
     .badge-dirty {
@@ -1153,16 +1197,25 @@
       color: #e3b341;
       padding: 1px 6px;
       border-radius: 10px;
-      font-size: 10px;
+      font-size: 9px;
+      white-space: nowrap;
     }
 
     .repo-commit-info {
-      font-size: 11px;
+      font-size: 10px;
       color: var(--text-muted);
       background: #0d1117;
-      padding: 6px 8px;
+      padding: 5px 8px;
       border-radius: 4px;
       border: 1px solid rgba(255, 255, 255, 0.05);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .repo-url-row {
+      font-size: 10px;
+      color: #79c0ff;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -1171,14 +1224,19 @@
     .repo-actions-bar {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 8px;
+      gap: 5px;
+      flex-wrap: wrap;
+      padding-top: 4px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
     }
 
-    .repo-actions-group {
-      display: flex;
-      align-items: center;
-      gap: 6px;
+    .btn-compact {
+      padding: 2px 7px !important;
+      font-size: 10px !important;
+      line-height: 1.3 !important;
+      white-space: nowrap !important;
+      border-radius: 4px !important;
+      flex-shrink: 0;
     }
 
     /* RIGHT-CLICK CONTEXT MENU */
@@ -3352,14 +3410,16 @@
 
       hubContainer.innerHTML = `
         <div class="git-hub-header">
-          <div>
-            <div style="font-size: 13px; font-weight: 700; color: #d2a8ff;">Kho Dự Án Git (Shared Workspace)</div>
-            <div style="font-size: 10px; color: var(--text-muted);">Không gian chung duy nhất để chia sẻ và đồng bộ giữa các máy</div>
-          </div>
-          <div style="display: flex; gap: 6px;">
-            <button class="btn-save" onclick="openCreateRepoModal()">+ Tạo Repo Mới</button>
-            <button class="explorer-btn" onclick="openCloneRepoModal()">Clone URL</button>
-            <button class="explorer-btn" onclick="fetchGitRepos()">Refresh</button>
+          <div class="git-hub-header-row">
+            <div class="git-hub-title-wrap">
+              <div class="git-hub-title">Kho Dự Án Git (Shared Workspace)</div>
+              <div class="git-hub-sub">Chia sẻ và đồng bộ mã nguồn giữa các máy</div>
+            </div>
+            <div class="git-hub-header-actions">
+              <button class="btn-save btn-compact" onclick="openCreateRepoModal()">+ Tạo Repo</button>
+              <button class="explorer-btn btn-compact" onclick="openCloneRepoModal()">Clone URL</button>
+              <button class="explorer-btn btn-compact" onclick="fetchGitRepos()">Refresh</button>
+            </div>
           </div>
         </div>
         <div id="${paneId}_reposList" style="display: flex; flex-direction: column; gap: 8px;"></div>
@@ -3410,16 +3470,14 @@
           <div class="repo-commit-info" title="${repo.path}">
             ${lastCommitHtml}
           </div>
+          <div class="repo-url-row" title="${repo.remoteUrl || repo.path}">
+            ${repo.remoteUrl ? repo.remoteUrl : repo.path}
+          </div>
           <div class="repo-actions-bar">
-            <div style="font-size: 10px; color: #79c0ff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 50%;">
-              ${repo.remoteUrl ? repo.remoteUrl : repo.path}
-            </div>
-            <div class="repo-actions-group">
-              <button class="explorer-btn" onclick="openRepoInExplorer('${paneId}', '${repo.path}')" title="Mở cây thư mục trong File Explorer">Mở Tệp</button>
-              <button class="explorer-btn" onclick="spawnTerminalPane('${repo.path}')" title="Mở PowerShell tại thư mục này">Terminal</button>
-              <button class="explorer-btn" onclick="gitPullProject('${repo.path}')" title="Kéo code mới nhất về máy">Pull</button>
-              <button class="btn-save" style="padding: 3px 8px;" onclick="gitPushProject('${repo.path}')" title="Lưu & Đẩy code lên Git">Push</button>
-            </div>
+            <button class="explorer-btn btn-compact" onclick="openRepoInExplorer('${paneId}', '${repo.path}')" title="Mở cây thư mục trong File Explorer">Mở Tệp</button>
+            <button class="explorer-btn btn-compact" onclick="spawnTerminalPane('${repo.path}')" title="Mở PowerShell tại thư mục này">Terminal</button>
+            <button class="explorer-btn btn-compact" onclick="gitPullProject('${repo.path}')" title="Kéo code mới nhất về máy">Pull</button>
+            <button class="btn-save btn-compact" onclick="gitPushProject('${repo.path}')" title="Lưu & Đẩy code lên Git">Push</button>
           </div>
         `;
 
