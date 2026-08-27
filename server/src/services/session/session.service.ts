@@ -51,10 +51,25 @@ export class SessionService {
   ): { user: UserSession; room: WorkspaceRoom; isNewJoin: boolean } {
     const room = this.getOrCreateRoom(workspaceId);
 
+    const isLocalhost = clientIp === '127.0.0.1' || clientIp === '::1' || clientIp === '::ffff:127.0.0.1' || clientIp.includes('127.0.0.1');
+
+    // Clean up stale disconnected sockets
+    for (const [uid, u] of room.users.entries()) {
+      if (u.ws.readyState !== WebSocket.OPEN) {
+        room.users.delete(uid);
+      }
+    }
+
     const existingEntry = this.wsToUserMap.get(ws);
     if (existingEntry && existingEntry.workspaceId === workspaceId) {
       const existingUser = room.users.get(existingEntry.userId);
       if (existingUser) {
+        if (isLocalhost) {
+          existingUser.isHost = true;
+          existingUser.role = 'owner';
+          room.hostUserId = existingUser.id;
+          room.currentEditorId = existingUser.id;
+        }
         if (requestedName && requestedName !== existingUser.name) {
           existingUser.name = requestedName;
         }
@@ -64,12 +79,12 @@ export class SessionService {
 
     const userId = `usr_${crypto.randomBytes(4).toString('hex')}`;
     const isFirstUser = room.users.size === 0;
-    const isLocalhost = clientIp === '127.0.0.1' || clientIp === '::1' || clientIp === '::ffff:127.0.0.1';
 
-    const isHost = isFirstUser || (isLocalhost && !room.hostUserId);
+    // Localhost machine is ALWAYS the Host/Owner!
+    const isHost = isLocalhost || isFirstUser || !room.hostUserId;
     const role: UserRole = isHost ? 'owner' : 'viewer';
 
-    if (isHost && !room.hostUserId) {
+    if (isHost) {
       room.hostUserId = userId;
       room.currentEditorId = userId;
     }
@@ -191,8 +206,9 @@ export class SessionService {
     const room = this.rooms.get(user.workspaceId);
     if (!room) return false;
 
-    // Host or Current Editor can edit
-    return user.id === room.currentEditorId || user.isHost;
+    // Host, Localhost, or Current Editor can ALWAYS edit!
+    const isLocalhost = user.ip === '127.0.0.1' || user.ip === '::1' || user.ip === '::ffff:127.0.0.1' || user.ip.includes('127.0.0.1');
+    return user.id === room.currentEditorId || user.isHost || user.role === 'owner' || isLocalhost;
   }
 
   public grantEdit(

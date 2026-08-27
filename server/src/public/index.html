@@ -2305,7 +2305,7 @@
     // --- TURN-BASED PERMISSION CONTROLS ---
 
     function amIEditor() {
-      return myUserId && currentEditorId === myUserId;
+      return Boolean(isHost || (myUserId && currentEditorId === myUserId) || myUserRole === 'owner');
     }
 
     function updateTurnControlUI() {
@@ -4652,7 +4652,7 @@
           if (msg.type === 'session:joined') {
             myUserId = msg.yourId;
             myUserRole = msg.yourRole;
-            isHost = msg.isHost;
+            isHost = Boolean(msg.isHost || msg.yourRole === 'owner');
             myUserName = msg.userName;
             localStorage.setItem('uws_user_name', myUserName);
 
@@ -4667,6 +4667,13 @@
             activeUsersList = msg.activeUsers || [];
             currentHostId = msg.hostUserId;
             currentEditorId = msg.currentEditorId;
+            const me = activeUsersList.find(u => u.id === myUserId);
+            if (me) {
+              myUserRole = me.role;
+              if (me.isHost || me.role === 'owner') {
+                isHost = true;
+              }
+            }
             renderPresenceUsers(activeUsersList, currentHostId);
             updateTurnControlUI();
           } else if (msg.type === 'session:user_event') {
