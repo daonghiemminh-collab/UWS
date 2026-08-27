@@ -223,6 +223,76 @@ export class GitService {
     }
   }
 
+  public async setRemoteUrl(
+    repoPath: string,
+    remoteUrl: string,
+    remoteName: string = 'origin'
+  ): Promise<{ success: boolean; message: string; remoteUrl: string }> {
+    try {
+      const trimmedUrl = remoteUrl.trim();
+      if (!trimmedUrl) {
+        throw new Error('Đường dẫn Remote URL không được để trống');
+      }
+
+      // Check existing remotes
+      let hasOrigin = false;
+      try {
+        const { stdout } = await execAsync('git remote', { cwd: repoPath });
+        const remotes = stdout.split('\n').map(r => r.trim()).filter(Boolean);
+        hasOrigin = remotes.includes(remoteName);
+      } catch (e) {}
+
+      if (hasOrigin) {
+        await execAsync(`git remote set-url ${remoteName} "${trimmedUrl}"`, { cwd: repoPath });
+      } else {
+        await execAsync(`git remote add ${remoteName} "${trimmedUrl}"`, { cwd: repoPath });
+      }
+
+      return {
+        success: true,
+        message: `Đã cập nhật Remote "${remoteName}" thành công: ${trimmedUrl}`,
+        remoteUrl: trimmedUrl,
+      };
+    } catch (e: any) {
+      return {
+        success: false,
+        message: e.message || 'Không thể thiết lập Remote URL',
+        remoteUrl,
+      };
+    }
+  }
+
+  public async testRemoteConnection(
+    repoPath: string
+  ): Promise<{ success: boolean; message: string; remoteUrl: string }> {
+    try {
+      let remoteUrl = '';
+      try {
+        const { stdout } = await execAsync('git remote get-url origin', { cwd: repoPath });
+        remoteUrl = stdout.trim();
+      } catch (e) {}
+
+      if (!remoteUrl) {
+        throw new Error('Chưa thiết lập Remote URL (origin) cho repository này');
+      }
+
+      // Test with git ls-remote
+      await execAsync(`git ls-remote --get-url origin`, { cwd: repoPath, timeout: 8000 });
+
+      return {
+        success: true,
+        message: `Kết nối GitHub / Remote hợp lệ: ${remoteUrl}`,
+        remoteUrl,
+      };
+    } catch (e: any) {
+      return {
+        success: false,
+        message: `Không thể kết nối đến Remote: ${e.message || 'Lỗi mạng hoặc xác thực'}`,
+        remoteUrl: '',
+      };
+    }
+  }
+
   public async pushRepo(repoPath: string, commitMsg?: string): Promise<{ success: boolean; message: string }> {
     try {
       await execAsync('git add .', { cwd: repoPath });

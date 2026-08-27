@@ -57,7 +57,9 @@ export type ClientMessage =
   | { type: 'git:create'; name: string; description?: string; gitignoreType?: 'node' | 'python' | 'general' | 'none'; remoteUrl?: string }
   | { type: 'git:clone'; url: string; name?: string }
   | { type: 'git:pull'; repoPath: string }
-  | { type: 'git:push'; repoPath: string; commitMessage?: string };
+  | { type: 'git:push'; repoPath: string; commitMessage?: string }
+  | { type: 'git:set_remote'; repoPath: string; remoteUrl: string; remoteName?: string }
+  | { type: 'git:test_remote'; repoPath: string };
 
 // Server -> Client Messages
 export type ServerMessage =
@@ -83,5 +85,5 @@ export type ServerMessage =
   | { type: 'automation:slots'; slots: AutomationSlot[] }
   | { type: 'automation:compiled'; slotId: string; command: string; label: string }
   | { type: 'git:list'; repos: GitRepoInfo[] }
-  | { type: 'git:action_result'; action: 'create' | 'clone' | 'pull' | 'push'; success: boolean; message: string; repoPath?: string }
+  | { type: 'git:action_result'; action: 'create' | 'clone' | 'pull' | 'push' | 'set_remote' | 'test_remote'; success: boolean; message: string; repoPath?: string; remoteUrl?: string }
   | { type: 'error'; code: string; message: string };

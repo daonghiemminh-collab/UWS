@@ -364,6 +364,40 @@ wss.on('connection', (ws, req) => {
           break;
         }
 
+        case 'git:set_remote': {
+          if (!checkWritePermission()) return;
+          const res = await gitService.setRemoteUrl(msg.repoPath, msg.remoteUrl, msg.remoteName || 'origin');
+          sendMsg({
+            type: 'git:action_result',
+            action: 'set_remote',
+            success: res.success,
+            message: res.message,
+            repoPath: msg.repoPath,
+            remoteUrl: res.remoteUrl,
+          });
+          if (res.success) {
+            const updatedRepos = await gitService.listRepos();
+            sessionService.broadcastToRoom(wsId, {
+              type: 'git:list',
+              repos: updatedRepos,
+            });
+          }
+          break;
+        }
+
+        case 'git:test_remote': {
+          const res = await gitService.testRemoteConnection(msg.repoPath);
+          sendMsg({
+            type: 'git:action_result',
+            action: 'test_remote',
+            success: res.success,
+            message: res.message,
+            repoPath: msg.repoPath,
+            remoteUrl: res.remoteUrl,
+          });
+          break;
+        }
+
         // --- AUTOMATION SLOTS ---
         case 'automation:get_slots': {
           sendMsg({
