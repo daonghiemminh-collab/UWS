@@ -808,7 +808,7 @@ setInterval(broadcastMetrics, 1000);
 
 server.listen(PORT, '0.0.0.0', () => {
   console.log('====================================================');
-  console.log(`⚡ UWS Master Daemon running on PORT ${PORT}`);
+  console.log(`⚡ Meodusa Master Daemon running on PORT ${PORT}`);
   console.log(`👉 Host Local:  http://localhost:${PORT}`);
   console.log(`👉 2nd Machine: http://192.168.1.6:${PORT}`);
   console.log('====================================================');

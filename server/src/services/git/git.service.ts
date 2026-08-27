@@ -59,7 +59,7 @@ export class GitService {
     try {
       const rootPath = path.resolve(process.cwd(), '..');
       if (fs.existsSync(path.join(rootPath, '.git'))) {
-        const rootInfo = await this.getRepoDetails(rootPath, 'UWS (Core Repository)');
+        const rootInfo = await this.getRepoDetails(rootPath, 'Meodusa (Core Repository)');
         if (rootInfo) repos.unshift(rootInfo);
       }
     } catch (e) {}
@@ -152,13 +152,13 @@ export class GitService {
       fs.writeFileSync(path.join(targetPath, '.gitignore'), gitignoreContent, 'utf-8');
 
       // Create README.md
-      const desc = options.description || 'Dự án được khởi tạo từ Unifiable Workspace System (UWS)';
-      const readmeContent = `# ${sanitizedName}\n\n${desc}\n\n---\n*Khởi tạo bởi UWS tại trạm [${options.machineName || 'UWS-Node'}] vào ${new Date().toLocaleString('vi-VN')}*\n`;
+      const desc = options.description || 'Dự án được khởi tạo từ Meodusa';
+      const readmeContent = `# ${sanitizedName}\n\n${desc}\n\n---\n*Khởi tạo bởi Meodusa tại trạm [${options.machineName || 'Meodusa-Node'}] vào ${new Date().toLocaleString('vi-VN')}*\n`;
       fs.writeFileSync(path.join(targetPath, 'README.md'), readmeContent, 'utf-8');
 
       // Initial commit
       await execAsync('git add .', { cwd: targetPath });
-      await execAsync('git commit -m "Initial commit from UWS"', { cwd: targetPath });
+      await execAsync('git commit -m "Initial commit from Meodusa"', { cwd: targetPath });
 
       // Add remote if provided
       if (options.remoteUrl && options.remoteUrl.trim()) {
@@ -297,7 +297,7 @@ export class GitService {
     try {
       await execAsync('git add .', { cwd: repoPath });
       try {
-        const msg = commitMsg || `Update from UWS at ${new Date().toISOString()}`;
+        const msg = commitMsg || `Update from Meodusa at ${new Date().toISOString()}`;
         await execAsync(`git commit -m "${msg}"`, { cwd: repoPath });
       } catch (ce) {
         // May fail if working tree is clean, which is fine

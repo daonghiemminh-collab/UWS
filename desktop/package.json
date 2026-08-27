@@ -1,7 +1,7 @@
 {
   "name": "@uws/desktop",
   "version": "1.0.0",
-  "description": "UWS Native Desktop Shell with System Tray & Global Hotkeys",
+  "description": "Meodusa Native Desktop Shell with System Tray & Global Hotkeys",
   "main": "dist/main.js",
   "type": "module",
   "scripts": {

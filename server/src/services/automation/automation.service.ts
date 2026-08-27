@@ -97,7 +97,7 @@ export class AutomationService {
     const dateTimeStr = `${dateStr} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
 
     let compiled = commandTemplate;
-    compiled = compiled.replace(/\{\{MACHINE_NAME\}\}/g, context.machineName || 'UWS-Node');
+    compiled = compiled.replace(/\{\{MACHINE_NAME\}\}/g, context.machineName || 'Meodusa-Node');
     compiled = compiled.replace(/\{\{USER_NAME\}\}/g, context.userName || 'Dev');
     compiled = compiled.replace(/\{\{DATE\}\}/g, dateStr);
     compiled = compiled.replace(/\{\{TIME\}\}/g, timeStr);

@@ -1,7 +1,7 @@
 {
-  "name": "uws",
+  "name": "meodusa",
   "version": "1.0.0",
-  "description": "Unifiable Workspace System",
+  "description": "Meodusa - Futuristic Cyberpunk Workspace System",
   "private": true,
   "workspaces": [
     "shared",

@@ -1,6 +1,6 @@
-# ⚡ UWS - Unifiable Workspace System
+# ⚡ Meodusa - Futuristic Cyberpunk Workspace System
 
-Hệ thống Không Gian Làm Việc Hợp Nhất (Unifiable Workspace System - UWS) được thiết kế cho trải nghiệm lập trình và quản trị máy trạm đa máy tính:
+Hệ thống Không Gian Làm Việc Hợp Nhất Đa Máy Trạm (**Meodusa**) được thiết kế cho trải nghiệm lập trình và quản trị máy tính hiện đại:
 
 - **🖥️ Web Terminal (PTY)**: Phiên làm việc PowerShell thời gian thực với xterm.js đa cửa sổ.
 - **🪟 Tiling Window Manager (BSP)**: Chia cửa sổ cây nhị phân thông minh, snap 4 hướng, zero gap, zero overlap.

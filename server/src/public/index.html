@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>UWS - Unifiable Workspace System</title>
+  <title>Meodusa</title>
   <link rel="icon" type="image/png" href="/assets/logo.png" />
   <link rel="stylesheet" href="/vendor/xterm/xterm.css" />
   <style>
@@ -1948,7 +1948,7 @@
   <!-- TOP BAR -->
   <div class="top-bar">
     <div class="brand-wrap">
-      <div class="brand-title">UWS // UNIFIABLE WORKSPACE SYSTEM</div>
+      <div class="brand-title">MEODUSA // WORKSPACE SYSTEM</div>
     </div>
 
     <div class="top-actions">
@@ -2380,7 +2380,7 @@
   <script src="/vendor/xterm/addon-web-links.js"></script>
   <script>
     let ws = null;
-    let currentMachineName = 'UWS-Node';
+    let currentMachineName = 'Meodusa-Node';
     let latestMetricsData = null;
     let paneCounter = 0;
     let activePaneId = null;
@@ -3233,7 +3233,7 @@
       if (gitReposList.length === 0) {
         listEl.innerHTML = `
           <div style="padding: 30px 16px; text-align: center; color: var(--text-muted); font-size: 12px; background: var(--input-bg); border-radius: 8px; border: 1px dashed var(--border);">
-            <p style="margin-bottom: 8px; font-size: 13px;">Chưa có Repository nào trong kho UWS</p>
+            <p style="margin-bottom: 8px; font-size: 13px;">Chưa có Repository nào trong kho Meodusa</p>
             <button class="btn-save" onclick="openCreateRepoModal()">Tạo Repo Mới</button>
           </div>
         `;
@@ -4866,7 +4866,7 @@
             }
           } else if (msg.type === 'metrics:update') {
             latestMetricsData = msg.data;
-            currentMachineName = msg.data.machineName || 'UWS-Node';
+            currentMachineName = msg.data.machineName || 'Meodusa-Node';
 
             allLeafsMap.forEach((leafNode) => {
               if (leafNode.serviceType === 'telemetry') {
