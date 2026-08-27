@@ -407,12 +407,27 @@
     }
 
     /* WORKSPACE ROOT CONTAINER */
+    #workspace-bg-layer {
+      position: fixed;
+      top: 40px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      pointer-events: none;
+      z-index: 0;
+      transition: background-image 0.3s ease, filter 0.3s ease, opacity 0.3s ease;
+    }
+
     #workspace-container {
       flex: 1;
       position: relative;
       overflow: hidden;
       padding: 6px 6px 6px 14px;
       display: flex;
+      z-index: 2;
     }
 
     /* RECURSIVE SPLIT TILING TREE */
@@ -475,8 +490,22 @@
       min-width: 0;
       min-height: 0;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
-      transition: border-color 0.15s, box-shadow 0.15s;
+      transition: border-color 0.15s, box-shadow 0.15s, opacity 0.2s ease;
       position: relative;
+      backdrop-filter: blur(12px);
+    }
+
+    .tiling-pane[data-service="terminal"] {
+      opacity: var(--opacity-terminal, 1);
+    }
+    .tiling-pane[data-service="explorer"] {
+      opacity: var(--opacity-explorer, 1);
+    }
+    .tiling-pane[data-service="notepad"] {
+      opacity: var(--opacity-notepad, 1);
+    }
+    .tiling-pane[data-service="telemetry"] {
+      opacity: var(--opacity-telemetry, 1);
     }
 
     .tiling-pane.active {
@@ -550,11 +579,11 @@
 
     .pane-close-btn {
       background: transparent;
-      border: none;
+      border: 1px solid transparent;
       color: var(--text-muted);
-      font-size: 13px;
+      font-size: 12px;
       cursor: pointer;
-      padding: 1px 6px;
+      padding: 2px 6px;
       border-radius: 3px;
       font-family: inherit;
       transition: all 0.15s;
@@ -563,8 +592,9 @@
       justify-content: center;
     }
     .pane-close-btn:hover {
-      color: #fff;
-      background: rgba(248, 81, 73, 0.8);
+      color: var(--text-bold);
+      background: var(--btn-bg-hover);
+      border-color: var(--accent);
     }
 
     /* PANE BODY */
@@ -739,15 +769,15 @@
     }
 
     .drive-chip.chip-git {
-      background: rgba(188, 140, 255, 0.12);
-      border-color: var(--accent-purple);
-      color: var(--accent-purple);
+      background: var(--btn-bg);
+      border-color: var(--accent);
+      color: var(--accent);
       font-weight: 600;
     }
     .drive-chip.chip-git:hover,
     .drive-chip.chip-git.active {
-      background: rgba(188, 140, 255, 0.25);
-      border-color: var(--accent-purple);
+      background: var(--btn-bg-hover);
+      border-color: var(--accent);
       color: var(--text-bold);
     }
 
@@ -872,15 +902,19 @@
 
     .item-badge {
       font-size: 9px;
-      padding: 1px 4px;
+      padding: 1px 5px;
       border-radius: 3px;
       font-weight: 700;
       text-transform: uppercase;
+      background: var(--btn-bg);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
     }
-    .badge-folder { background: rgba(88, 166, 255, 0.15); color: var(--accent); }
-    .badge-code { background: rgba(63, 185, 80, 0.15); color: var(--accent-green); }
-    .badge-img { background: rgba(210, 153, 34, 0.15); color: var(--accent-yellow); }
-    .badge-doc { background: rgba(188, 140, 255, 0.15); color: var(--accent-purple); }
+    .badge-folder { color: var(--accent); border-color: var(--accent); }
+    .badge-code { color: var(--accent-green); }
+    .badge-img { color: var(--accent-yellow); }
+    .badge-doc { color: var(--accent-purple); }
 
     .explorer-footer-bar {
       height: 22px;
@@ -1553,7 +1587,7 @@
       <!-- QUICK ACTIONS DROPDOWN -->
       <div class="actions-dropdown-wrap">
         <button class="actions-dropdown-trigger" id="actionsTriggerBtn" onclick="toggleActionsDropdown(event)" title="Chạy nhanh các mẫu lệnh tự động hóa">
-          <span>⚡ Actions</span>
+          <span>Actions</span>
           <span style="font-size: 9px;">▾</span>
         </button>
         <div class="actions-dropdown-menu" id="actionsMenu">
@@ -1567,7 +1601,7 @@
           <span class="user-badge host you">Connecting...</span>
         </div>
         <button class="share-btn" onclick="copyShareLink()" title="Sao chép liên kết mời người khác tham gia">
-          <span>+ Share</span>
+          <span>Share</span>
         </button>
       </div>
 
@@ -1627,7 +1661,7 @@
       </div>
       <div class="modal-body" id="modalSlotsList"></div>
       <div class="modal-footer">
-        <button class="explorer-btn" onclick="addNewSlot()">+ Thêm Slot Mới</button>
+        <button class="explorer-btn" onclick="addNewSlot()">Thêm Slot Mới</button>
         <button class="btn-save" onclick="saveAutomationSlots()">Lưu Cấu Hình</button>
       </div>
     </div>
@@ -1697,7 +1731,7 @@
           <label class="form-label" id="renameModalLabel">Tên hiển thị của bạn:</label>
           <input type="text" class="form-input" id="modalRenameInput" maxlength="32" placeholder="vd: máy shiba, John..." />
           <div style="font-size: 11px; color: var(--text-muted); margin-top: 6px; line-height: 1.4;" id="renameModalHint">
-            💡 Bạn là Host: Tên này sẽ đồng bộ làm Tên hiển thị trong phòng & Tên Node máy trạm.
+            Ghi chú: Bạn là Host - Tên này sẽ đồng bộ làm Tên hiển thị trong phòng & Tên Node máy trạm.
           </div>
         </div>
       </div>
@@ -1713,7 +1747,7 @@
     <div class="settings-modal-box">
       <div class="modal-header">
         <div style="display: flex; align-items: center; gap: 8px;">
-          <span>⚙️ Cài Đặt Hệ Thống // Settings & Customization</span>
+          <span>Cài Đặt Hệ Thống // Settings & Customization</span>
         </div>
         <button class="pane-close-btn" onclick="closeSystemSettingsModal()">✕</button>
       </div>
@@ -1722,35 +1756,100 @@
         <!-- SIDEBAR TABS -->
         <aside class="settings-sidebar">
           <button class="settings-nav-btn active" id="tabBtn_theme" onclick="switchSettingsTab('theme')">
-            <span>🎨 Giao Diện & Theme</span>
+            <span>Giao Diện & Theme</span>
           </button>
           <button class="settings-nav-btn" id="tabBtn_automation" onclick="switchSettingsTab('automation')">
-            <span>⚡ Lệnh Tự Động Hóa</span>
+            <span>Lệnh Tự Động Hóa</span>
           </button>
           <button class="settings-nav-btn" id="tabBtn_github" onclick="switchSettingsTab('github')">
-            <span>🐙 GitHub & Repos</span>
+            <span>GitHub & Repos</span>
           </button>
           <button class="settings-nav-btn" id="tabBtn_node" onclick="switchSettingsTab('node')">
-            <span>🖥️ Node & Máy Trạm</span>
+            <span>Node & Máy Trạm</span>
           </button>
         </aside>
 
         <!-- TAB CONTENT PANELS -->
         <main class="settings-content-area">
-          <!-- TAB 1: THEME & UI SCALE -->
+          <!-- TAB 1: THEME, BACKGROUND & UI SCALE -->
           <div class="settings-pane active" id="pane_theme">
-            <div class="settings-section-title">🎨 Chủ Đề Màu Sắc Toàn Hệ Thống (Color Theme Combos)</div>
+            <div class="settings-section-title">Chủ Đề Màu Sắc Toàn Hệ Thống (Color Theme Combos)</div>
             <div class="settings-section-desc">Thay đổi toàn bộ combo màu sắc (Nút bấm, chữ, nền, đường viền và Terminal) tức thì.</div>
             <div class="themes-grid" id="themesGridContainer"></div>
 
-            <div class="settings-section-title" style="margin-top: 8px;">🔍 Tỉ Lệ Phóng To / Thu Nhỏ Giao Diện (UI Zoom)</div>
+            <div class="settings-section-title" style="margin-top: 8px;">Tỉ Lệ Phóng To / Thu Nhỏ Giao Diện (UI Zoom)</div>
             <div class="settings-section-desc">Điều chỉnh tỉ lệ hiển thị không gian làm việc và kích thước cửa sổ.</div>
             <div class="zoom-control-box">
               <div class="zoom-slider-row">
                 <span style="font-size: 11px; font-weight: 600; color: var(--text-muted); min-width: 50px;">Tỉ lệ:</span>
                 <input type="range" class="zoom-slider" id="zoomSlider" min="75" max="140" step="5" value="100" oninput="onZoomSliderChange(this.value)" />
                 <span id="zoomValLabel" style="font-size: 13px; font-weight: 700; color: var(--accent); min-width: 48px; text-align: right;">100%</span>
-                <button class="explorer-btn" onclick="setUiZoom(1.0)" style="font-size: 10px; padding: 2px 7px; margin-left: 8px;" title="Đặt lại về mặc định 100%">↺ Đặt lại</button>
+                <button class="explorer-btn" onclick="setUiZoom(1.0)" style="font-size: 10px; padding: 2px 7px; margin-left: 8px;" title="Đặt lại về mặc định 100%">Đặt lại</button>
+              </div>
+            </div>
+
+            <div class="settings-section-title" style="margin-top: 8px;">Hình Nền Không Gian Làm Việc (Workspace Background)</div>
+            <div class="settings-section-desc">Tùy chỉnh ảnh nền cho toàn bộ khu vực làm việc UWS.</div>
+            <div class="zoom-control-box" style="gap: 10px;">
+              <div style="display: flex; gap: 8px;">
+                <input type="text" class="form-input" id="settingsBgUrlInput" placeholder="Nhập link ảnh nền (vd: https://images.unsplash.com/...)" style="flex: 1;" />
+                <button class="btn-save" onclick="applyCustomBackground()">Áp Dụng</button>
+                <button class="explorer-btn" onclick="clearCustomBackground()">Xóa Nền</button>
+              </div>
+              <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                <span style="font-size: 11px; color: var(--text-muted);">Mẫu nền sẵn:</span>
+                <button class="explorer-btn" onclick="setPresetBackground('cyber')">Cyber Grid</button>
+                <button class="explorer-btn" onclick="setPresetBackground('nebula')">Deep Nebula</button>
+                <button class="explorer-btn" onclick="setPresetBackground('aurora')">Aurora Night</button>
+                <button class="explorer-btn" onclick="setPresetBackground('minimal')">Minimal Slate</button>
+              </div>
+              <div style="display: flex; gap: 20px; align-items: center; margin-top: 4px; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 200px;">
+                  <span style="font-size: 11px; color: var(--text-muted); min-width: 70px;">Độ mờ (Blur):</span>
+                  <input type="range" class="zoom-slider" id="bgBlurSlider" min="0" max="25" step="1" value="0" oninput="onBgBlurChange(this.value)" />
+                  <span id="bgBlurValLabel" style="font-size: 11px; color: var(--accent); min-width: 32px; text-align: right;">0px</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 200px;">
+                  <span style="font-size: 11px; color: var(--text-muted); min-width: 70px;">Làm tối (Dim):</span>
+                  <input type="range" class="zoom-slider" id="bgDimSlider" min="0" max="80" step="5" value="0" oninput="onBgDimChange(this.value)" />
+                  <span id="bgDimValLabel" style="font-size: 11px; color: var(--accent); min-width: 32px; text-align: right;">0%</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="settings-section-title" style="margin-top: 8px;">Độ Trong Suốt Cửa Sổ (Window Opacity / Glass Effect)</div>
+            <div class="settings-section-desc">Điều chỉnh độ trong suốt riêng biệt cho từng loại cửa sổ hiển thị nền phía sau.</div>
+            <div class="zoom-control-box" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px;">
+              <div style="display: flex; flex-direction: column; gap: 6px; background: var(--input-bg); padding: 10px; border-radius: 6px; border: 1px solid var(--border);">
+                <div style="display: flex; justify-content: space-between; font-size: 11px;">
+                  <span style="font-weight: 600; color: var(--text-bold);">PowerShell Terminal</span>
+                  <span id="opacity_terminal_val" style="font-weight: 700; color: var(--accent);">100%</span>
+                </div>
+                <input type="range" class="zoom-slider" id="opacity_terminal_slider" min="30" max="100" step="5" value="100" oninput="onPaneOpacityChange('terminal', this.value)" />
+              </div>
+
+              <div style="display: flex; flex-direction: column; gap: 6px; background: var(--input-bg); padding: 10px; border-radius: 6px; border: 1px solid var(--border);">
+                <div style="display: flex; justify-content: space-between; font-size: 11px;">
+                  <span style="font-weight: 600; color: var(--text-bold);">File Explorer</span>
+                  <span id="opacity_explorer_val" style="font-weight: 700; color: var(--accent);">100%</span>
+                </div>
+                <input type="range" class="zoom-slider" id="opacity_explorer_slider" min="30" max="100" step="5" value="100" oninput="onPaneOpacityChange('explorer', this.value)" />
+              </div>
+
+              <div style="display: flex; flex-direction: column; gap: 6px; background: var(--input-bg); padding: 10px; border-radius: 6px; border: 1px solid var(--border);">
+                <div style="display: flex; justify-content: space-between; font-size: 11px;">
+                  <span style="font-weight: 600; color: var(--text-bold);">Notepad Editor</span>
+                  <span id="opacity_notepad_val" style="font-weight: 700; color: var(--accent);">100%</span>
+                </div>
+                <input type="range" class="zoom-slider" id="opacity_notepad_slider" min="30" max="100" step="5" value="100" oninput="onPaneOpacityChange('notepad', this.value)" />
+              </div>
+
+              <div style="display: flex; flex-direction: column; gap: 6px; background: var(--input-bg); padding: 10px; border-radius: 6px; border: 1px solid var(--border);">
+                <div style="display: flex; justify-content: space-between; font-size: 11px;">
+                  <span style="font-weight: 600; color: var(--text-bold);">Telemetry Dashboard</span>
+                  <span id="opacity_telemetry_val" style="font-weight: 700; color: var(--accent);">100%</span>
+                </div>
+                <input type="range" class="zoom-slider" id="opacity_telemetry_slider" min="30" max="100" step="5" value="100" oninput="onPaneOpacityChange('telemetry', this.value)" />
               </div>
             </div>
           </div>
@@ -1759,12 +1858,12 @@
           <div class="settings-pane" id="pane_automation">
             <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
               <div>
-                <div class="settings-section-title" style="border-bottom: none; padding-bottom: 0;">⚡ Mẫu Lệnh Tự Động Hóa & Git</div>
+                <div class="settings-section-title" style="border-bottom: none; padding-bottom: 0;">Mẫu Lệnh Tự Động Hóa & Git</div>
                 <div class="settings-section-desc" style="margin-top: 4px;">Cấu hình các slot lệnh chạy nhanh hiển thị trong menu <code>Actions ▾</code> trên Top Bar.</div>
               </div>
               <div style="display: flex; gap: 8px;">
-                <button class="explorer-btn" onclick="addNewSlot()">+ Thêm Slot</button>
-                <button class="btn-save" onclick="saveAutomationSlotsFromSettings()">💾 Lưu Cấu Hình</button>
+                <button class="explorer-btn" onclick="addNewSlot()">Thêm Slot</button>
+                <button class="btn-save" onclick="saveAutomationSlotsFromSettings()">Lưu Cấu Hình</button>
               </div>
             </div>
             <div id="settingsSlotsList" style="display: flex; flex-direction: column; gap: 10px;"></div>
@@ -1774,13 +1873,13 @@
           <div class="settings-pane" id="pane_github">
             <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
               <div>
-                <div class="settings-section-title" style="border-bottom: none; padding-bottom: 0;">🐙 GitHub & Quản Lý Liên Kết Repositories</div>
+                <div class="settings-section-title" style="border-bottom: none; padding-bottom: 0;">GitHub & Quản Lý Liên Kết Repositories</div>
                 <div class="settings-section-desc" style="margin-top: 4px;">Cập nhật Remote URL (origin), kiểm tra kết nối GitHub và đồng bộ mã nguồn.</div>
               </div>
               <div style="display: flex; gap: 6px;">
-                <button class="btn-save" onclick="openCreateRepoModal()">+ Tạo Repo Mới</button>
+                <button class="btn-save" onclick="openCreateRepoModal()">Tạo Repo Mới</button>
                 <button class="explorer-btn" onclick="openCloneRepoModal()">Clone URL</button>
-                <button class="explorer-btn" onclick="fetchGitRepos()">↻ Làm Mới</button>
+                <button class="explorer-btn" onclick="fetchGitRepos()">Làm Mới</button>
               </div>
             </div>
             <div id="settingsGitReposList" style="display: flex; flex-direction: column; gap: 10px;"></div>
@@ -1788,10 +1887,10 @@
 
           <!-- TAB 4: NODE & IDENTITY -->
           <div class="settings-pane" id="pane_node">
-            <div class="settings-section-title">🖥️ Định Danh Máy Trạm & Kết Nối Mạng LAN</div>
+            <div class="settings-section-title">Định Danh Máy Trạm & Kết Nối Mạng LAN</div>
             <div class="settings-section-desc">Thông tin máy trạm Node, tên hiển thị và liên kết chia sẻ trong mạng nội bộ.</div>
             
-            <div class="form-group" style="background: #10141e; padding: 14px; border: 1px solid var(--border); border-radius: 8px;">
+            <div class="form-group" style="background: var(--input-bg); padding: 14px; border: 1px solid var(--border); border-radius: 8px;">
               <label class="form-label">Tên Máy / Định Danh Node:</label>
               <div style="display: flex; gap: 8px; margin-top: 4px;">
                 <input type="text" class="form-input" id="settingsMachineNameInput" style="flex: 1;" placeholder="Tên máy..." />
@@ -1800,11 +1899,11 @@
               <span style="font-size: 10px; color: var(--text-muted); margin-top: 4px;">Tên này được dùng để định danh máy và thay thế thẻ biến <code>{{MACHINE_NAME}}</code> trong tự động hóa.</span>
             </div>
 
-            <div class="form-group" style="background: #10141e; padding: 14px; border: 1px solid var(--border); border-radius: 8px;">
+            <div class="form-group" style="background: var(--input-bg); padding: 14px; border: 1px solid var(--border); border-radius: 8px;">
               <label class="form-label">Liên Kết Mạng LAN (Local Area Network):</label>
               <div style="display: flex; gap: 8px; margin-top: 4px;">
                 <input type="text" class="form-input" id="settingsLanUrlInput" style="flex: 1;" readonly value="" />
-                <button class="explorer-btn" onclick="copyShareLink()">📋 Sao Chép</button>
+                <button class="explorer-btn" onclick="copyShareLink()">Sao Chép</button>
               </div>
               <span style="font-size: 10px; color: var(--text-muted); margin-top: 4px;">Chia sẻ liên kết này cho các máy khác trong cùng mạng Wi-Fi/LAN để cùng tham gia làm việc.</span>
             </div>
@@ -1923,13 +2022,12 @@
       const modal = document.getElementById('rename-modal');
       const input = document.getElementById('modalRenameInput');
       const hint = document.getElementById('renameModalHint');
-      if (!modal || !input) return;
-
-      input.value = myUserName || currentMachineName || '';
+      if (!input || !modal) return;
+      input.value = myUserName || '';
       if (isHost) {
-        hint.innerText = '💡 Bạn là Host: Tên này sẽ đồng bộ làm Tên hiển thị trong phòng & Tên Node máy trạm.';
+        hint.innerText = 'Ghi chú: Bạn là Host - Tên này sẽ đồng bộ làm Tên hiển thị trong phòng & Tên Node máy trạm.';
       } else {
-        hint.innerText = '💡 Bạn là Khách (Guest): Tên này sẽ hiển thị cho mọi người trong phòng.';
+        hint.innerText = 'Ghi chú: Bạn là Khách (Guest) - Tên này sẽ hiển thị cho mọi người trong phòng.';
       }
       modal.style.display = 'flex';
       setTimeout(() => {
@@ -1994,12 +2092,11 @@
         const badge = document.createElement('span');
         badge.className = `user-badge ${isHostUser ? 'host' : ''} ${isCurEditor ? 'editor-now' : ''} ${isMe ? 'you' : ''}`;
         
-        const hostIcon = isHostUser ? '<span style="font-size: 11px; margin-right: 1px;" title="Host (Máy trạm)">👑</span>' : '<span style="font-size: 11px; margin-right: 1px;">👤</span>';
+        const hostTag = isHostUser ? '<span class="user-badge-tag tag-host">Host</span>' : '';
         const meTag = isMe ? '<span class="user-badge-tag tag-you">You</span>' : '';
         const roleTag = isCurEditor ? '<span class="user-badge-tag tag-editor">Editor</span>' : '<span class="user-badge-tag tag-viewer">Viewer</span>';
-        const renameIcon = isMe ? '<span class="user-rename-icon" title="Nhấp để đổi tên">✏️</span>' : '';
 
-        badge.innerHTML = `${hostIcon}<span class="user-badge-name" title="${u.name}">${u.name}</span>${meTag}${roleTag}${renameIcon}`;
+        badge.innerHTML = `<span class="user-badge-name" title="${u.name}">${u.name}</span>${hostTag}${meTag}${roleTag}`;
         badge.title = isMe ? 'Nhấp để đổi tên hiển thị / Tên máy' : `Người dùng: ${u.name} (${isCurEditor ? 'Editor' : 'Viewer'})`;
 
         badge.onclick = (e) => {
@@ -2369,6 +2466,115 @@
       setUiZoom(scale);
     }
 
+    // --- WORKSPACE BACKGROUND & PANE OPACITY CONTROLS ---
+
+    const WALLPAPER_PRESETS = {
+      cyber: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1600&auto=format&fit=crop',
+      nebula: 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?q=80&w=1600&auto=format&fit=crop',
+      aurora: 'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?q=80&w=1600&auto=format&fit=crop',
+      minimal: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1600&auto=format&fit=crop',
+    };
+
+    let customBgUrl = localStorage.getItem('uws_custom_bg') || '';
+    let customBgBlur = parseInt(localStorage.getItem('uws_bg_blur') || '0', 10);
+    let customBgDim = parseInt(localStorage.getItem('uws_bg_dim') || '0', 10);
+
+    const paneOpacities = {
+      terminal: parseInt(localStorage.getItem('uws_opacity_terminal') || '100', 10),
+      explorer: parseInt(localStorage.getItem('uws_opacity_explorer') || '100', 10),
+      notepad: parseInt(localStorage.getItem('uws_opacity_notepad') || '100', 10),
+      telemetry: parseInt(localStorage.getItem('uws_opacity_telemetry') || '100', 10),
+    };
+
+    function applyWorkspaceBackground() {
+      const bgLayer = document.getElementById('workspace-bg-layer');
+      if (!bgLayer) return;
+
+      if (customBgUrl) {
+        bgLayer.style.backgroundImage = `url('${customBgUrl}')`;
+        bgLayer.style.filter = `blur(${customBgBlur}px) brightness(${1 - customBgDim / 100})`;
+        bgLayer.style.opacity = '1';
+      } else {
+        bgLayer.style.backgroundImage = 'none';
+        bgLayer.style.opacity = '0';
+      }
+
+      const input = document.getElementById('settingsBgUrlInput');
+      if (input) input.value = customBgUrl;
+
+      const blurSlider = document.getElementById('bgBlurSlider');
+      if (blurSlider) blurSlider.value = customBgBlur;
+      const blurLabel = document.getElementById('bgBlurValLabel');
+      if (blurLabel) blurLabel.innerText = `${customBgBlur}px`;
+
+      const dimSlider = document.getElementById('bgDimSlider');
+      if (dimSlider) dimSlider.value = customBgDim;
+      const dimLabel = document.getElementById('bgDimValLabel');
+      if (dimLabel) dimLabel.innerText = `${customBgDim}%`;
+    }
+
+    function applyCustomBackground() {
+      const input = document.getElementById('settingsBgUrlInput');
+      if (!input) return;
+      customBgUrl = input.value.trim();
+      localStorage.setItem('uws_custom_bg', customBgUrl);
+      applyWorkspaceBackground();
+      showToast(customBgUrl ? 'Đã áp dụng hình nền!' : 'Đã xóa hình nền', 'success');
+    }
+
+    function clearCustomBackground() {
+      customBgUrl = '';
+      localStorage.removeItem('uws_custom_bg');
+      const input = document.getElementById('settingsBgUrlInput');
+      if (input) input.value = '';
+      applyWorkspaceBackground();
+      showToast('Đã xóa hình nền!', 'info');
+    }
+
+    function setPresetBackground(presetKey) {
+      const url = WALLPAPER_PRESETS[presetKey];
+      if (!url) return;
+      customBgUrl = url;
+      localStorage.setItem('uws_custom_bg', url);
+      applyWorkspaceBackground();
+      showToast(`Đã áp dụng mẫu nền: ${presetKey}`, 'success');
+    }
+
+    function onBgBlurChange(val) {
+      customBgBlur = parseInt(val, 10);
+      localStorage.setItem('uws_bg_blur', customBgBlur);
+      applyWorkspaceBackground();
+    }
+
+    function onBgDimChange(val) {
+      customBgDim = parseInt(val, 10);
+      localStorage.setItem('uws_bg_dim', customBgDim);
+      applyWorkspaceBackground();
+    }
+
+    function onPaneOpacityChange(serviceType, val) {
+      const numVal = parseInt(val, 10);
+      paneOpacities[serviceType] = numVal;
+      localStorage.setItem(`uws_opacity_${serviceType}`, numVal);
+
+      const label = document.getElementById(`opacity_${serviceType}_val`);
+      if (label) label.innerText = `${numVal}%`;
+
+      const decimal = numVal / 100;
+      document.documentElement.style.setProperty(`--opacity-${serviceType}`, decimal.toString());
+    }
+
+    function initPaneOpacities() {
+      ['terminal', 'explorer', 'notepad', 'telemetry'].forEach(service => {
+        const val = paneOpacities[service] || 100;
+        document.documentElement.style.setProperty(`--opacity-${service}`, (val / 100).toString());
+        const slider = document.getElementById(`opacity_${service}_slider`);
+        if (slider) slider.value = val;
+        const label = document.getElementById(`opacity_${service}_val`);
+        if (label) label.innerText = `${val}%`;
+      });
+    }
+
     // --- SYSTEM SETTINGS MODAL CONTROLS ---
 
     function openSystemSettingsModal(initialTab = 'theme') {
@@ -2377,6 +2583,8 @@
 
       switchSettingsTab(initialTab);
       renderThemesGrid();
+      applyWorkspaceBackground();
+      initPaneOpacities();
       renderSettingsSlotsList();
       renderSettingsGitRepos();
 
@@ -2420,8 +2628,8 @@
 
       if (automationSlots.length === 0) {
         list.innerHTML = `
-          <div style="padding: 24px; text-align: center; color: var(--text-muted); font-size: 12px; background: #10141e; border-radius: 8px; border: 1px dashed var(--border);">
-            Chưa có Slot lệnh nào. Bấm "+ Thêm Slot" để tạo mẫu lệnh tự động hóa.
+          <div style="padding: 24px; text-align: center; color: var(--text-muted); font-size: 12px; background: var(--input-bg); border-radius: 8px; border: 1px dashed var(--border);">
+            Chưa có Slot lệnh nào. Bấm "Thêm Slot" để tạo mẫu lệnh tự động hóa.
           </div>
         `;
         return;
@@ -2435,7 +2643,7 @@
         card.innerHTML = `
           <div class="slot-row-header">
             <input type="text" class="form-input" style="flex: 1;" value="${slot.label}" id="settings_slot_label_${slot.id}" placeholder="Tên Slot (vd: Quick Git Push)" />
-            <button class="pane-close-btn" style="color: #ff7b72;" onclick="removeSlot('${slot.id}')" title="Xóa slot này">✕</button>
+            <button class="pane-close-btn" onclick="removeSlot('${slot.id}')" title="Xóa slot này">✕</button>
           </div>
           <textarea class="slot-cmd-textarea" id="settings_slot_cmd_${slot.id}" placeholder="Nhập mẫu lệnh PowerShell/Git (vd: git add . && git commit -m 'from {{MACHINE_NAME}}' && git push)">${slot.command}</textarea>
           <div class="tag-chips-wrap">
@@ -2522,9 +2730,9 @@
 
       if (gitReposList.length === 0) {
         listEl.innerHTML = `
-          <div style="padding: 30px 16px; text-align: center; color: var(--text-muted); font-size: 12px; background: #10141e; border-radius: 8px; border: 1px dashed var(--border);">
+          <div style="padding: 30px 16px; text-align: center; color: var(--text-muted); font-size: 12px; background: var(--input-bg); border-radius: 8px; border: 1px dashed var(--border);">
             <p style="margin-bottom: 8px; font-size: 13px;">Chưa có Repository nào trong kho UWS</p>
-            <button class="btn-save" onclick="openCreateRepoModal()">+ Tạo Repo Mới</button>
+            <button class="btn-save" onclick="openCreateRepoModal()">Tạo Repo Mới</button>
           </div>
         `;
         return;
@@ -2537,17 +2745,16 @@
         const remoteVal = repo.remoteUrl || '';
         const isClean = repo.isClean;
         const statusBadge = isClean 
-          ? '<span class="user-badge-tag tag-editor" style="background: rgba(63, 185, 80, 0.2); color: #7ee787;">Sạch (Clean)</span>'
-          : `<span class="user-badge-tag tag-viewer" style="background: rgba(210, 153, 34, 0.2); color: #e3b341;">${repo.uncommittedCount} thay đổi</span>`;
+          ? '<span class="user-badge-tag tag-editor" style="background: rgba(63, 185, 80, 0.2); color: var(--accent-green);">Sạch</span>'
+          : `<span class="user-badge-tag tag-viewer" style="background: rgba(210, 153, 34, 0.2); color: var(--accent-yellow);">${repo.uncommittedCount} thay đổi</span>`;
 
         const escapedPath = repo.path.replace(/\\/g, '/');
 
         item.innerHTML = `
           <div class="repo-setting-top">
             <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-              <span style="font-size: 14px;">🐙</span>
-              <span style="font-size: 13px; font-weight: 700; color: #d2a8ff;">${repo.name}</span>
-              <span class="user-badge-tag tag-you" style="background: rgba(88, 166, 255, 0.2); color: #79c0ff;">${repo.branch}</span>
+              <span style="font-size: 13px; font-weight: 700; color: var(--accent);">${repo.name}</span>
+              <span class="user-badge-tag tag-you" style="background: rgba(88, 166, 255, 0.2); color: var(--accent);">${repo.branch}</span>
               ${statusBadge}
             </div>
             <div style="font-size: 10px; color: var(--text-muted); font-family: monospace;">${escapedPath}</div>
@@ -2560,15 +2767,15 @@
             </label>
             <div class="repo-remote-input-group">
               <input type="text" class="form-input" id="repo_remote_input_${idx}" value="${remoteVal}" placeholder="https://github.com/username/project.git" style="flex: 1;" />
-              <button class="btn-save" onclick="saveRepoRemoteFromSettings('${escapedPath}', 'repo_remote_input_${idx}', 'remote_status_${idx}')">💾 Lưu Link</button>
-              <button class="explorer-btn" onclick="testRepoRemoteFromSettings('${escapedPath}', 'remote_status_${idx}')">🔌 Kiểm Tra</button>
-              ${remoteVal && remoteVal.startsWith('http') ? `<button class="explorer-btn" onclick="openRepoInBrowser('${remoteVal}')" title="Mở trang repository trên trình duyệt">🌐 Mở Web</button>` : ''}
+              <button class="btn-save" onclick="saveRepoRemoteFromSettings('${escapedPath}', 'repo_remote_input_${idx}', 'remote_status_${idx}')">Lưu Link</button>
+              <button class="explorer-btn" onclick="testRepoRemoteFromSettings('${escapedPath}', 'remote_status_${idx}')">Kiểm Tra</button>
+              ${remoteVal && remoteVal.startsWith('http') ? `<button class="explorer-btn" onclick="openRepoInBrowser('${remoteVal}')" title="Mở trang repository trên trình duyệt">Mở Web</button>` : ''}
             </div>
           </div>
 
-          <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 8px;">
-            <button class="explorer-btn" onclick="gitPullProject('${escapedPath}')">⬇️ Git Pull</button>
-            <button class="explorer-btn" onclick="gitPushProject('${escapedPath}')">⬆️ Git Push</button>
+          <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px; border-top: 1px solid var(--border); padding-top: 8px;">
+            <button class="explorer-btn" onclick="gitPullProject('${escapedPath}')">Git Pull</button>
+            <button class="explorer-btn" onclick="gitPushProject('${escapedPath}')">Git Push</button>
           </div>
         `;
 
@@ -2960,6 +3167,7 @@
       const paneEl = document.createElement('div');
       paneEl.className = 'tiling-pane active';
       paneEl.id = paneId;
+      paneEl.setAttribute('data-service', serviceType);
 
       paneEl.innerHTML = `
         <div class="pane-header" id="${paneId}_header">
@@ -4219,6 +4427,8 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       applyTheme(currentThemeKey);
+      applyWorkspaceBackground();
+      initPaneOpacities();
       const savedScale = parseFloat(localStorage.getItem('uws_zoom_scale') || '1.0');
       if (savedScale !== 1.0) {
         setUiZoom(savedScale);

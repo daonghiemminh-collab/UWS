@@ -16,9 +16,9 @@ export class FileSystemService {
 
   public getAvailableDrives(): DriveInfo[] {
     const drives: DriveInfo[] = [
-      { name: '⚡ E:\\UWS (Dự án UWS)', path: this.defaultRoot.replace(/\\/g, '/') },
-      { name: '💾 E:\\ (Ổ đĩa E)', path: 'E:/' },
-      { name: '💻 C:\\ (Ổ đĩa C)', path: 'C:/' },
+      { name: 'E:\\UWS (Dự án UWS)', path: this.defaultRoot.replace(/\\/g, '/') },
+      { name: 'E:\\ (Ổ đĩa E)', path: 'E:/' },
+      { name: 'C:\\ (Ổ đĩa C)', path: 'C:/' },
     ];
     return drives;
   }
