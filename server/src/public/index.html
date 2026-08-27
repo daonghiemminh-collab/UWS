@@ -687,6 +687,12 @@
       opacity: var(--bg-telemetry-opacity, 0);
     }
 
+    .tiling-pane[data-service="git"] .pane-body::before {
+      display: none !important;
+      background-image: none !important;
+      opacity: 0 !important;
+    }
+
     /* TERMINAL MOUNT & VIEWER NOTIFICATION BAR */
     .terminal-mount {
       width: 100%;
@@ -1071,6 +1077,9 @@
       gap: 12px;
       height: 100%;
       overflow-y: auto;
+      position: relative;
+      z-index: 1;
+      background: var(--bg);
     }
 
     .git-hub-header {
@@ -1886,7 +1895,7 @@
       style="margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 4px;">
       <button class="dock-btn btn-accent" onclick="openSystemSettingsModal()"
         style="background: rgba(88, 166, 255, 0.12); border-color: rgba(88, 166, 255, 0.35); color: var(--accent); font-weight: 600;">
-        <span>⚙️ Cài Đặt Hệ Thống</span>
+        <span>Cài Đặt Hệ Thống</span>
       </button>
     </div>
   </aside>
@@ -3425,14 +3434,26 @@
     }
 
     function spawnExplorerGitHub() {
-      const leaf = spawnExplorerPane('');
-      openGitReposHubInPane(leaf.paneId);
+      const leaf = createLeafNode({
+        title: 'Kho Dự Án Git (Repos)',
+        serviceType: 'git',
+        showSaveBtn: false,
+      });
+      leaf.isGitHubView = true;
+      insertLeafIntoLayout(leaf);
+      renderGitReposHub(leaf.paneId);
+      fetchGitRepos();
+      return leaf;
     }
 
     function openGitReposHubInPane(paneId) {
       const leaf = allLeafsMap.get(paneId);
       if (!leaf) return;
+      leaf.serviceType = 'git';
       leaf.isGitHubView = true;
+      if (leaf.el) {
+        leaf.el.setAttribute('data-service', 'git');
+      }
       const titleEl = leaf.el.querySelector(`#${paneId}_title`);
       if (titleEl) titleEl.innerText = `Kho Dự Án Git (Repos)`;
       renderGitReposHub(paneId);
@@ -3441,8 +3462,13 @@
 
     function openRepoInExplorer(paneId, repoPath) {
       const leaf = allLeafsMap.get(paneId);
-      if (!leaf) return;
-      leaf.isGitHubView = false;
+      if (leaf) {
+        leaf.isGitHubView = false;
+        leaf.serviceType = 'explorer';
+        if (leaf.el) {
+          leaf.el.setAttribute('data-service', 'explorer');
+        }
+      }
       spawnExplorerPane(repoPath);
     }
 
