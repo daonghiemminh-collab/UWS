@@ -1100,10 +1100,10 @@
 
     .explorer-nav-bar {
       padding: 6px 8px;
-      background: rgba(15, 20, 30, 0.5);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
+      background: rgba(10, 14, 24, 0.22);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
       display: flex;
       flex-direction: column;
       gap: 6px;
@@ -1125,8 +1125,8 @@
     }
 
     .drive-chip {
-      background: var(--btn-bg);
-      border: 1px solid var(--border);
+      background: rgba(15, 20, 30, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       color: var(--text);
       font-size: 11px;
       font-weight: 600;
@@ -1191,8 +1191,8 @@
     }
 
     .breadcrumb-pill {
-      background: var(--btn-bg);
-      border: 1px solid var(--border);
+      background: rgba(15, 20, 30, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       color: var(--accent);
       padding: 2px 8px;
       border-radius: 4px;
@@ -1203,7 +1203,7 @@
     }
 
     .breadcrumb-pill:hover {
-      background: var(--btn-bg-hover);
+      background: rgba(88, 166, 255, 0.22);
       border-color: var(--accent);
       color: var(--text-bold);
       box-shadow: 0 0 6px rgba(88, 166, 255, 0.25);
@@ -1216,8 +1216,8 @@
     }
 
     .explorer-btn {
-      background: var(--btn-bg);
-      border: 1px solid var(--border);
+      background: rgba(15, 20, 30, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       color: var(--btn-text);
       padding: 3px 7px;
       border-radius: 4px;
@@ -1232,7 +1232,7 @@
     }
 
     .explorer-btn:hover {
-      background: var(--btn-bg-hover);
+      background: rgba(88, 166, 255, 0.22);
       border-color: var(--accent);
       color: var(--text-bold);
     }
@@ -1276,12 +1276,12 @@
       align-items: center;
       justify-content: space-between;
       padding: 5px 8px;
-      border-radius: 4px;
+      border-radius: 6px;
       font-size: 12px;
       color: var(--text);
       cursor: pointer;
-      background: rgba(15, 20, 30, 0.45);
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      background: rgba(10, 14, 24, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.03);
       transition: background 0.12s, border-color 0.12s, transform 0.1s;
       -webkit-app-region: no-drag;
       user-select: none;
@@ -1290,9 +1290,10 @@
     }
 
     .explorer-item:hover {
-      background: rgba(88, 166, 255, 0.22);
+      background: rgba(88, 166, 255, 0.2);
       border-color: rgba(88, 166, 255, 0.4);
       color: var(--text-bold);
+      box-shadow: 0 0 10px rgba(88, 166, 255, 0.15);
     }
 
     .explorer-item.selected {
@@ -1317,8 +1318,8 @@
       border-radius: 3px;
       font-weight: 700;
       text-transform: uppercase;
-      background: var(--btn-bg);
-      border: 1px solid var(--border);
+      background: rgba(10, 14, 24, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       color: var(--text-muted);
       letter-spacing: 0.5px;
     }
@@ -1342,10 +1343,10 @@
 
     .explorer-footer-bar {
       height: 22px;
-      background: rgba(15, 20, 30, 0.5);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-top: 1px solid var(--border);
+      background: rgba(10, 14, 24, 0.22);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
       display: flex;
       align-items: center;
       justify-content: space-between;
