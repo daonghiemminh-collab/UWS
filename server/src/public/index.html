@@ -2568,6 +2568,16 @@
               <span style="font-size: 10px; color: var(--text-muted); margin-top: 4px;">Chia sẻ liên kết này cho các máy
                 khác trong cùng mạng Wi-Fi/LAN để cùng tham gia làm việc.</span>
             </div>
+
+            <div class="form-group"
+              style="background: var(--input-bg); padding: 14px; border: 1px solid var(--border); border-radius: 8px;">
+              <label class="form-label">Trạng Thái Không Gian Làm Việc // Workspace Session:</label>
+              <div style="display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap;">
+                <button class="btn-save" onclick="saveWorkspaceLayout(); showToast('Đã lưu trạng thái Workspace hiện tại!', 'success');">Lưu Layout Ngay</button>
+                <button class="btn-cancel" onclick="resetWorkspaceLayout()">Đặt Lại Layout Mặc Định</button>
+              </div>
+              <span style="font-size: 10px; color: var(--text-muted); margin-top: 4px;">Meodusa tự động ghi nhớ và khôi phục cây cửa sổ (Terminal, File Explorer, Notepad, Git Projects) khi tắt và mở lại chương trình.</span>
+            </div>
           </div>
         </main>
       </div>
@@ -3942,7 +3952,368 @@
     let layoutRoot = null;
     const allLeafsMap = new Map();
 
-    function renderLayoutTree() {
+    // --- WORKSPACE LAYOUT PERSISTENCE & RESTORE ---
+    let layoutSaveDebounceTimer = null;
+
+    function saveWorkspaceLayout() {
+      if (layoutSaveDebounceTimer) clearTimeout(layoutSaveDebounceTimer);
+      layoutSaveDebounceTimer = setTimeout(() => {
+        try {
+          if (!layoutRoot || allLeafsMap.size === 0) {
+            localStorage.removeItem('meodusa_workspace_layout');
+            return;
+          }
+
+          function serializeNode(node) {
+            if (!node) return null;
+            if (node.type === 'leaf') {
+              return {
+                type: 'leaf',
+                serviceType: node.serviceType,
+                title: node.title,
+                filePath: node.filePath || '',
+                currentPath: node.currentPath || '',
+                isGitHubView: Boolean(node.isGitHubView),
+                customCwd: node.customCwd || '',
+              };
+            }
+            return {
+              type: 'branch',
+              direction: node.direction,
+              ratio: node.ratio || 0.5,
+              first: serializeNode(node.first),
+              second: serializeNode(node.second),
+            };
+          }
+
+          const serialized = serializeNode(layoutRoot);
+          if (serialized) {
+            localStorage.setItem('meodusa_workspace_layout', JSON.stringify(serialized));
+          }
+        } catch (e) {
+          console.warn('[Workspace] Error saving layout:', e);
+        }
+      }, 200);
+    }
+
+    function resetWorkspaceLayout() {
+      if (confirm('Bạn có chắc chắn muốn đặt lại toàn bộ Layout Workspace về mặc định không?')) {
+        localStorage.removeItem('meodusa_workspace_layout');
+        allLeafsMap.forEach(leaf => {
+          if (leaf.resizeObserver) leaf.resizeObserver.disconnect();
+          if (leaf.term) leaf.term.dispose();
+        });
+        allLeafsMap.clear();
+        layoutRoot = null;
+        renderLayoutTree(false);
+        spawnTerminalPane();
+        showToast('Đã khôi phục Layout mặc định thành công!', 'info');
+      }
+    }
+
+    function restoreWorkspaceLayout() {
+      try {
+        const raw = localStorage.getItem('meodusa_workspace_layout');
+        if (!raw) return false;
+        const serialized = JSON.parse(raw);
+        if (!serialized) return false;
+
+        function instantiateLeaf(leafData) {
+          const serviceType = leafData.serviceType || 'terminal';
+          let leafNode = null;
+
+          if (serviceType === 'terminal') {
+            leafNode = createLeafNode({
+              title: leafData.title || 'PowerShell Terminal',
+              serviceType: 'terminal',
+            });
+            leafNode.customCwd = leafData.customCwd || '';
+
+            const bodyEl = leafNode.el.querySelector('.pane-body');
+            const termMount = document.createElement('div');
+            termMount.className = 'xterm-mount-wrap';
+            termMount.id = `${leafNode.paneId}_term`;
+            bodyEl.appendChild(termMount);
+
+            const term = new Terminal({
+              theme: currentXtermTheme,
+              fontFamily: '"JetBrains Mono", "SF Mono", "Fira Code", monospace',
+              fontSize: 13,
+              cursorBlink: true,
+              cursorStyle: 'bar',
+              allowTransparency: true,
+            });
+
+            const fitAddon = new FitAddon.FitAddon();
+            term.loadAddon(fitAddon);
+            if (window.WebLinksAddon && window.WebLinksAddon.WebLinksAddon) {
+              term.loadAddon(new window.WebLinksAddon.WebLinksAddon());
+            }
+
+            term.open(termMount);
+            setTimeout(() => fitAddon.fit(), 50);
+
+            leafNode.term = term;
+            leafNode.fitAddon = fitAddon;
+
+            term.onData((data) => {
+              if (!amIEditor()) {
+                showToast('Bạn đang ở chế độ Chỉ Xem. Hãy bấm "Xin Quyền" dưới terminal để gõ lệnh!', 'warning');
+                return;
+              }
+              if (ws && ws.readyState === WebSocket.OPEN && leafNode.sessionId) {
+                ws.send(JSON.stringify({
+                  type: 'terminal:input',
+                  sessionId: leafNode.sessionId,
+                  data: data,
+                }));
+              }
+            });
+
+            term.attachCustomKeyEventHandler((e) => {
+              if (e.type === 'keydown') {
+                if (e.ctrlKey && e.code === 'KeyC' && term.hasSelection()) {
+                  navigator.clipboard.writeText(term.getSelection()).catch(() => { });
+                  return false;
+                }
+                if (e.ctrlKey && e.shiftKey && e.code === 'KeyV') {
+                  if (!amIEditor()) {
+                    showToast('Bạn đang ở chế độ Chỉ Xem.', 'warning');
+                    return false;
+                  }
+                  navigator.clipboard.readText().then((text) => {
+                    if (text && ws && ws.readyState === WebSocket.OPEN && leafNode.sessionId) {
+                      ws.send(JSON.stringify({ type: 'terminal:input', sessionId: leafNode.sessionId, data: text }));
+                    }
+                  }).catch(() => { });
+                  return false;
+                }
+              }
+              return true;
+            });
+
+            if (ws && ws.readyState === WebSocket.OPEN) {
+              ws.send(JSON.stringify({
+                type: 'terminal:create',
+                workspaceId: 'default',
+                cwd: leafNode.customCwd || undefined,
+                cols: term.cols || 80,
+                rows: term.rows || 24,
+              }));
+            }
+          } else if (serviceType === 'explorer') {
+            if (leafData.isGitHubView) {
+              leafNode = createLeafNode({
+                title: 'Kho Dự Án Git (Repos)',
+                serviceType: 'git',
+                showSaveBtn: false,
+              });
+              leafNode.isGitHubView = true;
+              renderGitReposHub(leafNode.paneId);
+              fetchGitRepos();
+            } else {
+              leafNode = createLeafNode({
+                title: leafData.title || 'File Explorer',
+                serviceType: 'explorer',
+              });
+              leafNode.currentPath = leafData.currentPath || '';
+              leafNode.currentParent = '';
+              leafNode.currentItems = [];
+              leafNode.searchQuery = '';
+              leafNode.isGitHubView = false;
+
+              const bodyEl = leafNode.el.querySelector('.pane-body');
+              const explorerBox = document.createElement('div');
+              explorerBox.className = 'explorer-container';
+              explorerBox.innerHTML = `
+                <div class="explorer-nav-bar">
+                  <div class="explorer-drive-chips" id="${leafNode.paneId}_drives"></div>
+                  <div class="explorer-breadcrumb-wrap" id="${leafNode.paneId}_breadcrumbs"></div>
+                  <div class="explorer-toolbar">
+                    <button class="explorer-btn" id="${leafNode.paneId}_btnUp" onclick="explorerNavigateUp('${leafNode.paneId}')" title="Lên thư mục cha">Up</button>
+                    <button class="explorer-btn" onclick="explorerRefresh('${leafNode.paneId}')" title="Làm mới">Refresh</button>
+                    <input type="text" class="explorer-path-input" id="${leafNode.paneId}_pathInput" placeholder="Đường dẫn (vd: E:/, C:/Users...)" onkeydown="if(event.key==='Enter') loadExplorerDirectory('${leafNode.paneId}', this.value)" />
+                    <input type="text" class="explorer-path-input" style="max-width: 130px;" placeholder="Lọc tệp..." oninput="explorerFilter('${leafNode.paneId}', this.value)" />
+                  </div>
+                </div>
+                <div class="explorer-list" id="${leafNode.paneId}_fileList">
+                  <div style="padding: 16px; color: var(--text-muted); font-size: 11px;">Đang đọc thư mục...</div>
+                </div>
+                <div class="explorer-footer-bar" id="${leafNode.paneId}_footer">
+                  <span>0 mục</span>
+                  <span>...</span>
+                </div>
+              `;
+              bodyEl.appendChild(explorerBox);
+
+              const fileListEl = explorerBox.querySelector(`#${leafNode.paneId}_fileList`);
+              fileListEl.addEventListener('contextmenu', (e) => {
+                if (e.target.closest('.explorer-item')) return;
+                showContextMenu(e, [
+                  { label: 'Tệp mới', hint: 'File', action: () => explorerNewFile(leafNode.paneId) },
+                  { label: 'Thư mục mới', hint: 'Folder', action: () => explorerNewFolder(leafNode.paneId) },
+                  { label: 'Mở Terminal tại đây', hint: 'PowerShell', action: () => explorerOpenTerminalHere(leafNode.paneId) },
+                  { type: 'separator' },
+                  { label: 'Làm mới', hint: 'Refresh', action: () => explorerRefresh(leafNode.paneId) },
+                ]);
+              });
+
+              loadExplorerDirectory(leafNode.paneId, leafNode.currentPath);
+            }
+          } else if (serviceType === 'git') {
+            leafNode = createLeafNode({
+              title: 'Kho Dự Án Git (Repos)',
+              serviceType: 'git',
+              showSaveBtn: false,
+            });
+            leafNode.isGitHubView = true;
+            renderGitReposHub(leafNode.paneId);
+            fetchGitRepos();
+          } else if (serviceType === 'notepad') {
+            const filePath = leafData.filePath || '';
+            const filename = filePath ? filePath.split('/').pop() : 'Untitled.txt';
+            leafNode = createLeafNode({
+              title: `Notepad: ${filename}`,
+              serviceType: 'notepad',
+              showSaveBtn: true,
+            });
+            leafNode.filePath = filePath;
+            leafNode.isDirty = false;
+
+            const bodyEl = leafNode.el.querySelector('.pane-body');
+            const notepadBox = document.createElement('div');
+            notepadBox.className = 'notepad-container';
+            notepadBox.innerHTML = `
+              <textarea class="notepad-textarea" id="${leafNode.paneId}_textarea" placeholder="Nhập nội dung văn bản hoặc code tại đây... (Ctrl+S để lưu trực tiếp)"></textarea>
+              <div class="notepad-status-bar">
+                <span id="${leafNode.paneId}_fileInfo">${filePath || 'Tệp mới (Chưa lưu đường dẫn)'}</span>
+                <span id="${leafNode.paneId}_cursorInfo">Dòng 1, Cột 1 | UTF-8 | Đã lưu</span>
+              </div>
+            `;
+            bodyEl.appendChild(notepadBox);
+
+            const textarea = leafNode.el.querySelector(`#${leafNode.paneId}_textarea`);
+            leafNode.textarea = textarea;
+
+            textarea.addEventListener('input', () => {
+              leafNode.isDirty = true;
+              updateNotepadStatusBar(leafNode.paneId);
+            });
+
+            textarea.addEventListener('keydown', (e) => {
+              if (e.ctrlKey && e.code === 'KeyS') {
+                e.preventDefault();
+                saveNotepad(leafNode.paneId);
+              }
+              if (e.key === 'Tab') {
+                e.preventDefault();
+                const start = textarea.selectionStart;
+                const end = textarea.selectionEnd;
+                textarea.value = textarea.value.substring(0, start) + '  ' + textarea.value.substring(end);
+                textarea.selectionStart = textarea.selectionEnd = start + 2;
+                leafNode.isDirty = true;
+                updateNotepadStatusBar(leafNode.paneId);
+              }
+            });
+
+            textarea.addEventListener('keyup', () => updateNotepadStatusBar(leafNode.paneId));
+            textarea.addEventListener('click', () => updateNotepadStatusBar(leafNode.paneId));
+
+            if (filePath && ws && ws.readyState === WebSocket.OPEN) {
+              ws.send(JSON.stringify({ type: 'fs:read', path: filePath }));
+            }
+          } else if (serviceType === 'telemetry') {
+            leafNode = createLeafNode({
+              title: 'Telemetry Dashboard',
+              serviceType: 'telemetry',
+            });
+
+            const bodyEl = leafNode.el.querySelector('.pane-body');
+            const teleBody = document.createElement('div');
+            teleBody.className = 'telemetry-body';
+            teleBody.innerHTML = `
+              <div class="metric-list">
+                <div class="metric-line">
+                  <span class="metric-key">OS:</span>
+                  <span class="metric-val" id="${leafNode.paneId}_valOs">Đang tải...</span>
+                </div>
+                <div class="metric-line">
+                  <span class="metric-key">GPU:</span>
+                  <span class="metric-val" id="${leafNode.paneId}_valGpu" style="color: #7ee787;">Đang tải...</span>
+                </div>
+                <div class="metric-line">
+                  <span class="metric-key">RAM:</span>
+                  <span class="metric-val" id="${leafNode.paneId}_valRam">Đang tải...</span>
+                </div>
+                <div class="metric-line">
+                  <span class="metric-key">Load:</span>
+                  <span class="metric-val" id="${leafNode.paneId}_valLoad" style="color: #e3b341;">Đang tải...</span>
+                </div>
+                <div class="metric-line">
+                  <span class="metric-key">Memory:</span>
+                  <span class="metric-val" id="${leafNode.paneId}_valMemory">Đang tải...</span>
+                </div>
+              </div>
+            `;
+            bodyEl.appendChild(teleBody);
+
+            if (latestMetricsData) {
+              renderMetricsForPane(leafNode.paneId, latestMetricsData);
+            }
+          } else if (serviceType === 'image_viewer') {
+            const filePath = leafData.filePath || '';
+            const filename = filePath.split('/').pop();
+            leafNode = createLeafNode({
+              title: `Image: ${filename}`,
+              serviceType: 'image_viewer',
+            });
+            leafNode.filePath = filePath;
+
+            const bodyEl = leafNode.el.querySelector('.pane-body');
+            const imgBox = document.createElement('div');
+            imgBox.className = 'image-viewer-container';
+            imgBox.innerHTML = `
+              <img src="/api/files/raw?path=${encodeURIComponent(filePath)}" alt="${filename}" />
+            `;
+            bodyEl.appendChild(imgBox);
+          }
+
+          return leafNode;
+        }
+
+        function reconstructNode(nodeData) {
+          if (!nodeData) return null;
+          if (nodeData.type === 'leaf') {
+            return instantiateLeaf(nodeData);
+          }
+          const first = reconstructNode(nodeData.first);
+          const second = reconstructNode(nodeData.second);
+          if (!first && !second) return null;
+          if (!first) return second;
+          if (!second) return first;
+
+          return {
+            type: 'branch',
+            direction: nodeData.direction || 'row',
+            ratio: nodeData.ratio || 0.5,
+            first,
+            second,
+          };
+        }
+
+        const restoredRoot = reconstructNode(serialized);
+        if (restoredRoot) {
+          layoutRoot = restoredRoot;
+          renderLayoutTree(false);
+          return true;
+        }
+      } catch (err) {
+        console.warn('[Workspace] Could not restore layout:', err);
+      }
+      return false;
+    }
+
+    function renderLayoutTree(shouldSave = true) {
       const container = document.getElementById('workspace-container');
       const ghost = document.getElementById('snap-ghost-zone');
 
@@ -3957,6 +4328,7 @@
           <button onclick="spawnTerminalPane()">+ Mở PowerShell Terminal</button>
         `;
         container.appendChild(empty);
+        if (shouldSave) saveWorkspaceLayout();
         return;
       }
 
@@ -3965,6 +4337,7 @@
 
       setTimeout(fitAllTerminals, 50);
       updateTurnControlUI();
+      if (shouldSave) saveWorkspaceLayout();
     }
 
     function buildNodeDOM(node) {
@@ -4026,6 +4399,7 @@
           window.removeEventListener('mouseup', onMouseUp);
           gutter.classList.remove('resizing');
           fitAllTerminals();
+          saveWorkspaceLayout();
         }
 
         window.addEventListener('mousemove', onMouseMove);
@@ -5145,9 +5519,19 @@
         checkUrlPinAndAuth();
 
         if (allLeafsMap.size === 0) {
-          spawnTerminalPane();
+          const restored = restoreWorkspaceLayout();
+          if (!restored && allLeafsMap.size === 0) {
+            spawnTerminalPane();
+          }
         }
       };
+
+      window.addEventListener('beforeunload', () => {
+        saveWorkspaceLayout();
+      });
+      window.addEventListener('pagehide', () => {
+        saveWorkspaceLayout();
+      });
 
       ws.onmessage = (event) => {
         try {
