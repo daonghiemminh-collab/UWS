@@ -23,13 +23,13 @@ export class FileSystemService {
       const drivePath = `${l}:/`;
       try {
         if (fs.existsSync(drivePath)) {
-          drives.push({ name: `Ổ ${l}:`, path: drivePath });
+          drives.push({ name: `Disk ${l}`, path: drivePath });
         }
       } catch (e) { }
     }
 
     if (drives.length === 0) {
-      drives.push({ name: 'Ổ C:', path: 'C:/' });
+      drives.push({ name: 'Disk C', path: 'C:/' });
     }
     return drives;
   }
