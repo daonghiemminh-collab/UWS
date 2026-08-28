@@ -978,14 +978,21 @@
       border-bottom: 1px solid var(--border);
       display: flex;
       flex-direction: column;
-      gap: 5px;
+      gap: 6px;
       flex-shrink: 0;
     }
 
-    .explorer-drives-row {
+    .explorer-top-row {
       display: flex;
       align-items: center;
-      gap: 4px;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .explorer-drive-chips {
+      display: flex;
+      align-items: center;
+      gap: 5px;
       flex-wrap: wrap;
     }
 
@@ -995,10 +1002,13 @@
       color: var(--text);
       font-size: 11px;
       font-weight: 600;
-      padding: 2px 7px;
+      padding: 2px 8px;
       border-radius: 4px;
       cursor: pointer;
       transition: all 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
     }
 
     .drive-chip:hover,
@@ -1006,20 +1016,31 @@
       background: var(--btn-bg-hover);
       border-color: var(--accent);
       color: var(--accent);
+      box-shadow: 0 0 8px rgba(88, 166, 255, 0.25);
     }
 
-    .drive-chip.chip-git {
-      background: var(--btn-bg);
-      border-color: var(--accent);
-      color: var(--accent);
-      font-weight: 600;
+    .explorer-filter-box {
+      display: flex;
+      align-items: center;
     }
 
-    .drive-chip.chip-git:hover,
-    .drive-chip.chip-git.active {
-      background: var(--btn-bg-hover);
-      border-color: var(--accent);
+    .explorer-filter-input {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
       color: var(--text-bold);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-family: inherit;
+      outline: none;
+      width: 120px;
+      transition: all 0.15s;
+    }
+
+    .explorer-filter-input:focus {
+      border-color: var(--accent);
+      width: 160px;
+      box-shadow: 0 0 8px rgba(88, 166, 255, 0.2);
     }
 
     .explorer-breadcrumb-wrap {
@@ -1045,10 +1066,11 @@
       background: var(--btn-bg);
       border: 1px solid var(--border);
       color: var(--accent);
-      padding: 1px 6px;
-      border-radius: 3px;
+      padding: 2px 8px;
+      border-radius: 4px;
       cursor: pointer;
       font-size: 11px;
+      font-weight: 500;
       transition: all 0.12s;
     }
 
@@ -1056,34 +1078,13 @@
       background: var(--btn-bg-hover);
       border-color: var(--accent);
       color: var(--text-bold);
+      box-shadow: 0 0 6px rgba(88, 166, 255, 0.25);
     }
 
     .breadcrumb-sep {
       color: var(--text-muted);
       font-size: 10px;
-    }
-
-    .explorer-toolbar {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .explorer-path-input {
-      background: var(--input-bg);
-      border: 1px solid var(--border);
-      color: var(--text-bold);
-      padding: 3px 8px;
-      border-radius: 4px;
-      font-size: 11px;
-      font-family: inherit;
-      outline: none;
-      flex: 1;
-      min-width: 80px;
-    }
-
-    .explorer-path-input:focus {
-      border-color: var(--accent);
+      opacity: 0.6;
     }
 
     .explorer-btn {
@@ -4127,14 +4128,13 @@
               explorerBox.className = 'explorer-container';
               explorerBox.innerHTML = `
                 <div class="explorer-nav-bar">
-                  <div class="explorer-drive-chips" id="${leafNode.paneId}_drives"></div>
-                  <div class="explorer-breadcrumb-wrap" id="${leafNode.paneId}_breadcrumbs"></div>
-                  <div class="explorer-toolbar">
-                    <button class="explorer-btn" id="${leafNode.paneId}_btnUp" onclick="explorerNavigateUp('${leafNode.paneId}')" title="Lên thư mục cha">Up</button>
-                    <button class="explorer-btn" onclick="explorerRefresh('${leafNode.paneId}')" title="Làm mới">Refresh</button>
-                    <input type="text" class="explorer-path-input" id="${leafNode.paneId}_pathInput" placeholder="Đường dẫn (vd: E:/, C:/Users...)" onkeydown="if(event.key==='Enter') loadExplorerDirectory('${leafNode.paneId}', this.value)" />
-                    <input type="text" class="explorer-path-input" style="max-width: 130px;" placeholder="Lọc tệp..." oninput="explorerFilter('${leafNode.paneId}', this.value)" />
+                  <div class="explorer-top-row">
+                    <div class="explorer-drive-chips" id="${leafNode.paneId}_drives"></div>
+                    <div class="explorer-filter-box">
+                      <input type="text" class="explorer-filter-input" placeholder="Lọc tệp..." oninput="explorerFilter('${leafNode.paneId}', this.value)" />
+                    </div>
                   </div>
+                  <div class="explorer-breadcrumb-wrap" id="${leafNode.paneId}_breadcrumbs"></div>
                 </div>
                 <div class="explorer-list" id="${leafNode.paneId}_fileList">
                   <div style="padding: 16px; color: var(--text-muted); font-size: 11px;">Đang đọc thư mục...</div>
@@ -4949,14 +4949,13 @@
       explorerBox.className = 'explorer-container';
       explorerBox.innerHTML = `
         <div class="explorer-nav-bar">
-          <div class="explorer-drive-chips" id="${leafNode.paneId}_drives"></div>
-          <div class="explorer-breadcrumb-wrap" id="${leafNode.paneId}_breadcrumbs"></div>
-          <div class="explorer-toolbar">
-            <button class="explorer-btn" id="${leafNode.paneId}_btnUp" onclick="explorerNavigateUp('${leafNode.paneId}')" title="Lên thư mục cha">Up</button>
-            <button class="explorer-btn" onclick="explorerRefresh('${leafNode.paneId}')" title="Làm mới">Refresh</button>
-            <input type="text" class="explorer-path-input" id="${leafNode.paneId}_pathInput" placeholder="Đường dẫn (vd: E:/, C:/Users...)" onkeydown="if(event.key==='Enter') loadExplorerDirectory('${leafNode.paneId}', this.value)" />
-            <input type="text" class="explorer-path-input" style="max-width: 130px;" placeholder="Lọc tệp..." oninput="explorerFilter('${leafNode.paneId}', this.value)" />
+          <div class="explorer-top-row">
+            <div class="explorer-drive-chips" id="${leafNode.paneId}_drives"></div>
+            <div class="explorer-filter-box">
+              <input type="text" class="explorer-filter-input" placeholder="Lọc tệp..." oninput="explorerFilter('${leafNode.paneId}', this.value)" />
+            </div>
           </div>
+          <div class="explorer-breadcrumb-wrap" id="${leafNode.paneId}_breadcrumbs"></div>
         </div>
         <div class="explorer-list" id="${leafNode.paneId}_fileList">
           <div style="padding: 16px; color: var(--text-muted); font-size: 11px;">Đang đọc thư mục...</div>
@@ -5006,21 +5005,12 @@
       leaf.currentParent = parentPath;
       leaf.currentItems = items || [];
 
-      const pathInput = leaf.el.querySelector(`#${paneId}_pathInput`);
-      if (pathInput) pathInput.value = currentPath;
-
       const titleEl = leaf.el.querySelector(`#${paneId}_title`);
       if (titleEl) titleEl.innerText = `Explorer: ${currentPath}`;
 
       const drivesEl = leaf.el.querySelector(`#${paneId}_drives`);
       if (drivesEl) {
         drivesEl.innerHTML = '';
-
-        const gitChip = document.createElement('span');
-        gitChip.className = 'drive-chip chip-git';
-        gitChip.innerText = 'Dự Án Git';
-        gitChip.onclick = () => openGitReposHubInPane(paneId);
-        drivesEl.appendChild(gitChip);
 
         if (drives && drives.length > 0) {
           drives.forEach((d) => {

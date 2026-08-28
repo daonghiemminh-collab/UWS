@@ -15,11 +15,21 @@ export class FileSystemService {
   }
 
   public getAvailableDrives(): DriveInfo[] {
-    const drives: DriveInfo[] = [
-      { name: 'E:/UWS (Meodusa Core)', path: this.defaultRoot.replace(/\\/g, '/') },
-      { name: 'E:/ (Ổ E)', path: 'E:/' },
-      { name: 'C:/ (Ổ C)', path: 'C:/' },
-    ];
+    const letters = ['C', 'D', 'E', 'F', 'G', 'H'];
+    const drives: DriveInfo[] = [];
+
+    for (const l of letters) {
+      const drivePath = `${l}:/`;
+      try {
+        if (fs.existsSync(drivePath)) {
+          drives.push({ name: `Ổ ${l}:`, path: drivePath });
+        }
+      } catch (e) { }
+    }
+
+    if (drives.length === 0) {
+      drives.push({ name: 'Ổ C:', path: 'C:/' });
+    }
     return drives;
   }
 
