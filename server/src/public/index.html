@@ -127,26 +127,32 @@
     .meodusa-menu-wrapper {
       position: relative;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: flex-end;
       -webkit-app-region: no-drag;
       z-index: 10000;
       height: 38px;
     }
 
-    /* LIQUID WATER DROPLET NOTCH POD */
-    .meodusa-droplet-pod {
+    /* BOOKMARK RIBBON / PENNANT FLAG POD */
+    .meodusa-ribbon-pod {
       position: relative;
-      width: 64px;
-      height: 38px;
+      width: 46px;
+      height: 42px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       z-index: 1;
+      margin-top: 0;
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .meodusa-droplet-svg {
+    .meodusa-menu-wrapper:hover .meodusa-ribbon-pod {
+      transform: translateY(2px);
+    }
+
+    .meodusa-ribbon-svg {
       position: absolute;
       top: 0;
       left: 0;
@@ -156,23 +162,24 @@
       overflow: visible;
     }
 
-    .droplet-shape {
-      fill: url(#dropletBgGrad);
+    .ribbon-shape {
+      fill: url(#bookmarkBgGrad);
     }
 
-    .droplet-border {
+    .ribbon-border {
       fill: none;
-      stroke: rgba(188, 140, 255, 0.45);
+      stroke: rgba(188, 140, 255, 0.5);
       stroke-width: 1.5;
+      stroke-linejoin: round;
       stroke-linecap: round;
-      filter: drop-shadow(0 2px 5px rgba(188, 140, 255, 0.4));
+      filter: drop-shadow(0 2px 6px rgba(188, 140, 255, 0.4));
       transition: all 0.25s ease;
     }
 
-    .meodusa-menu-wrapper:hover .droplet-border {
+    .meodusa-menu-wrapper:hover .ribbon-border {
       stroke: #d2a8ff;
       stroke-width: 2;
-      filter: drop-shadow(0 3px 12px rgba(210, 168, 255, 0.9));
+      filter: drop-shadow(0 4px 14px rgba(210, 168, 255, 0.9));
     }
 
     .meodusa-avatar-trigger {
@@ -187,6 +194,7 @@
       cursor: pointer;
       position: relative;
       z-index: 2;
+      margin-top: 2px;
       transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
@@ -196,7 +204,7 @@
       object-fit: contain;
       transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       position: absolute;
-      filter: drop-shadow(0 0 5px rgba(210, 168, 255, 0.5));
+      filter: drop-shadow(0 0 6px rgba(210, 168, 255, 0.6));
     }
 
     .meodusa-avatar-img.default-face {
@@ -232,7 +240,7 @@
     .meodusa-pills-container {
       display: none;
       position: absolute;
-      top: 38px;
+      top: 40px;
       right: 4px;
       flex-direction: column;
       align-items: flex-end;
@@ -2270,17 +2278,17 @@
         </button>
       </div>
 
-      <!-- LIQUID WATER DROPLET NOTCH POD (COMPACT & ROUNDED) -->
-      <div class="meodusa-droplet-pod" title="Menu Hệ Thống Meodusa (Rê chuột để mở)">
-        <svg class="meodusa-droplet-svg" viewBox="0 0 64 38" preserveAspectRatio="none">
+      <!-- BOOKMARK RIBBON / PENNANT FLAG POD -->
+      <div class="meodusa-ribbon-pod" title="Menu Hệ Thống Meodusa (Rê chuột để mở)">
+        <svg class="meodusa-ribbon-svg" viewBox="0 0 46 42" preserveAspectRatio="none">
           <defs>
-            <linearGradient id="dropletBgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <linearGradient id="bookmarkBgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stop-color="#090c10" stop-opacity="0.98" />
-              <stop offset="100%" stop-color="#121826" stop-opacity="0.98" />
+              <stop offset="100%" stop-color="#141a29" stop-opacity="0.98" />
             </linearGradient>
           </defs>
-          <path class="droplet-shape" d="M 0,0 C 13,0 16,36 32,36 C 48,36 51,0 64,0 Z" />
-          <path class="droplet-border" d="M 0,0 C 13,0 16,36 32,36 C 48,36 51,0 64,0" />
+          <path class="ribbon-shape" d="M 0,0 L 0,42 L 23,33 L 46,42 L 46,0 Z" />
+          <path class="ribbon-border" d="M 0,0 L 0,42 L 23,33 L 46,42 L 46,0" />
         </svg>
 
         <!-- MEODUSA AVATAR TRIGGER (NO INNER CIRCLE) -->
