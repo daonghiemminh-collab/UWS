@@ -11,6 +11,7 @@ import { SessionService } from './services/session/session.service.js';
 import { AutomationService } from './services/automation/automation.service.js';
 import { GitService } from './services/git/git.service.js';
 import { tunnelService } from './services/tunnel/tunnel.service.js';
+import { getStorageDirPath } from './utils/paths.js';
 import type { ClientMessage, ServerMessage } from '@uws/shared/types/protocol.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -53,7 +54,7 @@ app.get('/api/health', (req, res) => {
 });
 
 app.get('/api/workspaces', (req, res) => {
-  const workspacesRoot = path.resolve(process.cwd(), '../storage/workspaces');
+  const workspacesRoot = getStorageDirPath('workspaces');
   try {
     if (!fs.existsSync(workspacesRoot)) {
       fs.mkdirSync(workspacesRoot, { recursive: true });

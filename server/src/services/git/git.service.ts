@@ -2,6 +2,7 @@ import { exec } from 'child_process';
 import util from 'util';
 import path from 'path';
 import fs from 'fs';
+import { getStorageDirPath, getProjectRootDir } from '../../utils/paths.js';
 
 const execAsync = util.promisify(exec);
 
@@ -24,7 +25,7 @@ export class GitService {
   private reposRoot: string;
 
   constructor() {
-    this.reposRoot = path.resolve(process.cwd(), '../storage/repos');
+    this.reposRoot = getStorageDirPath('repos');
     this.ensureReposDirectory();
   }
 
@@ -57,7 +58,7 @@ export class GitService {
 
     // Also check root workspace E:/UWS
     try {
-      const rootPath = path.resolve(process.cwd(), '..');
+      const rootPath = getProjectRootDir();
       if (fs.existsSync(path.join(rootPath, '.git'))) {
         const rootInfo = await this.getRepoDetails(rootPath, 'Meodusa (Core Repository)');
         if (rootInfo) repos.unshift(rootInfo);

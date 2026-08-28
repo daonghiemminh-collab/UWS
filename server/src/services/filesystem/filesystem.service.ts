@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import type { FileItem } from '@uws/shared/types/workspace.js';
+import { getProjectRootDir } from '../../utils/paths.js';
 
 export interface DriveInfo {
   name: string;
@@ -11,7 +12,7 @@ export class FileSystemService {
   private defaultRoot: string;
 
   constructor() {
-    this.defaultRoot = path.resolve(process.cwd(), '..'); // E:\UWS
+    this.defaultRoot = getProjectRootDir();
   }
 
   public getAvailableDrives(): DriveInfo[] {

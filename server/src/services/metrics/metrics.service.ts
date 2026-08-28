@@ -2,8 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import os from 'os';
 import si from 'systeminformation';
-
-const CONFIG_PATH = path.resolve(process.cwd(), '../config/default.json');
+import { getConfigFilePath } from '../../utils/paths.js';
 
 export interface SystemMetrics {
   timestamp: number;
@@ -69,8 +68,9 @@ export class MetricsService {
 
   private loadMachineName(): string {
     try {
-      if (fs.existsSync(CONFIG_PATH)) {
-        const raw = fs.readFileSync(CONFIG_PATH, 'utf-8');
+      const configPath = getConfigFilePath('default.json');
+      if (fs.existsSync(configPath)) {
+        const raw = fs.readFileSync(configPath, 'utf-8');
         const data = JSON.parse(raw);
         if (data.system?.customMachineName) {
           return data.system.customMachineName;
@@ -84,13 +84,14 @@ export class MetricsService {
 
   private saveMachineName(name: string): void {
     try {
+      const configPath = getConfigFilePath('default.json');
       let data: any = {};
-      if (fs.existsSync(CONFIG_PATH)) {
-        data = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf-8'));
+      if (fs.existsSync(configPath)) {
+        data = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
       }
       if (!data.system) data.system = {};
       data.system.customMachineName = name;
-      fs.writeFileSync(CONFIG_PATH, JSON.stringify(data, null, 2), 'utf-8');
+      fs.writeFileSync(configPath, JSON.stringify(data, null, 2), 'utf-8');
     } catch (e) {
       console.error('[Metrics] Failed to save custom machine name:', e);
     }

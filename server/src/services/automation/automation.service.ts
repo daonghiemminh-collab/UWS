@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { getConfigFilePath } from '../../utils/paths.js';
 
 export interface AutomationSlot {
   id: string;
@@ -14,7 +15,7 @@ export class AutomationService {
   private slots: AutomationSlot[] = [];
 
   constructor() {
-    this.configPath = path.resolve(process.cwd(), '../config/automation.json');
+    this.configPath = getConfigFilePath('automation.json');
     this.loadSlots();
   }
 

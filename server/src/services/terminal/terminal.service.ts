@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import pty, { type IPty } from 'node-pty';
 import crypto from 'crypto';
+import { getStorageDirPath } from '../../utils/paths.js';
 
 export interface TerminalSessionOptions {
   workspaceId?: string;
@@ -34,7 +35,7 @@ export class TerminalService {
 
   constructor() {
     // Workspace root defaults to storage/workspaces/default
-    this.defaultWorkspaceRoot = path.resolve(process.cwd(), '../storage/workspaces/default');
+    this.defaultWorkspaceRoot = getStorageDirPath('workspaces/default');
     if (!fs.existsSync(this.defaultWorkspaceRoot)) {
       try {
         fs.mkdirSync(this.defaultWorkspaceRoot, { recursive: true });
