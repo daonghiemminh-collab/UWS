@@ -3448,27 +3448,42 @@
 
     const WINDOW_SERVICES = ['terminal', 'explorer', 'notepad', 'telemetry'];
 
+    const defaultPresetBgs = {
+      terminal: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1600&auto=format&fit=crop',
+      explorer: 'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?q=80&w=1600&auto=format&fit=crop',
+      notepad: '',
+      telemetry: '',
+    };
+
+    function getSavedWindowBg(service) {
+      const saved = localStorage.getItem(`uws_bg_${service}_url`);
+      if (saved !== null) {
+        return saved === '__none__' ? '' : saved;
+      }
+      return defaultPresetBgs[service] || '';
+    }
+
     const windowConfigs = {
       terminal: {
-        url: localStorage.getItem('uws_bg_terminal_url') || '',
+        url: getSavedWindowBg('terminal'),
         blur: parseInt(localStorage.getItem('uws_bg_terminal_blur') || '0', 10),
         dim: parseInt(localStorage.getItem('uws_bg_terminal_dim') || '30', 10),
         opacity: parseInt(localStorage.getItem('uws_opacity_terminal') || '100', 10),
       },
       explorer: {
-        url: localStorage.getItem('uws_bg_explorer_url') || '',
+        url: getSavedWindowBg('explorer'),
         blur: parseInt(localStorage.getItem('uws_bg_explorer_blur') || '0', 10),
         dim: parseInt(localStorage.getItem('uws_bg_explorer_dim') || '30', 10),
         opacity: parseInt(localStorage.getItem('uws_opacity_explorer') || '100', 10),
       },
       notepad: {
-        url: localStorage.getItem('uws_bg_notepad_url') || '',
+        url: getSavedWindowBg('notepad'),
         blur: parseInt(localStorage.getItem('uws_bg_notepad_blur') || '0', 10),
         dim: parseInt(localStorage.getItem('uws_bg_notepad_dim') || '30', 10),
         opacity: parseInt(localStorage.getItem('uws_opacity_notepad') || '100', 10),
       },
       telemetry: {
-        url: localStorage.getItem('uws_bg_telemetry_url') || '',
+        url: getSavedWindowBg('telemetry'),
         blur: parseInt(localStorage.getItem('uws_bg_telemetry_blur') || '0', 10),
         dim: parseInt(localStorage.getItem('uws_bg_telemetry_dim') || '30', 10),
         opacity: parseInt(localStorage.getItem('uws_opacity_telemetry') || '100', 10),
@@ -3489,7 +3504,7 @@
         const cfg = windowConfigs[s];
         if (!cfg) return;
 
-        if (cfg.url) {
+        if (cfg.url && cfg.url !== '__none__') {
           document.documentElement.style.setProperty(`--bg-${s}-img`, `url("${cfg.url}")`);
           document.documentElement.style.setProperty(`--bg-${s}-blur`, `${cfg.blur}px`);
           document.documentElement.style.setProperty(`--bg-${s}-dim`, `${1 - (cfg.dim / 100)}`);
@@ -3503,7 +3518,7 @@
 
         // Update UI inputs if present
         const urlInput = document.getElementById(`win_bg_url_${s}`);
-        if (urlInput) urlInput.value = cfg.url;
+        if (urlInput) urlInput.value = (cfg.url === '__none__' ? '' : cfg.url);
 
         const blurSlider = document.getElementById(`win_blur_${s}`);
         if (blurSlider) blurSlider.value = cfg.blur;
@@ -3522,7 +3537,7 @@
 
         // Update terminal background transparency
         if (s === 'terminal') {
-          const termBg = cfg.url ? 'rgba(9, 12, 16, 0.45)' : (THEMES[currentThemeKey]?.termBg || '#090c10');
+          const termBg = (cfg.url && cfg.url !== '__none__') ? 'rgba(9, 12, 16, 0.45)' : (THEMES[currentThemeKey]?.termBg || '#090c10');
           allLeafsMap.forEach(leaf => {
             if (leaf.serviceType === 'terminal' && leaf.term) {
               leaf.term.options.theme = {
@@ -3540,14 +3555,14 @@
       if (!input) return;
       const url = input.value.trim();
       windowConfigs[service].url = url;
-      localStorage.setItem(`uws_bg_${service}_url`, url);
+      localStorage.setItem(`uws_bg_${service}_url`, url || '__none__');
       applyWindowBackgrounds();
       showToast(url ? `Đã áp dụng hình nền cho ${service}!` : `Đã xóa nền của ${service}`, 'success');
     }
 
     function clearWindowBg(service) {
       windowConfigs[service].url = '';
-      localStorage.removeItem(`uws_bg_${service}_url`);
+      localStorage.setItem(`uws_bg_${service}_url`, '__none__');
       const input = document.getElementById(`win_bg_url_${service}`);
       if (input) input.value = '';
       applyWindowBackgrounds();
