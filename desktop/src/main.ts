@@ -69,10 +69,16 @@ function createWindow() {
     height: 880,
     minWidth: 960,
     minHeight: 600,
-    title: 'Meodusa - Futuristic Cyberpunk Workspace System',
+    title: 'Meodusa',
     icon: icon,
     backgroundColor: '#090c10',
     autoHideMenuBar: true,
+    titleBarStyle: 'hidden',
+    titleBarOverlay: {
+      color: '#090c10',
+      symbolColor: '#f0f6fc',
+      height: 38,
+    },
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -84,7 +90,7 @@ function createWindow() {
     if (input.type === 'keyDown') {
       if (input.key === 'F5' || (input.control && input.key.toLowerCase() === 'r')) {
         event.preventDefault();
-        mainWindow?.webContents.reloadIgnoringCache();
+        mainWindow?.webContents.reload();
       }
       if (input.key === 'F12' || (input.control && input.shift && input.key.toLowerCase() === 'i')) {
         event.preventDefault();

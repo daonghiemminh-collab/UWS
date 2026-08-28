@@ -82,21 +82,24 @@
 
     /* TOP STATUS BAR */
     .top-bar {
-      height: 40px;
+      height: 38px;
       background: var(--topbar-bg);
       border-bottom: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0 16px 0 20px;
+      padding: 0 140px 0 16px;
       flex-shrink: 0;
       z-index: 5000;
+      -webkit-app-region: drag;
+      user-select: none;
     }
 
     .brand-wrap {
       display: flex;
       align-items: center;
       gap: 8px;
+      -webkit-app-region: no-drag;
     }
 
     .brand-logo {
@@ -124,6 +127,7 @@
       display: flex;
       align-items: center;
       gap: 12px;
+      -webkit-app-region: no-drag;
     }
 
     /* QUICK ACTIONS DROPDOWN */
@@ -4039,24 +4043,57 @@
 
           if (serviceType === 'terminal') {
             leafNode = createLeafNode({
-              title: leafData.title || 'PowerShell Terminal',
+              title: leafData.title || 'PowerShell Terminal...',
               serviceType: 'terminal',
             });
             leafNode.customCwd = leafData.customCwd || '';
 
             const bodyEl = leafNode.el.querySelector('.pane-body');
             const termMount = document.createElement('div');
-            termMount.className = 'xterm-mount-wrap';
-            termMount.id = `${leafNode.paneId}_term`;
+            termMount.className = 'terminal-mount';
+            termMount.innerHTML = `
+              <div class="terminal-viewer-notice-wrap">
+                <span class="terminal-viewer-text">Chế độ Chỉ Xem (Viewer)</span>
+                <button class="terminal-viewer-btn" onclick="requestEditControl()">Xin Quyền</button>
+                <button class="terminal-revoke-btn" style="display: none;" onclick="revokeEditControl()">Thu Hồi</button>
+              </div>
+            `;
             bodyEl.appendChild(termMount);
 
+            const termBg = windowConfigs.terminal.url 
+              ? 'rgba(10, 13, 18, 0.45)' 
+              : (THEMES[currentThemeKey]?.termBg || '#0a0d12');
+
             const term = new Terminal({
-              theme: currentXtermTheme,
-              fontFamily: '"JetBrains Mono", "SF Mono", "Fira Code", monospace',
-              fontSize: 13,
               cursorBlink: true,
               cursorStyle: 'bar',
+              fontSize: 13,
+              fontFamily: '"JetBrains Mono", "SF Mono", "Fira Code", Consolas, monospace',
+              lineHeight: 1.2,
+              theme: {
+                background: termBg,
+                foreground: '#d1d7e0',
+                cursor: '#58a6ff',
+                selectionBackground: 'rgba(56, 139, 253, 0.4)',
+                black: '#161b22',
+                red: '#ff7b72',
+                green: '#7ee787',
+                yellow: '#d29922',
+                blue: '#58a6ff',
+                magenta: '#bc8cff',
+                cyan: '#39c5cf',
+                white: '#d1d7e0',
+                brightBlack: '#6e7681',
+                brightRed: '#ffa198',
+                brightGreen: '#56d364',
+                brightYellow: '#e3b341',
+                brightBlue: '#79c0ff',
+                brightMagenta: '#d2a8ff',
+                brightCyan: '#56d4dd',
+                brightWhite: '#ffffff',
+              },
               allowTransparency: true,
+              convertEol: true,
             });
 
             const fitAddon = new FitAddon.FitAddon();
@@ -5521,6 +5558,23 @@
             spawnTerminalPane();
           }
         }
+
+        // Reconnect all active leaves with the WebSocket
+        allLeafsMap.forEach(leaf => {
+          if (leaf.serviceType === 'terminal' && !leaf.sessionId) {
+            ws.send(JSON.stringify({
+              type: 'terminal:create',
+              workspaceId: 'default',
+              cwd: leaf.customCwd || undefined,
+              cols: leaf.term ? leaf.term.cols : 80,
+              rows: leaf.term ? leaf.term.rows : 24,
+            }));
+          } else if (leaf.serviceType === 'explorer' && !leaf.isGitHubView) {
+            loadExplorerDirectory(leaf.paneId, leaf.currentPath || '');
+          } else if (leaf.serviceType === 'notepad' && leaf.filePath) {
+            ws.send(JSON.stringify({ type: 'fs:read', path: leaf.filePath }));
+          }
+        });
       };
 
       window.addEventListener('beforeunload', () => {
@@ -5725,6 +5779,7 @@
     window.addEventListener('keydown', (e) => {
       if (e.key === 'F5' || (e.ctrlKey && e.key.toLowerCase() === 'r')) {
         e.preventDefault();
+        saveWorkspaceLayout(true);
         window.location.reload();
       }
     });
@@ -5735,6 +5790,9 @@
       const savedScale = parseFloat(localStorage.getItem('uws_zoom_scale') || '1.0');
       if (savedScale !== 1.0) {
         setUiZoom(savedScale);
+      }
+      if (allLeafsMap.size === 0) {
+        restoreWorkspaceLayout();
       }
       connectWS();
     });
