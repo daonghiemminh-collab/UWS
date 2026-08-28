@@ -327,7 +327,8 @@
     }
 
     .presence-pill {
-      padding: 3px 8px;
+      padding: 4px 12px;
+      cursor: pointer;
     }
 
     .presence-users-list {
@@ -339,49 +340,41 @@
     .user-badge {
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 6px;
       font-size: 11px;
-      padding: 2px 8px;
-      border-radius: 14px;
-      background: var(--btn-bg);
+      padding: 0;
+      background: transparent;
       color: var(--text);
-      border: 1px solid var(--border);
+      border: none;
       cursor: pointer;
       transition: all 0.15s ease;
       position: relative;
     }
 
     .user-badge:hover {
-      border-color: var(--accent);
       color: var(--text-bold);
-      background: var(--btn-bg-hover);
     }
 
     .user-badge.host {
-      background: rgba(63, 185, 80, 0.12);
-      border-color: var(--accent-green);
+      background: transparent;
+      border: none;
       color: var(--accent-green);
     }
 
-    .user-badge.host:hover {
-      background: rgba(63, 185, 80, 0.22);
-      border-color: var(--accent-green);
-    }
-
     .user-badge.editor-now {
-      box-shadow: 0 0 8px rgba(63, 185, 80, 0.35);
-      border-color: var(--accent-green);
+      box-shadow: none;
+      border: none;
     }
 
     .user-badge.you {
-      border-color: var(--accent);
-      box-shadow: 0 0 8px rgba(88, 166, 255, 0.3);
+      border: none;
+      box-shadow: none;
     }
 
     .user-badge-name {
       font-weight: 600;
       color: var(--text-bold);
-      max-width: 130px;
+      max-width: 140px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -393,57 +386,50 @@
 
     .user-badge-tag {
       font-size: 9px;
-      padding: 1px 4px;
-      border-radius: 3px;
+      padding: 1px 5px;
+      border-radius: 4px;
       text-transform: uppercase;
       font-weight: 700;
       letter-spacing: 0.3px;
     }
 
+    .tag-host {
+      background: rgba(63, 185, 80, 0.22);
+      color: var(--accent-green);
+    }
+
     .tag-you {
-      background: rgba(88, 166, 255, 0.2);
+      background: rgba(88, 166, 255, 0.22);
       color: var(--accent);
     }
 
     .tag-editor {
-      background: rgba(63, 185, 80, 0.2);
+      background: rgba(63, 185, 80, 0.25);
       color: var(--accent-green);
     }
 
     .tag-viewer {
-      background: rgba(139, 148, 158, 0.18);
+      background: rgba(139, 148, 158, 0.22);
       color: var(--text-muted);
     }
 
-    .user-rename-icon {
-      font-size: 10px;
-      color: var(--text-muted);
-      margin-left: 2px;
-      transition: color 0.1s;
-    }
-
-    .user-badge:hover .user-rename-icon {
-      color: var(--accent);
-    }
-
-    .share-btn {
-      background: var(--btn-primary-bg);
-      border: 1px solid var(--btn-primary-bg);
-      color: var(--btn-primary-text);
+    .share-pill-btn {
+      background: transparent;
+      border: none;
+      color: #c084fc;
       font-size: 11px;
       font-weight: 600;
-      padding: 2px 9px;
-      border-radius: 12px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
+      gap: 5px;
       font-family: inherit;
-      transition: all 0.15s;
+      padding: 0;
+      transition: all 0.15s ease;
     }
 
-    .share-btn:hover {
-      filter: brightness(1.15);
-      box-shadow: 0 0 8px var(--accent);
+    .share-pill-btn:hover {
+      color: #d8b4fe;
     }
 
     .btn-save {
@@ -2209,7 +2195,22 @@
     <div class="meodusa-menu-wrapper" id="meodusaMenuWrapper">
       <!-- CASCADING PILL CAPSULES (OPENS TO LEFT/DOWN ON HOVER) -->
       <div class="meodusa-pills-container" id="meodusaPillsContainer">
-        <!-- PILL 1: QUICK ACTIONS -->
+        <!-- PILL 1 (LONGEST): MULTI-USER PRESENCE & IDENTITY WIDGET -->
+        <div class="meodusa-pill-item presence-pill" id="presencePillItem" onclick="openRenameModal()" title="Nhấp để đổi tên hiển thị / Tên máy">
+          <div class="presence-users-list" id="presenceList">
+            <span class="user-badge host you">Connecting...</span>
+          </div>
+        </div>
+
+        <!-- PILL 2: REMOTE INTERNET TUNNEL -->
+        <div class="meodusa-pill-item" onclick="openTunnelModal()" title="Kết nối từ xa qua Internet (Cloudflare Zero-Config Tunnel)">
+          <button class="meodusa-pill-btn tunnel-trigger-btn" id="tunnelTriggerBtn">
+            <span class="tunnel-indicator-dot" id="tunnelIndicatorDot"></span>
+            <span id="tunnelBtnText">Remote Tunnel</span>
+          </button>
+        </div>
+
+        <!-- PILL 3: QUICK ACTIONS -->
         <div class="meodusa-pill-item actions-dropdown-wrap">
           <button class="meodusa-pill-btn actions-dropdown-trigger" id="actionsTriggerBtn" onclick="toggleActionsDropdown(event)"
             title="Chạy nhanh các mẫu lệnh tự động hóa">
@@ -2222,21 +2223,11 @@
           </div>
         </div>
 
-        <!-- PILL 2: MULTI-USER PRESENCE & IDENTITY WIDGET -->
-        <div class="meodusa-pill-item presence-pill">
-          <div class="presence-users-list" id="presenceList">
-            <span class="user-badge host you">Connecting...</span>
-          </div>
-          <button class="share-btn" onclick="copyShareLink()" title="Sao chép liên kết mời người khác tham gia">
+        <!-- PILL 4 (SHORTEST): SEPARATE SHARE BUTTON -->
+        <div class="meodusa-pill-item" onclick="copyShareLink()" title="Sao chép liên kết mời người khác tham gia">
+          <button class="meodusa-pill-btn share-pill-btn">
+            <span style="color: #c084fc; font-size: 11px;">🔗</span>
             <span>Share</span>
-          </button>
-        </div>
-
-        <!-- PILL 3: REMOTE INTERNET TUNNEL -->
-        <div class="meodusa-pill-item">
-          <button class="meodusa-pill-btn tunnel-trigger-btn" id="tunnelTriggerBtn" onclick="openTunnelModal()" title="Kết nối từ xa qua Internet (Cloudflare Zero-Config Tunnel)">
-            <span class="tunnel-indicator-dot" id="tunnelIndicatorDot"></span>
-            <span id="tunnelBtnText">Remote Tunnel</span>
           </button>
         </div>
       </div>
