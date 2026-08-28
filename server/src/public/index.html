@@ -241,6 +241,15 @@
       transform: translateX(-4px);
     }
 
+    button.meodusa-pill-item {
+      font-family: inherit;
+      color: var(--text-bold);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      outline: none;
+    }
+
     .meodusa-pill-btn {
       background: transparent;
       border: none;
@@ -490,11 +499,10 @@
 
     /* REMOTE INTERNET TUNNEL (PHASE 4) */
     .tunnel-trigger-btn {
-      background: var(--btn-bg);
-      border: 1px solid var(--border);
+      background: transparent;
+      border: none;
       color: var(--btn-text);
-      padding: 4px 10px;
-      border-radius: 6px;
+      padding: 0;
       font-size: 11px;
       font-weight: 600;
       cursor: pointer;
@@ -503,13 +511,6 @@
       gap: 6px;
       font-family: inherit;
       transition: all 0.15s ease;
-    }
-
-    .tunnel-trigger-btn:hover {
-      background: var(--btn-bg-hover);
-      border-color: #bc8cff;
-      color: #f0f6fc;
-      box-shadow: 0 0 10px rgba(188, 140, 255, 0.35);
     }
 
     .tunnel-indicator-dot {
@@ -2202,13 +2203,11 @@
           </div>
         </div>
 
-        <!-- PILL 2: REMOTE INTERNET TUNNEL -->
-        <div class="meodusa-pill-item" onclick="openTunnelModal()" title="Kết nối từ xa qua Internet (Cloudflare Zero-Config Tunnel)">
-          <button class="meodusa-pill-btn tunnel-trigger-btn" id="tunnelTriggerBtn">
-            <span class="tunnel-indicator-dot" id="tunnelIndicatorDot"></span>
-            <span id="tunnelBtnText">Remote Tunnel</span>
-          </button>
-        </div>
+        <!-- PILL 2: REMOTE INTERNET TUNNEL (SINGLE DIRECT BUTTON) -->
+        <button class="meodusa-pill-item" id="tunnelTriggerBtn" onclick="openTunnelModal()" title="Kết nối từ xa qua Internet (Cloudflare Zero-Config Tunnel)">
+          <span class="tunnel-indicator-dot" id="tunnelIndicatorDot"></span>
+          <span id="tunnelBtnText">Remote Tunnel</span>
+        </button>
 
         <!-- PILL 3: QUICK ACTIONS -->
         <div class="meodusa-pill-item actions-dropdown-wrap">
@@ -2223,13 +2222,11 @@
           </div>
         </div>
 
-        <!-- PILL 4 (SHORTEST): SEPARATE SHARE BUTTON -->
-        <div class="meodusa-pill-item" onclick="copyShareLink()" title="Sao chép liên kết mời người khác tham gia">
-          <button class="meodusa-pill-btn share-pill-btn">
-            <span style="color: #c084fc; font-size: 11px;">🔗</span>
-            <span>Share</span>
-          </button>
-        </div>
+        <!-- PILL 4 (SHORTEST): SEPARATE SHARE BUTTON (SINGLE DIRECT BUTTON) -->
+        <button class="meodusa-pill-item" onclick="copyShareLink()" title="Sao chép liên kết mời người khác tham gia">
+          <span style="color: #c084fc; font-size: 11px;">🔗</span>
+          <span style="color: #c084fc; font-weight: 600;">Share</span>
+        </button>
       </div>
 
       <!-- MEODUSA AVATAR TRIGGER (HOVER FACE EFFECT) -->
