@@ -140,16 +140,17 @@
       width: 44px;
       height: 48px;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: center;
       cursor: pointer;
       z-index: 1;
       margin-top: 0;
-      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: height 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .meodusa-menu-wrapper:hover .meodusa-ribbon-pod {
-      transform: translateY(2px);
+    .meodusa-menu-wrapper:hover .meodusa-ribbon-pod,
+    .meodusa-menu-wrapper:focus-within .meodusa-ribbon-pod {
+      height: 204px;
     }
 
     .meodusa-ribbon-svg {
@@ -194,7 +195,7 @@
       cursor: pointer;
       position: relative;
       z-index: 2;
-      margin-top: -6px;
+      margin-top: 7px;
       transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
@@ -2280,15 +2281,15 @@
 
       <!-- BOOKMARK RIBBON / PENNANT FLAG POD -->
       <div class="meodusa-ribbon-pod" title="Menu Hệ Thống Meodusa (Rê chuột để mở)">
-        <svg class="meodusa-ribbon-svg" viewBox="0 0 44 48" preserveAspectRatio="none">
+        <svg class="meodusa-ribbon-svg" viewBox="0 0 44 200" preserveAspectRatio="none">
           <defs>
             <linearGradient id="bookmarkBgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stop-color="#090c10" stop-opacity="0.98" />
               <stop offset="100%" stop-color="#141a29" stop-opacity="0.98" />
             </linearGradient>
           </defs>
-          <path class="ribbon-shape" d="M 0,0 L 0,48 L 22,38 L 44,48 L 44,0 Z" />
-          <path class="ribbon-border" d="M 0,0 L 0,48 L 22,38 L 44,48 L 44,0" />
+          <path class="ribbon-shape" d="M 0,0 L 0,200 L 22,186 L 44,200 L 44,0 Z" />
+          <path class="ribbon-border" d="M 0,0 L 0,200 L 22,186 L 44,200 L 44,0" />
         </svg>
 
         <!-- MEODUSA AVATAR TRIGGER (NO INNER CIRCLE) -->
