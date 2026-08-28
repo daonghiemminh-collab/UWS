@@ -127,7 +127,7 @@
     .meodusa-menu-wrapper {
       position: relative;
       display: flex;
-      align-items: flex-start;
+      align-items: center;
       justify-content: flex-end;
       -webkit-app-region: no-drag;
       z-index: 10000;
@@ -137,8 +137,8 @@
     /* LIQUID WATER DROPLET NOTCH POD */
     .meodusa-droplet-pod {
       position: relative;
-      width: 88px;
-      height: 48px;
+      width: 64px;
+      height: 38px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -165,39 +165,38 @@
       stroke: rgba(188, 140, 255, 0.45);
       stroke-width: 1.5;
       stroke-linecap: round;
-      filter: drop-shadow(0 3px 6px rgba(188, 140, 255, 0.4));
+      filter: drop-shadow(0 2px 5px rgba(188, 140, 255, 0.4));
       transition: all 0.25s ease;
     }
 
     .meodusa-menu-wrapper:hover .droplet-border {
       stroke: #d2a8ff;
       stroke-width: 2;
-      filter: drop-shadow(0 4px 14px rgba(210, 168, 255, 0.9));
+      filter: drop-shadow(0 3px 12px rgba(210, 168, 255, 0.9));
     }
 
     .meodusa-avatar-trigger {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: rgba(188, 140, 255, 0.15);
-      border: 1.5px solid rgba(188, 140, 255, 0.4);
+      width: 24px;
+      height: 24px;
+      background: transparent;
+      border: none;
+      box-shadow: none;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      box-shadow: 0 0 10px rgba(188, 140, 255, 0.35);
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       position: relative;
       z-index: 2;
-      margin-top: 6px;
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .meodusa-avatar-img {
-      width: 18px;
-      height: 18px;
+      width: 20px;
+      height: 20px;
       object-fit: contain;
       transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       position: absolute;
+      filter: drop-shadow(0 0 5px rgba(210, 168, 255, 0.5));
     }
 
     .meodusa-avatar-img.default-face {
@@ -213,10 +212,10 @@
 
     /* On Hover of Wrapper */
     .meodusa-menu-wrapper:hover .meodusa-avatar-trigger {
-      background: rgba(188, 140, 255, 0.3);
-      border-color: #d2a8ff;
-      box-shadow: 0 0 18px rgba(188, 140, 255, 0.85), inset 0 0 8px rgba(188, 140, 255, 0.5);
-      transform: scale(1.12);
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      transform: scale(1.15);
     }
 
     .meodusa-menu-wrapper:hover .meodusa-avatar-img.default-face {
@@ -233,8 +232,8 @@
     .meodusa-pills-container {
       display: none;
       position: absolute;
-      top: 48px;
-      right: 6px;
+      top: 38px;
+      right: 4px;
       flex-direction: column;
       align-items: flex-end;
       gap: 6px;
@@ -2271,20 +2270,20 @@
         </button>
       </div>
 
-      <!-- LIQUID WATER DROPLET NOTCH POD -->
+      <!-- LIQUID WATER DROPLET NOTCH POD (COMPACT & ROUNDED) -->
       <div class="meodusa-droplet-pod" title="Menu Hệ Thống Meodusa (Rê chuột để mở)">
-        <svg class="meodusa-droplet-svg" viewBox="0 0 88 48" preserveAspectRatio="none">
+        <svg class="meodusa-droplet-svg" viewBox="0 0 64 38" preserveAspectRatio="none">
           <defs>
             <linearGradient id="dropletBgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stop-color="#090c10" stop-opacity="0.98" />
               <stop offset="100%" stop-color="#121826" stop-opacity="0.98" />
             </linearGradient>
           </defs>
-          <path class="droplet-shape" d="M 0,0 C 22,0 24,46 44,46 C 64,46 66,0 88,0 Z" />
-          <path class="droplet-border" d="M 0,0 C 22,0 24,46 44,46 C 64,46 66,0 88,0" />
+          <path class="droplet-shape" d="M 0,0 C 13,0 16,36 32,36 C 48,36 51,0 64,0 Z" />
+          <path class="droplet-border" d="M 0,0 C 13,0 16,36 32,36 C 48,36 51,0 64,0" />
         </svg>
 
-        <!-- MEODUSA AVATAR TRIGGER (HOVER FACE EFFECT) -->
+        <!-- MEODUSA AVATAR TRIGGER (NO INNER CIRCLE) -->
         <div class="meodusa-avatar-trigger" id="meodusaAvatarTrigger">
           <img src="/assets/Meodusa.png" class="meodusa-avatar-img default-face" alt="Meodusa" />
           <img src="/assets/Meodusa2.png" class="meodusa-avatar-img hover-face" alt="Meodusa" />
