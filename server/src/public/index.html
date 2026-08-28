@@ -373,6 +373,87 @@
       border-radius: 50%;
       background: currentColor;
       box-shadow: 0 0 6px currentColor;
+      animation: pulse-glow 2s infinite ease-in-out;
+    }
+
+    /* REMOTE INTERNET TUNNEL (PHASE 4) */
+    .tunnel-trigger-btn {
+      background: var(--btn-bg);
+      border: 1px solid var(--border);
+      color: var(--btn-text);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: inherit;
+      transition: all 0.15s ease;
+    }
+
+    .tunnel-trigger-btn:hover {
+      background: var(--btn-bg-hover);
+      border-color: #bc8cff;
+      color: #f0f6fc;
+      box-shadow: 0 0 10px rgba(188, 140, 255, 0.35);
+    }
+
+    .tunnel-indicator-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #8b949e;
+      transition: all 0.2s ease;
+    }
+
+    .tunnel-indicator-dot.active {
+      background: #3fb950;
+      box-shadow: 0 0 8px #3fb950;
+    }
+
+    .tunnel-indicator-dot.starting {
+      background: #d29922;
+      box-shadow: 0 0 8px #d29922;
+      animation: pulse-tunnel 1s infinite alternate;
+    }
+
+    @keyframes pulse-tunnel {
+      from { opacity: 0.4; }
+      to { opacity: 1; }
+    }
+
+    .tunnel-qr-box {
+      background: #0d1117;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .tunnel-qr-box img {
+      width: 140px;
+      height: 140px;
+      border-radius: 6px;
+      border: 1px solid rgba(88, 166, 255, 0.3);
+    }
+
+    .pin-display-badge {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: 3px;
+      color: #79c0ff;
+      background: #090c10;
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid rgba(88, 166, 255, 0.3);
+      display: inline-block;
+      user-select: all;
     }
 
     /* LEFT HOVER SUMMON MENU */
@@ -1989,6 +2070,12 @@
         </button>
       </div>
 
+      <!-- REMOTE INTERNET TUNNEL (PHASE 4) -->
+      <button class="tunnel-trigger-btn" id="tunnelTriggerBtn" onclick="openTunnelModal()" title="Kết nối từ xa qua Internet (Cloudflare Zero-Config Tunnel)">
+        <span class="tunnel-indicator-dot" id="tunnelIndicatorDot"></span>
+        <span id="tunnelBtnText">Remote Tunnel</span>
+      </button>
+
       <div class="live-tag" id="liveStatus">
         <span class="pulse-dot"></span>
         <span id="liveStatusText">Live (1s)</span>
@@ -2037,6 +2124,104 @@
 
   <!-- GLOBAL CONTEXT MENU -->
   <div id="uws-context-menu"></div>
+
+  <!-- REMOTE INTERNET TUNNEL MODAL (PHASE 4) -->
+  <div id="tunnel-modal" class="uws-modal-overlay">
+    <div class="modal-box" style="width: 500px; max-width: 95vw;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span>🌐 Secure Remote Tunnel // Phase 4</span>
+          <span id="tunnelStatusBadge" class="badge-dirty" style="font-size: 10px;">Offline</span>
+        </div>
+        <button class="pane-close-btn" onclick="closeTunnelModal()">✕</button>
+      </div>
+      <div class="modal-body" style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="font-size: 11px; color: var(--text-muted); line-height: 1.4;">
+          Kết nối và điều khiển <b>Meodusa</b> từ bất kỳ đâu qua Internet (không cần mở port modem, không cần IP tĩnh, mã hóa SSL toàn cầu).
+        </div>
+
+        <!-- TUNNEL CONTROLS -->
+        <div style="display: flex; align-items: center; justify-content: space-between; background: #0d1117; padding: 10px 14px; border-radius: 6px; border: 1px solid var(--border);">
+          <div>
+            <div style="font-weight: 700; font-size: 12px; color: var(--text-bold);">Cloudflare Quick Tunnel</div>
+            <div style="font-size: 10px; color: var(--text-muted);" id="tunnelStateDesc">Đang tắt kết nối Internet</div>
+          </div>
+          <button id="tunnelToggleBtn" class="btn-save" onclick="toggleTunnelState()" style="padding: 6px 14px;">
+            Bật Public Tunnel
+          </button>
+        </div>
+
+        <!-- ACTIVE TUNNEL INFO PANEL -->
+        <div id="tunnelActivePanel" style="display: none; flex-direction: column; gap: 10px;">
+          <!-- HTTPS URL ROW -->
+          <div class="form-group">
+            <label class="form-label" style="display: flex; justify-content: space-between;">
+              <span>Đường Dẫn Public HTTPS:</span>
+              <span style="color: #3fb950; font-size: 10px;">Mã hóa SSL 256-bit</span>
+            </label>
+            <div style="display: flex; gap: 6px;">
+              <input type="text" class="form-input" id="tunnelPublicUrlInput" readonly style="color: #79c0ff; font-weight: 600; font-size: 11px;" />
+              <button class="explorer-btn" onclick="copyTunnelPublicUrl()" style="white-space: nowrap;">Copy Link</button>
+            </div>
+          </div>
+
+          <!-- DIRECT LINK WITH PIN -->
+          <div class="form-group">
+            <label class="form-label">Link Chia Sẻ Trực Tiếp Kèm PIN (1-Click Vào Thẳng):</label>
+            <div style="display: flex; gap: 6px;">
+              <input type="text" class="form-input" id="tunnelDirectLinkInput" readonly style="font-size: 11px; color: var(--text-muted);" />
+              <button class="explorer-btn" onclick="copyTunnelDirectLink()" style="white-space: nowrap;">Copy Direct</button>
+            </div>
+          </div>
+
+          <!-- QR CODE & PIN SECTION -->
+          <div style="display: flex; gap: 12px; align-items: center; background: #0b0e14; padding: 10px; border-radius: 6px; border: 1px solid var(--border);">
+            <div class="tunnel-qr-box" id="tunnelQrContainer">
+              <img id="tunnelQrImage" src="" alt="QR Code" style="display: none;" />
+              <div id="tunnelQrPlaceholder" style="width: 140px; height: 140px; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 11px; text-align: center;">
+                Đang tạo QR...
+              </div>
+              <span style="font-size: 10px; color: var(--text-muted);">Quét để mở trên điện thoại</span>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px; flex: 1;">
+              <div>
+                <label class="form-label" style="margin-bottom: 4px;">Mã PIN Bảo Vệ (6 Số):</label>
+                <div class="pin-display-badge" id="tunnelPinDisplay">------</div>
+              </div>
+              <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                <button class="explorer-btn" onclick="regenerateTunnelPin()" style="font-size: 10px; padding: 3px 8px;">Đổi PIN Mới</button>
+                <button class="explorer-btn" onclick="copyTunnelPin()" style="font-size: 10px; padding: 3px 8px;">Copy PIN</button>
+              </div>
+              <div style="font-size: 10px; color: var(--text-muted); line-height: 1.3;">
+                Khách truy cập từ Internet cần nhập đúng mã PIN này để vào phòng.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeTunnelModal()">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PIN LOCK MODAL FOR GUESTS -->
+  <div id="pin-lock-modal" class="uws-modal-overlay" style="z-index: 999999; background: rgba(5, 8, 17, 0.95); backdrop-filter: blur(20px);">
+    <div class="modal-box" style="width: 380px; text-align: center; border-color: rgba(188, 140, 255, 0.4); box-shadow: 0 0 40px rgba(188, 140, 255, 0.2);">
+      <div style="display: flex; justify-content: center; margin-bottom: 8px;">
+        <img src="/assets/Meodusa.png" style="width: 48px; height: 48px; filter: drop-shadow(0 0 12px rgba(188, 140, 255, 0.8));" alt="Meodusa" />
+      </div>
+      <div style="font-size: 15px; font-weight: 800; color: #d2a8ff; margin-bottom: 4px;">MEODUSA SECURITY GATE</div>
+      <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 16px;">
+        Không gian làm việc này được bảo vệ. Vui lòng nhập mã PIN 6 số của Host để tham gia:
+      </div>
+      <div class="form-group" style="margin-bottom: 16px;">
+        <input type="password" maxlength="6" id="guestPinInput" class="form-input" placeholder="••••••" style="font-size: 24px; letter-spacing: 8px; text-align: center; font-weight: 800; color: #58a6ff; background: #0d1117;" onkeydown="if(event.key==='Enter') submitGuestPin()" />
+      </div>
+      <button class="btn-save" style="width: 100%; padding: 8px;" onclick="submitGuestPin()">Xác Thực & Mở Khóa</button>
+    </div>
+  </div>
 
   <!-- AUTOMATION SETTINGS MODAL -->
   <div id="automation-modal" class="uws-modal-overlay">
@@ -2434,6 +2619,159 @@
       }).catch(() => {
         prompt('Sao chép liên kết này để chia sẻ cho máy khác:', shareUrl);
       });
+    }
+
+    // --- SECURE REMOTE TUNNEL (PHASE 4) ---
+    let tunnelInfo = {
+      active: false,
+      provider: 'none',
+      url: null,
+      qrDataUrl: null,
+      securityPin: '',
+      connectedGuestsCount: 0,
+    };
+    let isTunnelStarting = false;
+
+    function openTunnelModal() {
+      document.getElementById('tunnel-modal').style.display = 'flex';
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'tunnel:get_status' }));
+      }
+    }
+
+    function closeTunnelModal() {
+      document.getElementById('tunnel-modal').style.display = 'none';
+    }
+
+    function toggleTunnelState() {
+      if (isTunnelStarting) return;
+      if (!amIHost()) {
+        showToast('Chỉ Host máy chủ mới có quyền Bật/Tắt Remote Tunnel!', 'warning');
+        return;
+      }
+      if (!ws || ws.readyState !== WebSocket.OPEN) return;
+
+      if (tunnelInfo.active) {
+        ws.send(JSON.stringify({ type: 'tunnel:stop' }));
+        showToast('Đang ngắt kết nối Remote Tunnel...', 'info');
+      } else {
+        isTunnelStarting = true;
+        updateTunnelUI();
+        ws.send(JSON.stringify({ type: 'tunnel:start', provider: 'cloudflare' }));
+        showToast('Đang khởi tạo Cloudflare Quick Tunnel...', 'info');
+      }
+    }
+
+    function regenerateTunnelPin() {
+      if (!amIHost()) {
+        showToast('Chỉ Host mới có quyền đổi mã PIN!', 'warning');
+        return;
+      }
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'tunnel:regenerate_pin' }));
+        showToast('Đang tạo mã PIN mới...', 'info');
+      }
+    }
+
+    function copyTunnelPublicUrl() {
+      if (!tunnelInfo.url) return;
+      navigator.clipboard.writeText(tunnelInfo.url).then(() => {
+        showToast('Đã sao chép đường dẫn Public HTTPS!', 'success');
+      });
+    }
+
+    function copyTunnelDirectLink() {
+      if (!tunnelInfo.url) return;
+      const directUrl = `${tunnelInfo.url}?pin=${encodeURIComponent(tunnelInfo.securityPin)}`;
+      navigator.clipboard.writeText(directUrl).then(() => {
+        showToast('Đã sao chép link truy cập trực tiếp kèm PIN!', 'success');
+      });
+    }
+
+    function copyTunnelPin() {
+      if (!tunnelInfo.securityPin) return;
+      navigator.clipboard.writeText(tunnelInfo.securityPin).then(() => {
+        showToast(`Đã sao chép mã PIN: ${tunnelInfo.securityPin}`, 'success');
+      });
+    }
+
+    function updateTunnelUI() {
+      const triggerDot = document.getElementById('tunnelIndicatorDot');
+      const btnText = document.getElementById('tunnelBtnText');
+      const statusBadge = document.getElementById('tunnelStatusBadge');
+      const toggleBtn = document.getElementById('tunnelToggleBtn');
+      const stateDesc = document.getElementById('tunnelStateDesc');
+      const activePanel = document.getElementById('tunnelActivePanel');
+
+      if (!triggerDot || !btnText || !statusBadge || !toggleBtn || !stateDesc || !activePanel) return;
+
+      if (isTunnelStarting) {
+        triggerDot.className = 'tunnel-indicator-dot starting';
+        btnText.innerText = 'Tunnel (Starting...)';
+        statusBadge.className = 'badge-dirty';
+        statusBadge.innerText = 'Connecting...';
+        toggleBtn.innerText = 'Đang Khởi Tạo...';
+        toggleBtn.className = 'btn-save';
+        toggleBtn.disabled = true;
+        stateDesc.innerText = 'Đang thiết lập kết nối Cloudflare...';
+        return;
+      }
+
+      toggleBtn.disabled = false;
+
+      if (tunnelInfo.active && tunnelInfo.url) {
+        triggerDot.className = 'tunnel-indicator-dot active';
+        btnText.innerText = 'Tunnel (Online)';
+        statusBadge.className = 'badge-clean';
+        statusBadge.innerText = 'Online 🟢';
+        toggleBtn.innerText = 'Ngắt Kết Nối';
+        toggleBtn.className = 'btn-cancel';
+        stateDesc.innerText = `Đang phát sóng toàn cầu qua ${tunnelInfo.provider === 'cloudflare' ? 'Cloudflare' : 'Localtunnel'}`;
+
+        activePanel.style.display = 'flex';
+        document.getElementById('tunnelPublicUrlInput').value = tunnelInfo.url;
+        document.getElementById('tunnelDirectLinkInput').value = `${tunnelInfo.url}?pin=${encodeURIComponent(tunnelInfo.securityPin)}`;
+        document.getElementById('tunnelPinDisplay').innerText = tunnelInfo.securityPin || '------';
+
+        const qrImg = document.getElementById('tunnelQrImage');
+        const qrPlc = document.getElementById('tunnelQrPlaceholder');
+        if (tunnelInfo.qrDataUrl) {
+          qrImg.src = tunnelInfo.qrDataUrl;
+          qrImg.style.display = 'block';
+          qrPlc.style.display = 'none';
+        } else {
+          qrImg.style.display = 'none';
+          qrPlc.style.display = 'flex';
+        }
+      } else {
+        triggerDot.className = 'tunnel-indicator-dot';
+        btnText.innerText = 'Remote Tunnel';
+        statusBadge.className = 'badge-dirty';
+        statusBadge.innerText = 'Offline 🔴';
+        toggleBtn.innerText = 'Bật Public Tunnel';
+        toggleBtn.className = 'btn-save';
+        stateDesc.innerText = 'Đang tắt kết nối Internet';
+        activePanel.style.display = 'none';
+      }
+    }
+
+    function checkUrlPinAndAuth() {
+      const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+      if (isLocal) return; // Localhost never locked
+
+      const params = new URLSearchParams(window.location.search);
+      const pin = params.get('pin');
+      if (pin && ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'tunnel:verify_pin', pin }));
+      }
+    }
+
+    function submitGuestPin() {
+      const pin = document.getElementById('guestPinInput').value.trim();
+      if (!pin) return;
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'tunnel:verify_pin', pin }));
+      }
     }
 
     // --- TURN-BASED PERMISSION CONTROLS ---
@@ -4803,6 +5141,8 @@
         }));
 
         fetchGitRepos();
+        ws.send(JSON.stringify({ type: 'tunnel:get_status' }));
+        checkUrlPinAndAuth();
 
         if (allLeafsMap.size === 0) {
           spawnTerminalPane();
@@ -4813,7 +5153,35 @@
         try {
           const msg = JSON.parse(event.data);
 
-          if (msg.type === 'session:joined') {
+          if (msg.type === 'tunnel:status') {
+            isTunnelStarting = false;
+            tunnelInfo = msg.tunnel;
+            updateTunnelUI();
+
+            const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+            const isTunnelHost = window.location.hostname.includes('trycloudflare.com') || window.location.hostname.includes('loca.lt');
+            if (!isLocal && isTunnelHost && tunnelInfo.active) {
+              const params = new URLSearchParams(window.location.search);
+              const pin = params.get('pin');
+              if (!pin && !sessionStorage.getItem('meodusa_pin_verified')) {
+                const lockModal = document.getElementById('pin-lock-modal');
+                if (lockModal) {
+                  lockModal.style.display = 'flex';
+                  const inp = document.getElementById('guestPinInput');
+                  if (inp) inp.focus();
+                }
+              }
+            }
+          } else if (msg.type === 'tunnel:pin_result') {
+            if (msg.success) {
+              sessionStorage.setItem('meodusa_pin_verified', 'true');
+              const lockModal = document.getElementById('pin-lock-modal');
+              if (lockModal) lockModal.style.display = 'none';
+              showToast('Đã xác thực mã PIN bảo vệ thành công!', 'success');
+            } else {
+              showToast(msg.message || 'Mã PIN bảo vệ không chính xác!', 'warning');
+            }
+          } else if (msg.type === 'session:joined') {
             myUserId = msg.yourId;
             myUserRole = msg.yourRole;
             isHost = Boolean(msg.isHost || msg.yourRole === 'owner');

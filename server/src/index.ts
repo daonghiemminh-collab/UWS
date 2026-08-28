@@ -10,6 +10,7 @@ import { FileSystemService } from './services/filesystem/filesystem.service.js';
 import { SessionService } from './services/session/session.service.js';
 import { AutomationService } from './services/automation/automation.service.js';
 import { GitService } from './services/git/git.service.js';
+import { tunnelService } from './services/tunnel/tunnel.service.js';
 import type { ClientMessage, ServerMessage } from '@uws/shared/types/protocol.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -494,6 +495,68 @@ wss.on('connection', (ws, req) => {
               label: target.label,
             });
           }
+          break;
+        }
+
+        // --- SECURE REMOTE TUNNEL (PHASE 4) ---
+        case 'tunnel:get_status': {
+          sendMsg({
+            type: 'tunnel:status',
+            tunnel: tunnelService.getStatus(),
+          });
+          break;
+        }
+
+        case 'tunnel:start': {
+          try {
+            const info = await tunnelService.startTunnel(PORT, msg.provider || 'cloudflare');
+            sessionService.broadcastToRoom(wsId, {
+              type: 'tunnel:status',
+              tunnel: info,
+            });
+          } catch (e: any) {
+            sendMsg({
+              type: 'tunnel:status',
+              tunnel: tunnelService.getStatus(),
+            });
+          }
+          break;
+        }
+
+        case 'tunnel:stop': {
+          const info = await tunnelService.stopTunnel();
+          sessionService.broadcastToRoom(wsId, {
+            type: 'tunnel:status',
+            tunnel: info,
+          });
+          break;
+        }
+
+        case 'tunnel:set_pin': {
+          tunnelService.setPin(msg.pin);
+          sessionService.broadcastToRoom(wsId, {
+            type: 'tunnel:status',
+            tunnel: tunnelService.getStatus(),
+          });
+          break;
+        }
+
+        case 'tunnel:regenerate_pin': {
+          tunnelService.regeneratePin();
+          sessionService.broadcastToRoom(wsId, {
+            type: 'tunnel:status',
+            tunnel: tunnelService.getStatus(),
+          });
+          break;
+        }
+
+        case 'tunnel:verify_pin': {
+          const isValid = tunnelService.verifyPin(msg.pin);
+          sendMsg({
+            type: 'tunnel:pin_result',
+            success: isValid,
+            message: isValid ? 'Xác thực PIN thành công' : 'Mã PIN không chính xác',
+          });
           break;
         }
 

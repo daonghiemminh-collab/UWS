@@ -29,6 +29,16 @@ export interface GitRepoInfo {
   remoteUrl: string | null;
 }
 
+export interface TunnelInfo {
+  active: boolean;
+  provider: 'cloudflare' | 'localtunnel' | 'none';
+  url: string | null;
+  qrDataUrl: string | null;
+  securityPin: string;
+  error?: string;
+  connectedGuestsCount: number;
+}
+
 // Client -> Server Messages
 export type ClientMessage =
   | { type: 'terminal:input'; sessionId: string; data: string }
@@ -44,7 +54,7 @@ export type ClientMessage =
   | { type: 'fs:create'; path: string; isDir?: boolean; workspaceId?: string }
   | { type: 'fs:rename'; oldPath: string; newPath: string; workspaceId?: string }
   | { type: 'fs:delete'; path: string; workspaceId?: string }
-  | { type: 'session:join'; workspaceId?: string; userName?: string }
+  | { type: 'session:join'; workspaceId?: string; userName?: string; pin?: string }
   | { type: 'session:leave'; workspaceId?: string }
   | { type: 'session:rename_user'; userName: string }
   | { type: 'session:claim_host'; workspaceId?: string }
@@ -60,7 +70,13 @@ export type ClientMessage =
   | { type: 'git:pull'; repoPath: string }
   | { type: 'git:push'; repoPath: string; commitMessage?: string }
   | { type: 'git:set_remote'; repoPath: string; remoteUrl: string; remoteName?: string }
-  | { type: 'git:test_remote'; repoPath: string };
+  | { type: 'git:test_remote'; repoPath: string }
+  | { type: 'tunnel:get_status' }
+  | { type: 'tunnel:start'; provider?: 'cloudflare' | 'localtunnel' }
+  | { type: 'tunnel:stop' }
+  | { type: 'tunnel:set_pin'; pin: string }
+  | { type: 'tunnel:regenerate_pin' }
+  | { type: 'tunnel:verify_pin'; pin: string };
 
 // Server -> Client Messages
 export type ServerMessage =
@@ -87,4 +103,6 @@ export type ServerMessage =
   | { type: 'automation:compiled'; slotId: string; command: string; label: string }
   | { type: 'git:list'; repos: GitRepoInfo[] }
   | { type: 'git:action_result'; action: 'create' | 'clone' | 'pull' | 'push' | 'set_remote' | 'test_remote'; success: boolean; message: string; repoPath?: string; remoteUrl?: string }
+  | { type: 'tunnel:status'; tunnel: TunnelInfo }
+  | { type: 'tunnel:pin_result'; success: boolean; message: string }
   | { type: 'error'; code: string; message: string };
