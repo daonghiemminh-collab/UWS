@@ -189,27 +189,34 @@
 
     /* CASCADING PILLS FLYOUT CONTAINER (SLIDES TO LEFT/DOWN) */
     .meodusa-pills-container {
+      display: none;
       position: absolute;
       top: 36px;
       right: 0;
-      display: flex;
       flex-direction: column;
       align-items: flex-end;
       gap: 6px;
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(-8px) scale(0.96);
-      transform-origin: top right;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       z-index: 10001;
       padding-bottom: 16px;
       padding-right: 2px;
+      -webkit-app-region: no-drag;
     }
 
-    .meodusa-menu-wrapper:hover .meodusa-pills-container {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateY(0) scale(1);
+    .meodusa-menu-wrapper:hover .meodusa-pills-container,
+    .meodusa-menu-wrapper:focus-within .meodusa-pills-container {
+      display: flex;
+      animation: pillsSlideIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes pillsSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
     }
 
     /* INDIVIDUAL PILL CAPSULES */
@@ -1273,21 +1280,23 @@
       font-size: 12px;
       color: var(--text);
       cursor: pointer;
-      background: rgba(15, 20, 30, 0.25);
-      border: 1px solid transparent;
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
+      background: rgba(15, 20, 30, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.05);
       transition: background 0.12s, border-color 0.12s, transform 0.1s;
+      -webkit-app-region: no-drag;
+      user-select: none;
+      position: relative;
+      z-index: 2;
     }
 
     .explorer-item:hover {
-      background: rgba(88, 166, 255, 0.18);
-      border-color: rgba(88, 166, 255, 0.3);
+      background: rgba(88, 166, 255, 0.22);
+      border-color: rgba(88, 166, 255, 0.4);
       color: var(--text-bold);
     }
 
     .explorer-item.selected {
-      background: rgba(88, 166, 255, 0.25);
+      background: rgba(88, 166, 255, 0.28);
       border-color: var(--accent);
       border-left: 3px solid var(--accent);
     }
@@ -5191,7 +5200,10 @@
             const chip = document.createElement('span');
             chip.className = `drive-chip ${currentPath.startsWith(d.path) ? 'active' : ''}`;
             chip.innerText = d.name;
-            chip.onclick = () => loadExplorerDirectory(paneId, d.path);
+            chip.onclick = (e) => {
+              e.stopPropagation();
+              loadExplorerDirectory(paneId, d.path);
+            };
             drivesEl.appendChild(chip);
           });
         }
@@ -5213,7 +5225,10 @@
           const pill = document.createElement('span');
           pill.className = 'breadcrumb-pill';
           pill.innerText = p;
-          pill.onclick = () => loadExplorerDirectory(paneId, target);
+          pill.onclick = (e) => {
+            e.stopPropagation();
+            loadExplorerDirectory(paneId, target);
+          };
           breadcrumbsEl.appendChild(pill);
         });
       }
@@ -5282,7 +5297,8 @@
             </div>
           `;
 
-          itemEl.onclick = () => {
+          itemEl.onclick = (e) => {
+            e.stopPropagation();
             if (item.isDirectory) {
               loadExplorerDirectory(paneId, item.path);
             } else {
