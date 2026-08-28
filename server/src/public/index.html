@@ -3955,13 +3955,19 @@
 
     // --- WORKSPACE LAYOUT PERSISTENCE & RESTORE ---
     let layoutSaveDebounceTimer = null;
+    let isWorkspaceRestoring = false;
 
-    function saveWorkspaceLayout() {
-      if (layoutSaveDebounceTimer) clearTimeout(layoutSaveDebounceTimer);
-      layoutSaveDebounceTimer = setTimeout(() => {
+    function saveWorkspaceLayout(immediate = false) {
+      if (isWorkspaceRestoring) return;
+      if (layoutSaveDebounceTimer) {
+        clearTimeout(layoutSaveDebounceTimer);
+        layoutSaveDebounceTimer = null;
+      }
+
+      function doSave() {
+        if (isWorkspaceRestoring) return;
         try {
           if (!layoutRoot || allLeafsMap.size === 0) {
-            localStorage.removeItem('meodusa_workspace_layout');
             return;
           }
 
@@ -3994,7 +4000,13 @@
         } catch (e) {
           console.warn('[Workspace] Error saving layout:', e);
         }
-      }, 200);
+      }
+
+      if (immediate) {
+        doSave();
+      } else {
+        layoutSaveDebounceTimer = setTimeout(doSave, 150);
+      }
     }
 
     function resetWorkspaceLayout() {
@@ -4018,6 +4030,8 @@
         if (!raw) return false;
         const serialized = JSON.parse(raw);
         if (!serialized) return false;
+
+        isWorkspaceRestoring = true;
 
         function instantiateLeaf(leafData) {
           const serviceType = leafData.serviceType || 'terminal';
@@ -4128,12 +4142,7 @@
               explorerBox.className = 'explorer-container';
               explorerBox.innerHTML = `
                 <div class="explorer-nav-bar">
-                  <div class="explorer-top-row">
-                    <div class="explorer-drive-chips" id="${leafNode.paneId}_drives"></div>
-                    <div class="explorer-filter-box">
-                      <input type="text" class="explorer-filter-input" placeholder="Lọc tệp..." oninput="explorerFilter('${leafNode.paneId}', this.value)" />
-                    </div>
-                  </div>
+                  <div class="explorer-drive-chips" id="${leafNode.paneId}_drives"></div>
                   <div class="explorer-breadcrumb-wrap" id="${leafNode.paneId}_breadcrumbs"></div>
                 </div>
                 <div class="explorer-list" id="${leafNode.paneId}_fileList">
@@ -4305,10 +4314,13 @@
         if (restoredRoot) {
           layoutRoot = restoredRoot;
           renderLayoutTree(false);
+          isWorkspaceRestoring = false;
           return true;
         }
       } catch (err) {
         console.warn('[Workspace] Could not restore layout:', err);
+      } finally {
+        isWorkspaceRestoring = false;
       }
       return false;
     }
@@ -4949,12 +4961,7 @@
       explorerBox.className = 'explorer-container';
       explorerBox.innerHTML = `
         <div class="explorer-nav-bar">
-          <div class="explorer-top-row">
-            <div class="explorer-drive-chips" id="${leafNode.paneId}_drives"></div>
-            <div class="explorer-filter-box">
-              <input type="text" class="explorer-filter-input" placeholder="Lọc tệp..." oninput="explorerFilter('${leafNode.paneId}', this.value)" />
-            </div>
-          </div>
+          <div class="explorer-drive-chips" id="${leafNode.paneId}_drives"></div>
           <div class="explorer-breadcrumb-wrap" id="${leafNode.paneId}_breadcrumbs"></div>
         </div>
         <div class="explorer-list" id="${leafNode.paneId}_fileList">
@@ -5517,10 +5524,10 @@
       };
 
       window.addEventListener('beforeunload', () => {
-        saveWorkspaceLayout();
+        saveWorkspaceLayout(true);
       });
       window.addEventListener('pagehide', () => {
-        saveWorkspaceLayout();
+        saveWorkspaceLayout(true);
       });
 
       ws.onmessage = (event) => {
