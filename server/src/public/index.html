@@ -3457,8 +3457,11 @@
 
     function getSavedWindowBg(service) {
       const saved = localStorage.getItem(`uws_bg_${service}_url`);
-      if (saved !== null) {
-        return saved === '__none__' ? '' : saved;
+      if (saved && saved !== '__none__') {
+        return saved;
+      }
+      if (saved === '__none__') {
+        return '';
       }
       return defaultPresetBgs[service] || '';
     }
