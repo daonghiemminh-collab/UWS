@@ -123,11 +123,135 @@
       letter-spacing: 0.8px;
     }
 
-    .top-actions {
+    /* MEODUSA HOVER EXPANDABLE CAPSULE SYSTEM MENU */
+    .meodusa-menu-wrapper {
+      position: relative;
       display: flex;
       align-items: center;
-      gap: 12px;
+      justify-content: flex-end;
       -webkit-app-region: no-drag;
+      z-index: 10000;
+      padding: 2px;
+    }
+
+    .meodusa-avatar-trigger {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(188, 140, 255, 0.15);
+      border: 1.5px solid rgba(188, 140, 255, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 0 12px rgba(188, 140, 255, 0.3);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .meodusa-avatar-img {
+      width: 20px;
+      height: 20px;
+      object-fit: contain;
+      transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      position: absolute;
+    }
+
+    .meodusa-avatar-img.default-face {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .meodusa-avatar-img.hover-face {
+      opacity: 0;
+      transform: scale(0.7);
+      filter: drop-shadow(0 0 8px rgba(210, 168, 255, 0.95));
+    }
+
+    /* On Hover of Wrapper */
+    .meodusa-menu-wrapper:hover .meodusa-avatar-trigger {
+      background: rgba(188, 140, 255, 0.3);
+      border-color: #d2a8ff;
+      box-shadow: 0 0 20px rgba(188, 140, 255, 0.85), inset 0 0 8px rgba(188, 140, 255, 0.5);
+      transform: scale(1.12);
+    }
+
+    .meodusa-menu-wrapper:hover .meodusa-avatar-img.default-face {
+      opacity: 0;
+      transform: scale(0.7);
+    }
+
+    .meodusa-menu-wrapper:hover .meodusa-avatar-img.hover-face {
+      opacity: 1;
+      transform: scale(1.15);
+    }
+
+    /* CASCADING PILLS FLYOUT CONTAINER (SLIDES TO LEFT/DOWN) */
+    .meodusa-pills-container {
+      position: absolute;
+      top: 36px;
+      right: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-8px) scale(0.96);
+      transform-origin: top right;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 10001;
+      padding-bottom: 16px;
+      padding-right: 2px;
+    }
+
+    .meodusa-menu-wrapper:hover .meodusa-pills-container {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0) scale(1);
+    }
+
+    /* INDIVIDUAL PILL CAPSULES */
+    .meodusa-pill-item {
+      background: rgba(18, 24, 38, 0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(88, 166, 255, 0.25);
+      border-radius: 20px;
+      padding: 4px 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7), 0 0 12px rgba(88, 166, 255, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .meodusa-pill-item:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 16px rgba(88, 166, 255, 0.45), 0 8px 24px rgba(0, 0, 0, 0.85);
+      transform: translateX(-4px);
+    }
+
+    .meodusa-pill-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-bold);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: inherit;
+      padding: 2px 4px;
+      border-radius: 12px;
+      transition: all 0.15s ease;
+    }
+
+    .meodusa-pill-btn:hover {
+      color: var(--accent);
     }
 
     /* QUICK ACTIONS DROPDOWN */
@@ -137,10 +261,10 @@
     }
 
     .actions-dropdown-trigger {
-      background: var(--btn-bg);
-      border: 1px solid var(--border);
+      background: transparent;
+      border: none;
       color: var(--btn-text);
-      padding: 4px 10px;
+      padding: 2px 6px;
       border-radius: 6px;
       font-size: 11px;
       font-weight: 600;
@@ -153,8 +277,6 @@
     }
 
     .actions-dropdown-trigger:hover {
-      background: var(--btn-bg-hover);
-      border-color: var(--accent);
       color: var(--text-bold);
     }
 
@@ -197,15 +319,8 @@
       color: var(--text-bold);
     }
 
-    /* MULTI-USER PRESENCE & IDENTITY WIDGET */
-    .presence-container {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--topbar-bg);
-      padding: 3px 6px 3px 10px;
-      border-radius: 20px;
-      border: 1px solid var(--border);
+    .presence-pill {
+      padding: 3px 8px;
     }
 
     .presence-users-list {
@@ -2062,38 +2177,46 @@
       <div class="brand-title">MEODUSA // WORKSPACE SYSTEM</div>
     </div>
 
-    <div class="top-actions">
-      <!-- QUICK ACTIONS DROPDOWN -->
-      <div class="actions-dropdown-wrap">
-        <button class="actions-dropdown-trigger" id="actionsTriggerBtn" onclick="toggleActionsDropdown(event)"
-          title="Chạy nhanh các mẫu lệnh tự động hóa">
-          <span>Actions</span>
-          <span style="font-size: 9px;">▾</span>
-        </button>
-        <div class="actions-dropdown-menu" id="actionsMenu">
-          <!-- Dynamic Slots Injected Here -->
+    <!-- COMBINED HOVER CAPSULE SYSTEM MENU -->
+    <div class="meodusa-menu-wrapper" id="meodusaMenuWrapper">
+      <!-- CASCADING PILL CAPSULES (OPENS TO LEFT/DOWN ON HOVER) -->
+      <div class="meodusa-pills-container" id="meodusaPillsContainer">
+        <!-- PILL 1: QUICK ACTIONS -->
+        <div class="meodusa-pill-item actions-dropdown-wrap">
+          <button class="meodusa-pill-btn actions-dropdown-trigger" id="actionsTriggerBtn" onclick="toggleActionsDropdown(event)"
+            title="Chạy nhanh các mẫu lệnh tự động hóa">
+            <span style="color: var(--accent-yellow); font-size: 11px;">⚡</span>
+            <span>Actions</span>
+            <span style="font-size: 9px; opacity: 0.7;">▾</span>
+          </button>
+          <div class="actions-dropdown-menu" id="actionsMenu">
+            <!-- Dynamic Slots Injected Here -->
+          </div>
+        </div>
+
+        <!-- PILL 2: MULTI-USER PRESENCE & IDENTITY WIDGET -->
+        <div class="meodusa-pill-item presence-pill">
+          <div class="presence-users-list" id="presenceList">
+            <span class="user-badge host you">Connecting...</span>
+          </div>
+          <button class="share-btn" onclick="copyShareLink()" title="Sao chép liên kết mời người khác tham gia">
+            <span>Share</span>
+          </button>
+        </div>
+
+        <!-- PILL 3: REMOTE INTERNET TUNNEL -->
+        <div class="meodusa-pill-item">
+          <button class="meodusa-pill-btn tunnel-trigger-btn" id="tunnelTriggerBtn" onclick="openTunnelModal()" title="Kết nối từ xa qua Internet (Cloudflare Zero-Config Tunnel)">
+            <span class="tunnel-indicator-dot" id="tunnelIndicatorDot"></span>
+            <span id="tunnelBtnText">Remote Tunnel</span>
+          </button>
         </div>
       </div>
 
-      <!-- MULTI-USER PRESENCE & IDENTITY WIDGET -->
-      <div class="presence-container">
-        <div class="presence-users-list" id="presenceList">
-          <span class="user-badge host you">Connecting...</span>
-        </div>
-        <button class="share-btn" onclick="copyShareLink()" title="Sao chép liên kết mời người khác tham gia">
-          <span>Share</span>
-        </button>
-      </div>
-
-      <!-- REMOTE INTERNET TUNNEL (PHASE 4) -->
-      <button class="tunnel-trigger-btn" id="tunnelTriggerBtn" onclick="openTunnelModal()" title="Kết nối từ xa qua Internet (Cloudflare Zero-Config Tunnel)">
-        <span class="tunnel-indicator-dot" id="tunnelIndicatorDot"></span>
-        <span id="tunnelBtnText">Remote Tunnel</span>
-      </button>
-
-      <div class="live-tag" id="liveStatus">
-        <span class="pulse-dot"></span>
-        <span id="liveStatusText">Live (1s)</span>
+      <!-- MEODUSA AVATAR TRIGGER (HOVER FACE EFFECT) -->
+      <div class="meodusa-avatar-trigger" id="meodusaAvatarTrigger" title="Menu Hệ Thống Meodusa (Rê chuột để mở)">
+        <img src="/assets/Meodusa.png" class="meodusa-avatar-img default-face" alt="Meodusa" />
+        <img src="/assets/Meodusa2.png" class="meodusa-avatar-img hover-face" alt="Meodusa" />
       </div>
     </div>
   </div>
@@ -2214,9 +2337,6 @@
             </div>
           </div>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn-cancel" onclick="closeTunnelModal()">Đóng</button>
       </div>
     </div>
   </div>
@@ -5544,13 +5664,7 @@
       const wsUrl = `${protocol}//${location.host}/ws`;
       ws = new WebSocket(wsUrl);
 
-      const statusEl = document.getElementById('liveStatus');
-      const textEl = document.getElementById('liveStatusText');
-
       ws.onopen = () => {
-        statusEl.style.color = 'var(--accent-green)';
-        textEl.innerText = 'Live (1s)';
-
         const savedName = localStorage.getItem('uws_user_name') || '';
         ws.send(JSON.stringify({
           type: 'session:join',
@@ -5772,8 +5886,6 @@
       };
 
       ws.onclose = () => {
-        statusEl.style.color = 'var(--accent-red)';
-        textEl.innerText = 'Mất kết nối...';
         setTimeout(connectWS, 2000);
       };
 
