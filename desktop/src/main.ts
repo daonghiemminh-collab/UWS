@@ -1,5 +1,6 @@
 import { app, BrowserWindow, Tray, Menu, globalShortcut, nativeImage, shell, clipboard, Notification } from 'electron';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import http from 'http';
 import { spawn, ChildProcess } from 'child_process';
@@ -9,7 +10,15 @@ const __dirname = path.dirname(__filename);
 
 const PORT = 4000;
 const SERVER_URL = `http://localhost:${PORT}`;
-const LOGO_PATH = path.resolve(__dirname, '../../assets/logo.png');
+const LOGO_PNG = path.resolve(__dirname, '../../assets/logo.png');
+const LOGO_ICO = path.resolve(__dirname, '../../assets/icon.ico');
+const APP_ICON = process.platform === 'win32' && fs.existsSync(LOGO_ICO) ? LOGO_ICO : LOGO_PNG;
+
+// Set Application Identity for Windows Taskbar & Shell
+app.setName('Meodusa');
+if (process.platform === 'win32') {
+  app.setAppUserModelId('com.daonghiemminh.meodusa');
+}
 
 let mainWindow: BrowserWindow | null = null;
 let tray: Tray | null = null;
@@ -62,7 +71,7 @@ async function ensureServerRunning() {
 }
 
 function createWindow() {
-  const icon = nativeImage.createFromPath(LOGO_PATH);
+  const appIcon = nativeImage.createFromPath(APP_ICON);
 
   mainWindow = new BrowserWindow({
     width: 1400,
@@ -70,7 +79,7 @@ function createWindow() {
     minWidth: 960,
     minHeight: 600,
     title: 'Meodusa',
-    icon: icon,
+    icon: APP_ICON,
     backgroundColor: '#090c10',
     autoHideMenuBar: true,
     titleBarStyle: 'hidden',
@@ -84,6 +93,8 @@ function createWindow() {
       contextIsolation: true,
     },
   });
+
+  mainWindow.setIcon(appIcon);
 
   // Enable F5, Ctrl+F5, Ctrl+R, Ctrl+Shift+R reload and F12, Ctrl+Shift+I DevTools
   mainWindow.webContents.on('before-input-event', (event, input) => {
@@ -109,7 +120,7 @@ function createWindow() {
         new Notification({
           title: 'Meodusa đang chạy ngầm',
           body: 'Meodusa đã thu nhỏ xuống khay hệ thống (System Tray). Bấm biểu tượng để mở lại.',
-          icon: LOGO_PATH,
+          icon: LOGO_PNG,
         }).show();
       }
     }
@@ -121,7 +132,7 @@ function createWindow() {
 }
 
 function createTray() {
-  const icon = nativeImage.createFromPath(LOGO_PATH).resize({ width: 18, height: 18 });
+  const icon = nativeImage.createFromPath(LOGO_PNG).resize({ width: 18, height: 18 });
   tray = new Tray(icon);
   tray.setToolTip('Meodusa (Live)');
 
@@ -149,7 +160,7 @@ function createTray() {
             new Notification({
               title: 'Meodusa LAN Link',
               body: 'Đã sao chép link chia sẻ vào clipboard!',
-              icon: LOGO_PATH,
+              icon: LOGO_PNG,
             }).show();
           }
         },
