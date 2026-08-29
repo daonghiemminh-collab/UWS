@@ -10,7 +10,11 @@
     "start": "tsc && electron .",
     "build": "tsc",
     "pack:dir": "npm run build && electron-builder --dir",
-    "package": "npm run build && electron-builder --win"
+    "package": "npm run build && electron-builder --win",
+    "package:x64": "npm run build && electron-builder --win --x64",
+    "package:ia32": "npm run build && electron-builder --win --ia32",
+    "package:arm64": "npm run build && electron-builder --win --arm64",
+    "package:all": "npm run build && electron-builder --win --x64 --ia32 --arm64"
   },
   "build": {
     "appId": "com.daonghiemminh.meodusa",
@@ -55,13 +59,17 @@
         {
           "target": "nsis",
           "arch": [
-            "x64"
+            "x64",
+            "ia32",
+            "arm64"
           ]
         },
         {
           "target": "portable",
           "arch": [
-            "x64"
+            "x64",
+            "ia32",
+            "arm64"
           ]
         }
       ],
@@ -76,7 +84,11 @@
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "shortcutName": "Meodusa",
+      "artifactName": "${productName}-Setup-${version}-${arch}.${ext}",
       "runAfterFinish": true
+    },
+    "portable": {
+      "artifactName": "${productName}-Portable-${version}-${arch}.${ext}"
     }
   },
   "devDependencies": {

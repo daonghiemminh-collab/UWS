@@ -39,17 +39,50 @@ E:\UWS
 
 ---
 
-## 🚀 Khởi chạy Nhanh
+## 📥 Tải Về Meodusa (Download Hub & Showroom)
+
+| Nền tảng | Kiến trúc | Định dạng | Tải trực tiếp |
+| :--- | :--- | :--- | :--- |
+| **🪟 Windows 10 / 11** | `64-bit (x64)` *(Khuyên dùng)* | Bộ cài đặt NSIS Setup | [⬇️ Tải Meodusa-Setup-x64.exe](https://github.com/daonghiemminh-collab/UWS/releases/latest/download/Meodusa-Setup-1.0.0-x64.exe) |
+| **🪟 Windows 10 / 11** | `64-bit (x64)` | Bản Portable Chạy Ngay | [⬇️ Tải Meodusa-Portable-x64.exe](https://github.com/daonghiemminh-collab/UWS/releases/latest/download/Meodusa-Portable-1.0.0-x64.exe) |
+| **🪟 Windows Legacy** | `32-bit (ia32 / x86)` | Bộ cài đặt NSIS Setup | [⬇️ Tải Meodusa-Setup-ia32.exe](https://github.com/daonghiemminh-collab/UWS/releases/latest/download/Meodusa-Setup-1.0.0-ia32.exe) |
+| **🪟 Windows Legacy** | `32-bit (ia32 / x86)` | Bản Portable Chạy Ngay | [⬇️ Tải Meodusa-Portable-ia32.exe](https://github.com/daonghiemminh-collab/UWS/releases/latest/download/Meodusa-Portable-1.0.0-ia32.exe) |
+| **💻 Windows ARM** | `ARM 64-bit (arm64)` | Bộ cài đặt NSIS Setup | [⬇️ Tải Meodusa-Setup-arm64.exe](https://github.com/daonghiemminh-collab/UWS/releases/latest/download/Meodusa-Setup-1.0.0-arm64.exe) |
+
+> 💡 **Tất cả các bản phát hành**: Xem lịch sử cập nhật chi tiết tại [GitHub Releases](https://github.com/daonghiemminh-collab/UWS/releases).
+
+---
+
+## 🚀 Khởi chạy Nhanh (Dành cho Lập Trình Viên / Developer)
 
 ```bash
 # Cài đặt dependencies
 npm install
 
-# Khởi chạy máy chủ Daemon
-npm --workspace=server run dev
+# Khởi chạy bản Desktop Dev kèm Hot Reload
+npm run desktop:dev
+
+# Hoặc khởi chạy riêng máy chủ Daemon
+npm run server:dev
 ```
 
 Truy cập trên trình duyệt:
 - **Máy chính (Host)**: `http://localhost:4000`
 - **Máy phụ (LAN)**: `http://192.168.1.6:4000`
+
+---
+
+## 📦 Quy Trình Đóng Gói (Build & Packaging)
+
+```bash
+# 1. Đóng gói bộ cài đặt Windows x64 (Khuyên dùng)
+npm --workspace=desktop run package:x64
+
+# 2. Đóng gói toàn bộ các kiến trúc (x64, ia32, arm64)
+npm --workspace=desktop run package:all
+
+# 3. Tạo bản phát hành mới (Tự động build qua GitHub Actions)
+git tag v1.0.0
+git push origin v1.0.0
+```
 
