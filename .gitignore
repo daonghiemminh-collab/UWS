@@ -5,6 +5,8 @@ dist/
 */dist/
 build/
 */build/
+release/
+*/release/
 .cache/
 
 # Environment & Local configs

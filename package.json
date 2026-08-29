@@ -10,10 +10,13 @@
     "desktop"
   ],
   "scripts": {
+    "build": "npm --workspace=shared run build && npm --workspace=server run build && npm --workspace=desktop run build",
     "server:dev": "npm --workspace=server run dev",
     "client:dev": "npm --workspace=client run dev",
     "desktop:dev": "npm --workspace=desktop run dev",
     "desktop:start": "npm --workspace=desktop run start",
+    "desktop:pack:dir": "npm run build && npm --workspace=desktop run pack:dir",
+    "desktop:package": "npm run build && npm --workspace=desktop run package",
     "dev": "npm run server:dev"
   },
   "keywords": [
@@ -25,5 +28,8 @@
     "desktop"
   ],
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "pngjs": "^7.0.0"
+  }
 }

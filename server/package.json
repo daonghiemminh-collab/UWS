@@ -6,7 +6,7 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc"
+    "build": "tsc && node -e \"const fs=require('fs'); fs.cpSync('src/public', 'dist/public', {recursive: true, force: true}); console.log('[Server] Copied public assets to dist/public');\""
   },
   "dependencies": {
     "@uws/shared": "*",

@@ -10,8 +10,15 @@ const __dirname = path.dirname(__filename);
 
 const PORT = 4000;
 const SERVER_URL = `http://localhost:${PORT}`;
-const LOGO_PNG = path.resolve(__dirname, '../../assets/logo.png');
-const LOGO_ICO = path.resolve(__dirname, '../../assets/icon.ico');
+
+// Resolve paths correctly in both Dev and Packaged Production environments
+const isDev = !app.isPackaged;
+const ASSETS_DIR = isDev
+  ? path.resolve(__dirname, '../../assets')
+  : path.join(process.resourcesPath, 'assets');
+
+const LOGO_PNG = path.join(ASSETS_DIR, 'logo.png');
+const LOGO_ICO = path.join(ASSETS_DIR, 'icon.ico');
 const APP_ICON = process.platform === 'win32' && fs.existsSync(LOGO_ICO) ? LOGO_ICO : LOGO_PNG;
 
 // Set Application Identity for Windows Taskbar & Shell
@@ -48,21 +55,40 @@ async function ensureServerRunning() {
   }
 
   console.log('[Desktop] Spawning Meodusa Server Daemon...');
-  const serverDir = path.resolve(__dirname, '../../server');
 
-  serverProcess = spawn('npx.cmd', ['tsx', 'src/index.ts'], {
-    cwd: serverDir,
-    shell: true,
-    stdio: 'inherit',
-  });
+  if (app.isPackaged) {
+    // In Packaged Production: Spawn bundled Node server using Electron's built-in node binary
+    const serverEntry = path.join(process.resourcesPath, 'server', 'dist', 'index.js');
+    const serverCwd = path.join(process.resourcesPath, 'server');
 
-  serverProcess.on('error', (err) => {
+    serverProcess = spawn(process.execPath, [serverEntry], {
+      cwd: serverCwd,
+      env: {
+        ...process.env,
+        ELECTRON_RUN_AS_NODE: '1',
+        PORT: String(PORT),
+        NODE_ENV: 'production',
+      },
+      stdio: 'ignore',
+      windowsHide: true,
+    });
+  } else {
+    // In Development: Spawn using tsx or node
+    const serverDir = path.resolve(__dirname, '../../server');
+    serverProcess = spawn('npx.cmd', ['tsx', 'src/index.ts'], {
+      cwd: serverDir,
+      shell: true,
+      stdio: 'inherit',
+    });
+  }
+
+  serverProcess?.on('error', (err) => {
     console.error('[Desktop] Failed to spawn Meodusa server daemon:', err);
   });
 
   // Wait for server to become healthy
-  for (let i = 0; i < 30; i++) {
-    await new Promise((r) => setTimeout(r, 400));
+  for (let i = 0; i < 40; i++) {
+    await new Promise((r) => setTimeout(r, 350));
     if (await checkServerRunning()) {
       console.log('[Desktop] Meodusa Server Daemon is up and healthy!');
       return;

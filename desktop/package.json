@@ -1,18 +1,88 @@
 {
   "name": "@uws/desktop",
   "version": "1.0.0",
-  "description": "Meodusa Native Desktop Shell with System Tray & Global Hotkeys",
+  "description": "Meodusa - Futuristic Cyberpunk Workspace System",
+  "author": "daonghiemminh",
   "main": "dist/main.js",
   "type": "module",
   "scripts": {
     "dev": "tsc && electron .",
     "start": "tsc && electron .",
-    "build": "tsc"
+    "build": "tsc",
+    "pack:dir": "npm run build && electron-builder --dir",
+    "package": "npm run build && electron-builder --win"
   },
-  "dependencies": {},
+  "build": {
+    "appId": "com.daonghiemminh.meodusa",
+    "productName": "Meodusa",
+    "electronVersion": "34.5.8",
+    "copyright": "Copyright © 2026 Meodusa Team",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "../assets",
+        "to": "assets",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../server",
+        "to": "server",
+        "filter": [
+          "dist/**/*",
+          "package.json",
+          "node_modules/**/*"
+        ]
+      },
+      {
+        "from": "../shared",
+        "to": "shared",
+        "filter": [
+          "dist/**/*",
+          "package.json"
+        ]
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "../assets/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "../assets/icon.ico",
+      "uninstallerIcon": "../assets/icon.ico",
+      "installerHeaderIcon": "../assets/icon.ico",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Meodusa",
+      "runAfterFinish": true
+    }
+  },
   "devDependencies": {
     "@types/node": "^22.10.1",
-    "electron": "^34.0.0",
+    "electron": "34.5.8",
+    "electron-builder": "^26.15.3",
     "typescript": "^5.7.2"
   }
 }

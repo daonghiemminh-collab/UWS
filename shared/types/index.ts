@@ -1,3 +1,3 @@
-export * from './metrics';
-export * from './workspace';
-export * from './protocol';
+export * from './metrics.js';
+export * from './workspace.js';
+export * from './protocol.js';
